@@ -1,0 +1,27 @@
+require 'zoetrope.core.class'
+
+require 'zoetrope.core.app'
+require 'zoetrope.core.bitmapfont'
+require 'zoetrope.core.globals'
+require 'zoetrope.core.group'
+require 'zoetrope.core.keys'
+require 'zoetrope.core.mouse'
+require 'zoetrope.core.sound'
+require 'zoetrope.core.sprite'
+require 'zoetrope.core.timer'
+require 'zoetrope.core.tweener'
+
+require 'zoetrope.sprites.animation'
+require 'zoetrope.sprites.emitter'
+require 'zoetrope.sprites.fill'
+require 'zoetrope.sprites.map'
+require 'zoetrope.sprites.outlinetext'
+require 'zoetrope.sprites.tile'
+
+require 'zoetrope.ui.button'
+require 'zoetrope.ui.cursor'
+
+require 'zoetrope.utils.cached'
+require 'zoetrope.utils.debugwatch'
+require 'zoetrope.utils.factory'
+require 'zoetrope.utils.spriteloader'
