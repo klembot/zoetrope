@@ -1,6 +1,11 @@
 -- Class: Animation
 -- An animation displays a sequence of frames.
 --
+--
+-- Event: onEndSequence
+-- Called whenever an animation sequence ends. It is passed the name
+-- of the sequence that just ended.
+-- 
 -- Extends:
 --		<Sprite>
 
@@ -21,12 +26,19 @@ Animation = Sprite:extend({
 	-- Property: currentName
 	-- The name of the current animation sequence.
 
+	-- Property: currentFrame
+	-- The current frame being displayed; starts at 1.
+
 	-- Property: frameIndex
 	-- Numeric index of the current frame in the current sequence; starts at 1.
 
 	-- Property: frameTimer
 	-- Time left before the animation changes to the next frame in seconds.
 	-- Normally you shouldn't need to change this directly.
+
+	-- private property: used to check whether the source image
+	-- for our quad is up-to-date
+	set = {},
 
 	-- Method: addSequence
 	-- Adds an animation to the sprite's library. All arguments are
@@ -36,18 +48,17 @@ Animation = Sprite:extend({
 	--		* name - name to store the animation under
 	--		* frames - table of frames, starting at 1
 	--		* fps - frames per second to run the animation
-	--		* looped	loop the animation? defaults to true
+	--		* loops - loop the animation? defaults to true
 	--
 	-- Returns:
 	--		nothing
 
 	addSequence = function (self, seq)
-		if type(seq.looped) == 'nil' then seq.looped = true end
-		
+		if type(seq.loops) == 'nil' then seq.loops = true end
 		self.sequences[seq.name] = seq
 	end,
 
-	-- Method: 
+	-- Method: play 
 	-- Begins playing an animation in the sprite's library.
 	-- If the animation is already playing, this has no effect.
 	--
@@ -77,42 +88,71 @@ Animation = Sprite:extend({
 	-- Arguments:
 	--		* index - integer frame index relative to the entire sprite sheet,
 	--				  starts at 1. If omitted, this freezes the current frame.
+	--				  If there is no current frame, this freezes on the first frame.
 	--
 	-- Returns:
 	--		nothing
 
 	freeze = function (self, index)
-		index = index or self.currentSequence[self.frameIndex]
+		if self.currentSequence then
+			index = index or self.currentSequence[self.frameIndex]
+		end
+		
+		index = index or 1
 
-		if not self.imageWidth then
+		if self.set.image ~= self.image then
 			self:updateQuad()
 		end
 
-		local frameX = index * self.width
-		local viewportX = frameX % self.imageWidth
-		local viewportY = math.floor(frameX / self.imageWidth)
-		self.quad:setViewport(viewportX, viewportY, self.width, self.height)
+		self.currentFrame = index
+		self:updateFrame(index)
 		self.paused = true
 	end,
 
-	-- sets up the sprite's quad property; you should not need to call this directly
+	-- private method: updateQuad
+	-- sets up the sprite's quad property based on the image;
+	-- needs to be called whenever the sprite's image property changes.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
 
 	updateQuad = function (self)
-		if self.quadImage == self.image then return end
+		if self.set.image == self.image then return end
 
 		self.quad = love.graphics.newQuad(0, 0, self.width, self.height,
 										  self.image:getWidth(), self.image:getHeight())
 		self.imageWidth = self.image:getWidth()
-		self.quadImage = self.image
+		self.set.image = self.image
+	end,
+
+	-- private method: updateFrame
+	-- changes the sprite's quad property based on the current frame;
+	-- needs to be called whenever the sprite's currentFrame property changes.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	updateFrame = function (self)
+		assert(type(self.currentFrame) == 'number', "current frame is not a number")
+		assert(self.image, "asked to set the frame of a nil image")
+
+		if self.set.image ~= self.image then
+			self:updateQuad()
+		end
+
+		local frameX = (self.currentFrame - 1) * self.width
+		local viewportX = frameX % self.imageWidth
+		local viewportY = math.floor(frameX / self.imageWidth)
+		self.quad:setViewport(viewportX, viewportY, self.width, self.height)
 	end,
 
 	update = function (self, elapsed)
-		-- if the sprite's image changed, create a new quad
-		
-		if self.quadImage ~= self.image then
-			self:updateQuad()
-		end
-		
 		-- move the animation frame forward
 
 		if self.currentSequence and not self.paused then
@@ -120,21 +160,21 @@ Animation = Sprite:extend({
 			
 			if self.frameTimer <= 0 then
 				self.frameIndex = self.frameIndex + 1
-				
+
 				if self.frameIndex > #self.currentSequence.frames then
-					if self.currentSequence.looped then
+					if self.onEndSequence then self:onEndSequence(self.currentName) end
+
+					if self.currentSequence.loops then
 						self.frameIndex = 1
 					else
 						self.frameIndex = self.frameIndex - 1
 						self.paused = true
 					end
 				end
-					
+
+				self.currentFrame = self.currentSequence.frames[self.frameIndex]
+				self:updateFrame()
 				self.frameTimer = 1 / self.currentSequence.fps
-				local frameX = self.currentSequence.frames[self.frameIndex] * self.width
-				local viewportX = frameX % self.imageWidth
-				local viewportY = math.floor(frameX / self.imageWidth)
-				self.quad:setViewport(viewportX, viewportY, self.width, self.height)
 			end
 		end
 
@@ -145,6 +185,12 @@ Animation = Sprite:extend({
 		x = x or self.x
 		y = y or self.y
 		if not self.visible and self.image then return end
+		
+		-- if our image changed, update the quad
+		
+		if self.set.image ~= self.image then
+			self:updateQuad()
+		end
 		
 		-- set color if needed
 		
