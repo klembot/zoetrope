@@ -73,6 +73,8 @@ OutlineText = Sprite:extend({
 
 	draw = function (self, x, y)
 		if not self.visible or not self.text then return end
+		assert(not self.font or type(self.font) == 'userdata', "font property is set to a non-font")
+
 		x = x or self.x
 		y = y or self.y
 		local width = self.width
