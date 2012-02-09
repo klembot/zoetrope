@@ -91,6 +91,24 @@ function split (source, pattern)
 	return result
 end
 
+-- Function: searchTable
+-- Returns the index of a value in a table. If the value
+-- does not exist in the table, this returns nil.
+--
+-- Arguments:
+--		search - value to search for
+--
+-- Returns:
+--		integer index or nil
+
+function searchTable (table, search)
+	for i, value in ipairs(table) do
+		if value == search then return i end
+	end
+
+	return nil
+end
+
 -- Function: copyTable
 -- Returns a superficial copy of a table. If it contains a 
 -- reference to another table in one of its properties, that
