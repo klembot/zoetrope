@@ -49,9 +49,16 @@ SpriteTypes = App:extend({
 		
 		self:add(OutlineText:new({ x = 16, y = 250, text = 'This is an outline (TrueType) font.',
 								   width = 150, color = {0, 0, 255} }))
-	end,
+		self:add(OutlineText:new({ x = 316, y = 250, text = 'This is an outline (TrueType) font.',
+								   width = 150, color = {0, 0, 255}, align = 'center' }))
+		self:add(OutlineText:new({ x = 516, y = 250, text = 'This is an outline (TrueType) font.',
+								   width = 150, color = {0, 0, 255}, align = 'right' }))
 
-	onDraw = function (self)
-		self.font:drawText('Hello, world.', 0, 0, 0)
+		self:add(BitmapText:new({ x = 16, y = 350, text = 'This is a bitmap font.',
+								   width = 150, font = self.font }))
+		self:add(BitmapText:new({ x = 316, y = 350, text = 'This is a bitmap font.',
+								   width = 150, font = self.font, align = 'center' }))
+		self:add(BitmapText:new({ x = 516, y = 350, text = 'This is a bitmap font.',
+								   width = 150, font = self.font, align = 'right' }))
 	end
 })

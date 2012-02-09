@@ -81,16 +81,19 @@ BitmapFont = Class:extend({
 	-- Returns:
 	--		width in pixels
 
-	textWidth = function (text, tracking)
+	textWidth = function (self, text, tracking)
+		assert(type(text) == 'string', 'text to measure is ' .. type(text) .. ', not a string')
 		tracking = tracking or self.tracking
 		local width = 0
 
 		for i = 1, #text do
-			local c = string.sub(text, i, 1)
+			local c = string.sub(text, i, i)
 			assert(self.quads[c], 'no glyph found for character "' .. c .. '"')
-			width = width + self.quads[c]:getViewport() + tracking
+			local x, y, w, h = self.quads[c]:getViewport()
+			width = width + w + tracking
 		end
 
+		print(text, width)
 		return width
 	end,
 
@@ -115,7 +118,7 @@ BitmapFont = Class:extend({
 		for i = 1, #text do
 			local c = string.sub(text, i, i)
 			assert(self.quads[c], 'this font has no glyph for character "' .. c .. '"')
-			self.batch:addq(self.quads[c], charX, y)
+			self.batch:addq(self.quads[c], charX, 0)
 			local x, y, w, h = self.quads[c]:getViewport()
 
 			charX = charX + w + tracking

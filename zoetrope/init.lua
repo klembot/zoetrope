@@ -12,6 +12,7 @@ require 'zoetrope.core.timer'
 require 'zoetrope.core.tweener'
 
 require 'zoetrope.sprites.animation'
+require 'zoetrope.sprites.bitmaptext'
 require 'zoetrope.sprites.emitter'
 require 'zoetrope.sprites.fill'
 require 'zoetrope.sprites.map'
