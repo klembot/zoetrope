@@ -10,6 +10,13 @@ Sounds = App:extend({
 		self.testSound = Sound:new({ source = self.tone })
 		self.testSound:play(1)
 		self.testSound.volume = 0.25
+		
+		self.signal = Fill:new({ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } })
+		self:add(self.signal)
+
+		self.jukeboxLabel = OutlineText:new({ x = 16, y = 16, width = 300 })
+		self:add(self.jukeboxLabel)
+
 		self.timer:start({ func = self.testSound.play, delay = 1, arg = { self.testSound, 0.25 } })
 	end,
 
@@ -17,5 +24,8 @@ Sounds = App:extend({
 		if Current.keys:justPressed(' ') then
 			self.view.sounds:play(self.tonePath, math.random())
 		end
+
+		self.jukeboxLabel.text = #Current.view.sounds.sounds .. ' sounds active in jukebox'
+		self.signal.visible = self.testSound:isPlaying()
 	end
 })

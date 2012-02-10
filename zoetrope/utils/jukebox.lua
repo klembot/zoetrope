@@ -61,9 +61,13 @@ Jukebox = Sprite:extend({
 	end,
 
 	update = function (self, elapsed)
-		for _, spr in pairs(self.sounds) do
+		for i, spr in ipairs(self.sounds) do
 			if spr.active and spr.update then
 				spr:update(elapsed)
+			end
+
+			if not spr:isPlaying() then
+				table.remove(self.sounds, i)
 			end
 		end
 
