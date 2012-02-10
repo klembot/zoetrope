@@ -193,8 +193,9 @@ Animation = Sprite:extend({
 		end
 		
 		-- set color if needed
-		
-		if self:isColorTransformed() then
+		local colored = self:isColorTransformed()
+
+		if colored then
 			love.graphics.setColor(self:filterColor(255, 255, 255, 255))
 		end
 		
@@ -205,7 +206,7 @@ Animation = Sprite:extend({
 		
 		-- reset color
 		
-		if self:isColorTransformed() then
+		if colored then
 			love.graphics.setColor(255, 255, 255, 255)
 		end
 		

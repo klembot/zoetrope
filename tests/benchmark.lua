@@ -10,8 +10,6 @@ Block = Tile:extend({
 	luigi = Cached:image('tests/assets/luigi.png'),
 
 	onNew = function (self)
-		print(self.velocity)
-	
 		if (math.random() > 0.5) then
 			self.image = self.mario
 		else
