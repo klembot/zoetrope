@@ -93,6 +93,12 @@ BitmapText = Sprite:extend({
 
 			i = i + 1
 		end
+
+		-- signal we've redone layout
+		self.set.text = self.text
+		self.set.align = self.align
+		self.set.tracking = self.tracking
+		self.set.leading = self.leading
 	end,
 
 	draw = function (self, x, y)
@@ -102,7 +108,8 @@ BitmapText = Sprite:extend({
 		y = y or self.y
 
 		-- do we need to redo layout?
-		if not self.lines then
+		if not self.lines or self.set.text ~= self.text or self.set.align ~= self.align or
+		   self.set.leading ~= self.leading or self.set.tracking ~= self.tracking then
 			self:layoutLines()
 		end
 

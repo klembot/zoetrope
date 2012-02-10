@@ -93,7 +93,6 @@ BitmapFont = Class:extend({
 			width = width + w + tracking
 		end
 
-		print(text, width)
 		return width
 	end,
 
