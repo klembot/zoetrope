@@ -43,8 +43,10 @@ Sound = Sprite:extend({
 
 	play = function (self, volume, force)
 		assert(self.source, "can't play a sound without a source set")
+		assert(type(self.source) == 'userdata', 'source sound is a ' .. type(self.source) .. ', not a sound')
 
 		if volume then
+			assert(type(volume) == 'number', 'sound volume must be a number')
 			self.set.volume = volume
 			self.volume = volume
 			self.source:setVolume(volume)
@@ -80,7 +82,7 @@ Sound = Sprite:extend({
 	--		nothing
 
 	resume = function (self)
-		self.source.resume()
+		self.source:resume()
 	end,
 
 	-- Method: isPlaying

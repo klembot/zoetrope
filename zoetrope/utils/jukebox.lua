@@ -26,9 +26,11 @@ Jukebox = Sprite:extend({
 		local sourceObj
 
 		if type(source) == 'string' then
-			sourceObj = love.audio.newSource(source)
-		else
+			sourceObj = love.audio.newSource(source, 'static')
+		elseif type(source) == 'userdata' then
 			sourceObj = source
+		else
+			error('sound is ' .. type(source) .. '; must be either string path or source object')
 		end
 
 		volume = volume or 1
@@ -37,12 +39,15 @@ Jukebox = Sprite:extend({
 		for i, value in ipairs(self.sounds) do
 			if not value:isPlaying() then
 				sound = value
+				print('reusing old sound')
 				sound.source = sourceObj
+				break
 			end
 		end
 
 		if not sound then
 			sound = Sound:new({ source = sourceObj })
+			print('adding new sound')
 			table.insert(self.sounds, sound)
 		end
 	
@@ -66,9 +71,9 @@ Jukebox = Sprite:extend({
 				spr:update(elapsed)
 			end
 
-			if not spr:isPlaying() then
-				table.remove(self.sounds, i)
-			end
+			--if not spr:isPlaying() then
+			--	table.remove(self.sounds, i)
+			--end
 		end
 
 		Sprite.update(self, elapsed)

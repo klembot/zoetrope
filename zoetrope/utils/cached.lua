@@ -78,7 +78,7 @@ Cached = Class.extend({
 
 	sound = function (self, key, alias)
 		if not self.library.sound[key] then
-			self.library.sound[key] = love.audio.newSource(key)
+			self.library.sound[key] = love.audio.newSource(key, 'static')
 		end
 
 		if alias then
