@@ -178,7 +178,7 @@ App = Class:extend({
 		-- did our view change from under us?
 		
 		if Current.view ~= self.view then
-			self.view = Current.viewc
+			self.view = Current.view
 		end
 		
 		-- update everyone

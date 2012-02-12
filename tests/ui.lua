@@ -3,7 +3,7 @@ require 'zoetrope'
 UI = App:extend({
 	name = 'UI Test',
 	
-	cursorImage = Cached:image('tests/assets/mario.png'),
+	cursorImage = Cached:image('tests/assets/bluegem.png'),
 
 	onRun = function (self)
 		local cursor = Cursor:new()

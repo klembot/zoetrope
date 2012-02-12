@@ -15,7 +15,7 @@ Maps = App:extend({
 			end
 		end
 		
-		local mario = Cached:image('tests/assets/mario.png')
+		local mario = Cached:image('tests/assets/bluegem.png')
 		
 		map.sprites[1] = Fill:new({ width = 16, height = 16, fill = {255, 0, 0} })
 		map.sprites[2] = Fill:new({ width = 16, height = 16, fill = {0, 255, 0} })

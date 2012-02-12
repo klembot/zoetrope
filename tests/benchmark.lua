@@ -6,14 +6,14 @@ Block = Tile:extend({
 	width = 16,
 	height = 16,
 
-	mario = Cached:image('tests/assets/mario.png'),
-	luigi = Cached:image('tests/assets/luigi.png'),
+	blueGem = Cached:image('tests/assets/bluegem.png'),
+	greenGem = Cached:image('tests/assets/greengem.png'),
 
 	onNew = function (self)
 		if (math.random() > 0.5) then
-			self.image = self.mario
+			self.image = self.blueGem
 		else
-			self.image = self.luigi
+			self.image = self.greenGem
 		end
 	
 		self.velocity.x = math.random(-100, 100)
