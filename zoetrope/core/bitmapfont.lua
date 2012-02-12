@@ -38,11 +38,9 @@ BitmapFont = Class:extend({
 	-- image directly. Once a bitmap font is created, this property may not be changed.
 	
 	-- Property: height
-	-- The height of a single row of glyphs in the source image. If you have a
-	-- source image with multiple rows, sentinel pixels must appear at exact multiple
-	-- multiples of this number. (e.g. a height 20 font should have sentinels at 
-	-- pixels 0, 20, and 40.) Every glyph must have the same height. Once a bitmap
-	-- font is created, this property may not be changed.
+	-- The height of a single row of glyphs in the source image. This is calculated for
+	-- you based on the source image, and you should not change this value. Every glyph
+	-- must have the same height.
 
 	-- Property: alphabet
 	-- A string listing the order of glyphs' appearance in the source image.
@@ -63,7 +61,6 @@ BitmapFont = Class:extend({
 	new = function (self, obj)
 		assert(obj.imagePath, 'image path must be set when creating a bitmap font')
 		assert(type(obj.imagePath) == 'string', 'image path must be a string')
-		assert(obj.height, 'height must be set when creating a bitmap font') 
 		obj = self:extend(obj)
 		obj:loadImage()
 	
@@ -166,6 +163,21 @@ BitmapFont = Class:extend({
 		-- sentinel color is always at (0, 0)
 		local sentinel = pixels[0][0]
 
+		-- scan downward to find height
+		local y
+
+		for y = 1, imageHeight do
+			if pixels[0][y][1] == sentinel[1] and pixels[0][y][2] == sentinel[2] and
+		 	   pixels[0][y][3] == sentinel[3] then
+				self.height = y 
+				break
+			end
+		end
+
+		-- if we didn't find another sentinel, assume a single row
+
+		if not self.height then self.height = y end
+
 		-- which character in the alphabet are we determining bounds for?
 		local currentChar = 1
 
@@ -178,7 +190,7 @@ BitmapFont = Class:extend({
 			for x = 1, imageWidth - 1 do
 				local color = pixels[x][y]
 
-				if color[1] == sentinel[1] and color[2] == sentinel[2] and
+				if color and color[1] == sentinel[1] and color[2] == sentinel[2] and
 				   color[3] == sentinel[3] and color[4] == sentinel[4] then
 
 				    -- set up quad for the current character
