@@ -47,7 +47,7 @@ BitmapFont = Class:extend({
 	-- Property: alphabet
 	-- A string listing the order of glyphs' appearance in the source image.
 	-- By default, it uses ASCII order.
-	alphabet = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~',
+	alphabet = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~',
 
 	-- Constant: tracking
 	-- The amount of tracking (space between glyphs in pixels) used when drawing 
