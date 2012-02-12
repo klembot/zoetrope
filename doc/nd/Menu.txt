@@ -69,6 +69,7 @@ File: Cursor  (ui\cursor.lua)
 Group: Sprites  {
 
    File: Animation  (sprites\animation.lua)
+   File: BitmapText  (sprites\bitmaptext.lua)
    File: Emitter  (sprites\emitter.lua)
    File: Fill  (sprites\fill.lua)
    File: Map  (sprites\map.lua)
@@ -82,6 +83,8 @@ Group: Utils  {
    File: DebugWatch  (utils\debugwatch.lua)
    File: Factory  (utils\factory.lua)
    File: Jukebox  (utils\jukebox.lua)
+   File: SpriteLoader  (utils\spriteloader.lua)
+   File: Storage  (utils\storage.lua)
    }  # Group: Utils
 
 Group: Index  {
