@@ -1,4 +1,5 @@
 require 'zoetrope.core.class'
+require 'zoetrope.lib.json'
 
 require 'zoetrope.core.app'
 require 'zoetrope.core.bitmapfont'
@@ -26,3 +27,4 @@ require 'zoetrope.utils.cached'
 require 'zoetrope.utils.debugwatch'
 require 'zoetrope.utils.factory'
 require 'zoetrope.utils.spriteloader'
+require 'zoetrope.utils.storage'

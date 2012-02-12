@@ -19,8 +19,8 @@ Cached = Class.extend({
 	-- Returns a cached image asset.
 	--
 	-- Arguments:
-	--		* key - pathname to image file or alias previously set
-	--		* alias - alias to remember a path by
+	--		key - pathname to image file or alias previously set
+	--		alias - alias to remember a path by
 	--
 	-- Returns:
 	--		Image asset ready for use
@@ -41,8 +41,8 @@ Cached = Class.extend({
 	-- Returns a cached text asset.
 	--
 	-- Arguments:
-	--		* key - pathname to text file or alias previously set
-	--		* alias - alias to remember a path by
+	--		key - pathname to text file or alias previously set
+	--		alias - alias to remember a path by
 	--
 	-- Returns:
 	--		string
@@ -61,7 +61,7 @@ Cached = Class.extend({
 
 	-- Method: sound
 	-- Returns a cached sound asset. Be careful using this method.
-	-- A single sound can only be played once, so if you need to
+	-- A single sound can only be played one at a time, so if you need to
 	-- be able to play the same sound simultaneously, you'll need
 	-- to set up separate entries for it via the alias property.
 	--
@@ -70,8 +70,8 @@ Cached = Class.extend({
 	-- multiple simultaneous sounds.
 	--
 	-- Arguments:
-	--		* key - pathname to text file or alias previously set
-	--		* alias - alias to remember a path by
+	--		key - pathname to text file or alias previously set
+	--		alias - alias to remember a path by
 	--
 	-- Returns:
 	--		string
