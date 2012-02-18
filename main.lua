@@ -3,7 +3,7 @@ require 'zoetrope.utils.debugwatch'
 
 function love.load()
 	print 'Welcome to the Zoetrope test suite.'
-	testApp = SpriteTypes:new()
+	testApp = Recording:new()
 	testApp.meta:add(DebugWatch:new())
 	testApp:run()
 end
