@@ -141,4 +141,6 @@ Keys = Sprite:extend({
 		
 		Sprite.endFrame(self, elapsed)
 	end,
+
+	update = function() end
 })

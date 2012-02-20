@@ -13,9 +13,11 @@ require 'zoetrope.core.sprite'
 Mouse = Sprite:extend({
 	visible = false,
 
+	-- private property: thisFrame
 	-- what mouse buttons are pressed this frame
 	thisFrame = {},
 
+	-- private property: lastFrame
 	-- what mouse buttons were pressed last frame
 	lastFrame = {},
 	
@@ -128,10 +130,12 @@ Mouse = Sprite:extend({
 		for key, value in pairs(self.thisFrame) do
 			self.lastFrame[key] = value
 		end
-		
+	
 		self.x = love.mouse.getX()
 		self.y = love.mouse.getY()
 
 		Sprite.endFrame(self)
-	end
+	end,
+
+	update = function() end
 })
