@@ -13,6 +13,10 @@ Recorder = Sprite:extend({
 	-- either time elapsed while recording or playing back, in seconds
 	elapsed = 0,
 
+	-- private property: mousePosTimer
+	-- used to make sure mouse motions are recorded even if no other event occurs
+	mousePosTimer = 0,
+
 	-- Constant: IDLE
 	-- The recorder is currently doing nothing.
 	IDLE = 'idle',
@@ -24,6 +28,13 @@ Recorder = Sprite:extend({
 	-- Constant: PLAYING
 	-- The recorder is currently playing back user input.
 	PLAYING = 'playing',
+
+	-- Property: mousePosInterval
+	-- How often, in seconds, we should capture the mouse position.
+	-- This records the mouse position when other events occur, too, so
+	-- it's possible the interval will be even higher in reality.
+	-- Setting this number lower will burn memory.
+	mousePosInterval = 0.05,
 
 	-- Property: state
 	-- One of the state constants, indicates what the recorder is currently doing.
@@ -58,6 +69,7 @@ Recorder = Sprite:extend({
 		self.record = record or self.record or {}
 		self.state = Recorder.RECORDING
 		self.elapsed = 0
+		self.mousePosTimer = 0
 
 		-- insert ourselves into event handlers
 		self:stealInputs()
@@ -84,7 +96,8 @@ Recorder = Sprite:extend({
 	end,
 
 	-- Method: startPlaying
-	-- Starts playing back user inputs.
+	-- Starts playing back user inputs. If this is already playing
+	-- a recording, this restarts it.
 	--
 	-- Arguments:
 	--		record - Record to play back. If ommitted, this uses
@@ -95,6 +108,13 @@ Recorder = Sprite:extend({
 
 	startPlaying = function (self, record)
 		record = record or self.record
+
+		-- restart if needed
+
+		if self.state == Recorder.PLAYING then
+			self:stopPlaying()	
+		end
+
 		self.state = Recorder.PLAYING 
 
 		self.elapsed = 0
@@ -123,15 +143,22 @@ Recorder = Sprite:extend({
 		love.keypressed = function (key, code) this:recordKeyPress(key, code) end
 		self.origKeyReleased = love.keyreleased
 		love.keyreleased = function (key, code) this:recordKeyRelease(key, code) end
+		self.origMousePressed = love.mousepressed
+		love.mousepressed = function (x, y, button) this:recordMousePress(x, y, button) end
+		self.origMouseReleased = love.mousereleased
+		love.mousereleased = function (x, y, button) this:recordMouseRelease(x, y, button) end
 	end,
 
 	restoreInputs = function (self)
 		love.keypressed = self.origKeyPressed
 		love.keyreleased = self.origKeyReleased
+		love.mousepressed = self.origMousePressed
+		love.mousereleased = self.origMouseReleased
 	end,
 	
 	recordKeyPress = function (self, key, unicode)
-		table.insert(self.record, { self.elapsed, 'keypress', key, unicode })
+		table.insert(self.record, { self.elapsed, Current.mouse.x, Current.mouse.y, 'keypress', key, unicode })
+		self.mousePosTimer = 0
 
 		if self.origKeyPressed then
 			self.origKeyPressed(key, unicode)
@@ -139,25 +166,66 @@ Recorder = Sprite:extend({
 	end,
 
 	recordKeyRelease = function (self, key, unicode)
-		table.insert(self.record, { self.elapsed, 'keyrelease', key, unicode })
+		table.insert(self.record, { self.elapsed, Current.mouse.x, Current.mouse.y, 'keyrelease', key, unicode })
+		self.mousePosTimer = 0
 
 		if self.origKeyReleased then
 			self.origKeyReleased(key, unicode)
 		end
 	end,
 
+	recordMousePress = function (self, x, y, button)
+		table.insert(self.record, { self.elapsed, x, y, 'mousepress', button })
+		self.mousePosTimer = 0
+
+		if self.origMousePressed then
+			self.origMousePressed(x, y, button)
+		end
+	end,
+
+	recordMouseRelease = function (self, x, y, button)
+		table.insert(self.record, { self.elapsed, x, y, 'mouserelease', button })
+		self.mousePosTimer = 0
+
+		if self.origMouseReleased then
+			self.origMouseReleased(x, y, button)
+		end
+	end,
+
 	update = function (self, elapsed)
+		-- increment timers
+
 		if self.state ~= Recorder.IDLE then
 			self.elapsed = self.elapsed + elapsed
 		end
 
-		if self.state == Recorder.PLAYING and self.elapsed > self.record[self.playbackIndex][1] then
+		-- record mouse position if the timer has expired
+
+		if self.state == Recorder.RECORDING then
+			self.mousePosTimer = self.mousePosTimer + elapsed
+
+			if self.mousePosTimer > self.mousePosInterval then
+				table.insert(self.record, { self.elapsed, Current.mouse.x, Current.mouse.y })
+
+				self.mousePosTimer = 0
+			end
+		end
+
+		-- handle playback
+
+		if self.state == Recorder.PLAYING and self.elapsed >= self.record[self.playbackIndex][1] then
 			local event = self.record[self.playbackIndex]
-			
-			if event[2] == 'keypress' and self.origKeyPressed then
-				self.origKeyPressed(event[3], event[4])
-			elseif event[2] == 'keyrelease' and self.origKeyReleased then
-				self.origKeyReleased(event[3], event[4])
+	
+			love.mouse.setPosition(event[2], event[3])
+
+			if event[4] == 'keypress' and self.origKeyPressed then
+				self.origKeyPressed(event[5], event[6])
+			elseif event[4] == 'keyrelease' and self.origKeyReleased then
+				self.origKeyReleased(event[5], event[6])
+			elseif event[4] == 'mousepress' and self.origMousePressed then
+				self.origMousePressed(event[2], event[3], event[5])
+			elseif event[4] == 'mouserelease' and self.origMouseReleased then
+				self.origMouseReleased(event[2], event[3], event[5])
 			end
 
 			self.playbackIndex = self.playbackIndex + 1
