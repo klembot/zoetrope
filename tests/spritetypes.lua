@@ -33,7 +33,7 @@ SpriteTypes = App:extend({
 		}))
 		
 		local anim = Animation:new({ x = 150, y = 25, width = 16, height = 24, image = self.chestAnim })
-		anim:addSequence({ name = 'open', frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 })
+		anim.sequences.open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 }
 		anim:play('open')
 		self:add(anim)
 
@@ -42,7 +42,7 @@ SpriteTypes = App:extend({
 									  colorMultiplier = { 1, 1, 1, 0.5 }, rotation = math.rad(45),
 									  scale = { x = 2, y = 2 }
 		})
-		anim2:addSequence({ name = 'open', frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 })
+		anim2.sequences.open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 }
 		anim2:play('open')
 		self:add(anim2)
 		

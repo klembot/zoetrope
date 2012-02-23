@@ -17,7 +17,12 @@ Animation = Sprite:extend({
 	paused = false,
 
 	-- Property: sequences
-	-- A lookup table of sequences -- see <Animation.addSequence>.
+	-- A lookup table of sequences. Each one is stored by name and has
+	-- the following properties:
+	-- * name - string name for the sequence.
+	-- * frames - table of frames to display. The first frame in the sheet is at index 1.
+	-- * fps - frames per second.
+	-- * loops - does the animation loop? defaults to true
 	sequences = {},
 
 	-- Property: currentSequence
@@ -39,24 +44,6 @@ Animation = Sprite:extend({
 	-- private property: used to check whether the source image
 	-- for our quad is up-to-date
 	set = {},
-
-	-- Method: addSequence
-	-- Adds an animation to the sprite's library. All arguments are
-	-- passed as a single object as follows:
-	--
-	-- Arguments:
-	--		* name - name to store the animation under
-	--		* frames - table of frames, starting at 1
-	--		* fps - frames per second to run the animation
-	--		* loops - loop the animation? defaults to true
-	--
-	-- Returns:
-	--		nothing
-
-	addSequence = function (self, seq)
-		if type(seq.loops) == 'nil' then seq.loops = true end
-		self.sequences[seq.name] = seq
-	end,
 
 	-- Method: play 
 	-- Begins playing an animation in the sprite's library.
@@ -164,7 +151,7 @@ Animation = Sprite:extend({
 				if self.frameIndex > #self.currentSequence.frames then
 					if self.onEndSequence then self:onEndSequence(self.currentName) end
 
-					if self.currentSequence.loops then
+					if self.currentSequence.loops ~= false then
 						self.frameIndex = 1
 					else
 						self.frameIndex = self.frameIndex - 1
