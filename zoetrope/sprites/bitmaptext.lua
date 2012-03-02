@@ -23,8 +23,7 @@ BitmapText = Sprite:extend({
 	leading = 0,
 
 	-- Property: tracking
-	-- Space between characters, in pixels.
-	tracking = 0,
+	-- Space between characters, in pixels. If omitted, uses the font's tracking.
 
 	-- Property: wordWrap
 	-- Word wrap the text to fit the sprite boundaries?
@@ -106,6 +105,7 @@ BitmapText = Sprite:extend({
 		if not self.text then return end
 		x = x or self.x
 		y = y or self.y
+		local tracking = self.tracking or self.font.tracking
 
 		-- do we need to redo layout?
 		if not self.lines or self.set.text ~= self.text or self.set.align ~= self.align or
@@ -114,7 +114,7 @@ BitmapText = Sprite:extend({
 		end
 
 		for _, line in pairs(self.lines) do
-			self.font:drawText(line.text, self.x + line.inset, y, self.tracking)
+			self.font:drawText(line.text, self.x + line.inset, y, tracking)
 			y = y + self.font.height + self.leading
 		end
 	end
