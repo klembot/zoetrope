@@ -23,8 +23,8 @@ Tile = Sprite:extend({
 
 	draw = function (self, x, y)
 		if not (self.visible and self.image) then return end
-		x = x or self.x
-		y = y or self.y
+		x = math.floor(x or self.x)
+		y = math.floor(y or self.y)
 		local colored = self:isColorTransformed()
 		
 		-- if the source image has changed,

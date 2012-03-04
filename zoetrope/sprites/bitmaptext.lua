@@ -103,8 +103,8 @@ BitmapText = Sprite:extend({
 	draw = function (self, x, y)
 		if not self.font then return end
 		if not self.text then return end
-		x = x or self.x
-		y = y or self.y
+		x = math.floor(x or self.x)
+		y = math.floor(y or self.y)
 		local tracking = self.tracking or self.font.tracking
 
 		-- do we need to redo layout?

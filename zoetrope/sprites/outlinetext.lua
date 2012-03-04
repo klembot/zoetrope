@@ -75,8 +75,8 @@ OutlineText = Sprite:extend({
 		if not self.visible or not self.text then return end
 		assert(not self.font or type(self.font) == 'userdata', "font property is set to a non-font")
 
-		x = x or self.x
-		y = y or self.y
+		x = math.floor(x or self.x)
+		y = math.floor(y or self.y)
 		local width = self.width
 		if width == 0 then width = math.huge end
 

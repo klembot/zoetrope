@@ -169,8 +169,8 @@ Animation = Sprite:extend({
 	end,
 
 	draw = function (self, x, y)
-		x = x or self.x
-		y = y or self.y
+		x = math.floor(x or self.x)
+		y = math.floor(y or self.y)
 		if not self.visible and self.image then return end
 		
 		-- if our image changed, update the quad

@@ -2,7 +2,7 @@ require 'zoetrope'
 
 Recording = App:extend({
 	onNew = function (self)
-		self.recorder = Recorder:new({ mousePosInterval = 0.01 })
+		self.recorder = Recorder:new()--{ mousePosInterval = 0.01 })
 		self.meta:add(self.recorder)
 
 		local cursor = Cursor:new()
