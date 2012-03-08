@@ -5,8 +5,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 Fill = Sprite:extend({
 	-- Property: fill
 	-- A table of color values in RGBA order. Each value should fall

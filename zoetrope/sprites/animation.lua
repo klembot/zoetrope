@@ -9,8 +9,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 Animation = Sprite:extend({
 	-- Property: paused
 	-- Set this to true to freeze the animation on the current frame.

@@ -27,9 +27,6 @@
 -- Event: onEndFrame
 -- Called once each frame like onUpdate, but guaranteed to fire after all others' onUpdate handlers.
 
-require 'zoetrope.core.class'
-require 'zoetrope.core.globals'
-
 Sprite = Class:extend({
 	-- Property: active
 	-- If false, the sprite will not receive an update-related events.
@@ -71,7 +68,7 @@ Sprite = Class:extend({
 	drag = { x = 0, y = 0, rotation = 0 },
 	scale = { x = 1, y = 1 },
 	colorOffset = { 0, 0, 0, 0 },
-	colorMultiplier = { 1, 1, 1, 1 },
+	colorScale = { 1, 1, 1, 1 },
 
 	-- Method: die
 	-- Makes the sprite totally inert. It will not receive
@@ -306,7 +303,7 @@ Sprite = Class:extend({
 	-- 		decimal alpha, 0-1
 
 	getAlpha = function (self)
-		return self.colorMultiplier[4]
+		return self.colorScale[4]
 	end,
 
 	-- Method: setAlpha
@@ -319,12 +316,12 @@ Sprite = Class:extend({
 	--		nothing
 
 	setAlpha = function (self, value)
-		self.colorMultiplier[4] = value
+		self.colorScale[4] = value
 	end,
 
 	-- Method: isColorTransformed
 	-- Checks whether any color transformation is set on this sprite,
-	-- either through colorOffset or colorMultiplier.
+	-- either through colorOffset or colorScale.
 	--
 	-- Arguments:
 	--		none
@@ -334,17 +331,17 @@ Sprite = Class:extend({
 
 	isColorTransformed = function (self)
 		local colOff = self.colorOffset
-		local colMul = self.colorMultiplier
+		local colScale = self.colorScale
 
 		return colOff[1] ~= 0 or colOff[2] ~= 0
 			   or colOff[3] ~= 0 or colOff[4] ~= 0
-			   or colMul[1] ~= 1 or colMul[2] ~= 1
-			   or colMul[3] ~= 1 or colMul[4] ~= 1
+			   or colScale[1] ~= 1 or colScale[2] ~= 1
+			   or colScale[3] ~= 1 or colScale[4] ~= 1
 	end,
 
 	-- Method: filterColor
 	-- Alters a color based on this sprite's colorOffset
-	-- and colorMultiplier properties.
+	-- and colorScale properties.
 	--
 	-- Arguments:
 	--		Either a table of colors as a single argument,
@@ -356,22 +353,22 @@ Sprite = Class:extend({
 
 	filterColor = function (self, ...)
 		local colOff = self.colorOffset
-		local colMul = self.colorMultiplier
+		local colScale = self.colorScale
 
 		if arg.n == 1 then
 			local color = arg[1]
 			color[4] = color[4] or 255
 			
-			return { (color[1] + colOff[1]) * colMul[1],
-					 (color[2] + colOff[2]) * colMul[2],
-					 (color[3] + colOff[3]) * colMul[3],
-					 (color[4] + colOff[4]) * colMul[4] }
+			return { (color[1] + colOff[1]) * colScale[1],
+					 (color[2] + colOff[2]) * colScale[2],
+					 (color[3] + colOff[3]) * colScale[3],
+					 (color[4] + colOff[4]) * colScale[4] }
 		else
 			local alpha = arg[4] or 255
-			return (arg[1] + colOff[1]) * colMul[1],
-				   (arg[2] + colOff[2]) * colMul[2],
-				   (arg[3] + colOff[3]) * colMul[3],
-				   (alpha + colOff[4]) * colMul[4]
+			return (arg[1] + colOff[1]) * colScale[1],
+				   (arg[2] + colOff[2]) * colScale[2],
+				   (arg[3] + colOff[3]) * colScale[3],
+				   (alpha + colOff[4]) * colScale[4]
 		end
 	end,
 

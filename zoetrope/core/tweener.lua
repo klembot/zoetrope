@@ -6,9 +6,6 @@
 -- be added somewhere in the current view or app. If you are using
 -- the View class, this is already done for you.
 
-require 'zoetrope.core.globals'
-require 'zoetrope.core.sprite'
-
 Tweener = Sprite:extend({
 	tweens = {},
 	visible = false,

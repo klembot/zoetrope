@@ -30,8 +30,6 @@
 -- Extends:
 --		<Class>
 
-require 'zoetrope.core.class'
-
 BitmapFont = Class:extend({
 	-- Property: imagePath
 	-- The filename to the source image to use. You *must* set this instead of

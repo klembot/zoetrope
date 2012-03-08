@@ -4,8 +4,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 Tile = Sprite:extend({
 	-- this must be a nonsense value, not nil,
 	-- for the tile to see that an image has been set if it

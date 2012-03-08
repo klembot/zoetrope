@@ -17,13 +17,6 @@
 -- Event: onRun
 -- 		Called once, when the app begins running.
 
-require 'zoetrope.core.class'
-require 'zoetrope.core.globals'
-require 'zoetrope.core.group'
-require 'zoetrope.core.keys'
-require 'zoetrope.core.mouse'
-require 'zoetrope.core.view'
-
 App = Class:extend({
 	-- Property: name
 	-- This is shown in the window title bar.
@@ -34,6 +27,10 @@ App = Class:extend({
 	-- FPS may vary from frame to frame. Every event handler (e.g. onUpdate)
 	-- is passed the exact elapsed time in seconds.
 	fps = 60,
+
+	-- Property: timeScale
+	-- Multiplier for elapsed time; 1.0 is normal, 0 is completely frozen.
+	timeScale = 1,
 	
 	-- Property: active
 	-- If false, nothing receives update-related events, including the meta view.
@@ -168,6 +165,8 @@ App = Class:extend({
 	end,
 
 	update = function (self, elapsed)
+		elapsed = elapsed * self.timeScale
+
 		-- if we are not active at all, sleep for a half-second
 
 		if not self.active then

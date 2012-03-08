@@ -12,11 +12,9 @@
 -- Make sure to set your app's identity in conf.lua, so that your 
 -- files don't clobber some other app's. See https://love2d.org/wiki/Config_Files
 -- for details.
-
+--
 -- Extends:
 --		<Class>
-
-require 'zoetrope.lib.json'
 
 Storage = Class:extend({
 	-- Property: data

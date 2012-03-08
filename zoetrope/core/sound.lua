@@ -9,8 +9,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 Sound = Sprite:extend({
 	visible = false,
 	solid = false,

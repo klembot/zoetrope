@@ -23,10 +23,9 @@ Sounds = App:extend({
 
 	onUpdate = function (self, elapsed)
 		if Current.keys:justPressed(' ') then
-			self.view.sounds:play(self.beepPath)
+			playSound(self.beepPath)
 		end
 
-		self.jukeboxLabel.text = #Current.view.sounds.sounds .. ' sounds active in jukebox'
 		self.signal.visible = self.testSound:isPlaying()
 	end
 })

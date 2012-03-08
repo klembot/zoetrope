@@ -16,9 +16,6 @@
 -- Extends:
 --		<Class>
 
-require 'zoetrope.core.class'
-require 'zoetrope.core.sprite'
-
 Factory = Class:extend({
 	-- objects ready to be recycled, stored by prototype
 	recycled = {},

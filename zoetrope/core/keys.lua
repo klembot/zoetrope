@@ -13,9 +13,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.globals'
-require 'zoetrope.core.sprite'
-
 Keys = Sprite:extend({
 	visible = false,
 

@@ -3,10 +3,6 @@
 -- It can be used to keep track of fps, the position of a 
 -- It only updates when visible.
 
-require 'zoetrope.core.group'
-require 'zoetrope.sprites.fill'
-require 'zoetrope.sprites.outlinetext'
-
 DebugWatch = Group:extend({
 	-- Property: toggleKey
 	-- What key toggles visibility.

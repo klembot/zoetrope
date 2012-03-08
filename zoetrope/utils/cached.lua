@@ -9,9 +9,7 @@
 -- Extends:
 --		<Class>
 
-require 'zoetrope.core.class'
-
-Cached = Class.extend({
+Cached = Class:extend({
 	-- a table to store already-instantiated assets
 	library = { image = {}, text = {}, sound = {} },
 

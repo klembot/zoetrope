@@ -11,9 +11,6 @@
 -- Extends:
 --		<Class>
 
-require 'zoetrope.core.class'
-require 'zoetrope.core.globals'
-
 SpriteLoader = Class:extend({
 	-- Property: lineSeparator
 	-- The character the loader should understand as separating lines.

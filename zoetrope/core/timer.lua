@@ -5,8 +5,6 @@
 -- view or app. If you are using the <View> class, then this is already
 -- done for you; one is created as the View's timer property.
 
-require 'zoetrope.core.sprite'
-
 Timer = Sprite:extend({
 	timers = {},
 	visible = false,

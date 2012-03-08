@@ -6,8 +6,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 OutlineText = Sprite:extend({
 	defaultFont = love.graphics.newFont(12),
 	

@@ -35,8 +35,6 @@
 -- when it is emitted. If multiple particles are emitted at once, the
 -- emitter will receive multiple onEmit events.
 
-require 'zoetrope.core.sprite'
-
 Emitter = Sprite:extend({
 	solid = false,
 

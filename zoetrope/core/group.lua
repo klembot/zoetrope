@@ -17,8 +17,6 @@
 -- Event: onEndFrame
 -- Called once each frame like onUpdate, but guaranteed to fire after all others' onUpdate handlers.
 
-require 'zoetrope.core.class'
-
 Group = Class:extend({
 	-- Property: active
 	-- If false, none of its member sprites will receive update-related events.
@@ -32,16 +30,20 @@ Group = Class:extend({
 	-- A table of member sprites, in drawing order.
 	sprites = {},
 
+	-- Property: timeScale
+	-- Multiplier for elapsed time; 1.0 is normal, 0 is completely frozen.
+	timeScale = 1,
+
 	-- Property: translate
 	-- This table's x and y properties shift member sprites' positions when drawn.
 	-- To draw sprites at their normal position, set both x and y to 0.
 	translate = { x = 0, y = 0 },
 	
-	-- Property: translateMultiplier
+	-- Property: translateScale
 	-- This table's x and y properties multiply member sprites'
 	-- positions, which you can use to simulate parallax scrolling. To draw
 	-- sprites at their normal position, set both x and y to 1.
-	translateMultiplier = { x = 1, y = 1 },
+	translateScale = { x = 1, y = 1 },
 
 	-- Method: add
 	-- Adds a sprite to the group.
@@ -118,6 +120,7 @@ Group = Class:extend({
 
 	startFrame = function (self, elapsed)
 		if not self.active then return end
+		elapsed = elapsed * self.timeScale
 		if self.onStartFrame then self:onStartFrame(elapsed) end
 		
 		for _, spr in pairs(self.sprites) do
@@ -131,6 +134,7 @@ Group = Class:extend({
 
 	update = function (self, elapsed)
 		if not self.active then return end
+		elapsed = elapsed * self.timeScale
 		if self.onUpdate then self:onUpdate(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
@@ -144,6 +148,7 @@ Group = Class:extend({
 
 	endFrame = function (self, elapsed)
 		if not self.active then return end
+		elapsed = elapsed * self.timeScale
 		if self.onEndFrame then self.onEndFrame(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
@@ -165,8 +170,8 @@ Group = Class:extend({
 		x = x or self.translate.x
 		y = y or self.translate.y
 		
-		local scrollX = x * self.translateMultiplier.x
-		local scrollY = y * self.translateMultiplier.y
+		local scrollX = x * self.translateScale.x
+		local scrollY = y * self.translateScale.y
 		
 		for _, spr in pairs(self.sprites) do	
 			if spr.visible and spr.draw then

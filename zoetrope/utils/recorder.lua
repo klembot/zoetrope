@@ -6,8 +6,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 Recorder = Sprite:extend({
 	-- private property: elapsed
 	-- either time elapsed while recording or playing back, in seconds

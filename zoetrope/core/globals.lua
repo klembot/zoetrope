@@ -26,29 +26,6 @@ LEFT = 'left'
 -- Directional constant corresponding to right.
 RIGHT = 'right'
 
--- Function: coerceToTable
--- Coerces any type of object possible to a table of sprites.
--- If a single sprite is passed, it is boxed into a new table.
--- If a group is passed, its sprites property is returned.
--- A table of sprites is left as-is.
---
--- Arguments:
---		sprite, group, or table of sprites
---
--- Returns:
---		table of sprites equivalent to passed argument
-
-function coerceToTable (other)
-	assert(other, "can't coerce a nil value to a table")
-
-	if type(other.sprites) == 'table' then
-		return other.sprites
-	elseif #other > 1 then
-		return other
-	else
-		return { other }
-	end
-end
 
 -- Function: trim
 -- trim() implementation for strings via http://lua-users.org/wiki/stringtrim
@@ -89,6 +66,48 @@ function split (source, pattern)
 	
 	table.insert(result, string.sub(source, searchStart))
 	return result
+end
+
+-- Function: playSound
+-- Plays a sound once. This is the easiest way to play a sound.
+--
+-- Arguments:
+--		path - string pathname to sound
+--		volume - volume to play at, from 0 to 1; default 1
+--		hint - either 'short' or 'long', depending on length of sound; default 'short'
+
+function playSound (path, volume, hint)
+	volume = volume or 1
+	local sourceType = 'static'
+	if hint == 'long' then sourceType = 'stream' end
+
+	local source = love.audio.newSource(path, sourceType)
+	source:setVolume(volume)
+	source:play()
+end
+
+-- Function: coerceToTable
+-- Coerces any type of object possible to a table of sprites.
+-- If a single sprite is passed, it is boxed into a new table.
+-- If a group is passed, its sprites property is returned.
+-- A table of sprites is left as-is.
+--
+-- Arguments:
+--		sprite, group, or table of sprites
+--
+-- Returns:
+--		table of sprites equivalent to passed argument
+
+function coerceToTable (other)
+	assert(other, "can't coerce a nil value to a table")
+
+	if type(other.sprites) == 'table' then
+		return other.sprites
+	elseif #other > 1 then
+		return other
+	else
+		return { other }
+	end
 end
 
 -- Function: searchTable

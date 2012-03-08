@@ -4,8 +4,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.sprite'
-
 BitmapText = Sprite:extend({
 	-- Property: font
 	-- What <BitmapFont> to use.

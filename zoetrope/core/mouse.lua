@@ -7,9 +7,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.globals'
-require 'zoetrope.core.sprite'
-
 Mouse = Sprite:extend({
 	visible = false,
 

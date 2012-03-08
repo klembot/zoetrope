@@ -2,13 +2,9 @@
 -- A view is a group that packages several useful objects with it.
 -- It's helpful to use, but not required. When a view is created, it
 -- automatically sets Current.view for itself.
-
-require 'zoetrope.core.globals'
-require 'zoetrope.core.group'
-require 'zoetrope.core.timer'
-require 'zoetrope.core.tweener'
-require 'zoetrope.utils.factory'
-require 'zoetrope.utils.jukebox'
+--
+-- Extends:
+--		<Group>
 
 View = Group:extend({
 	-- Property: timer
@@ -19,9 +15,6 @@ View = Group:extend({
 
 	-- Property: factory
 	-- A built-in <Factory> object for use as needed.
-
-	-- Property: sounds
-	-- A built-in <Jukebox> object for use as needed.
 
 	-- Property: focus
 	-- A <Sprite> to keep centered onscreen.
@@ -50,8 +43,6 @@ View = Group:extend({
 		obj.tweener = Tweener:new()
 		obj:add(obj.tweener)
 		obj.factory = Factory:new()
-		obj.sounds = Jukebox:new()
-		obj:add(obj.sounds)
 		Current.view = obj
 		
 		if obj.onNew then obj:onNew() end

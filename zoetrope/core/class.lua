@@ -5,8 +5,6 @@
 -- Event: onNew
 -- 		Called once, when a new object is created via new().
 
-require 'zoetrope.core.globals'
-
 Class = {
 	-- Method: extend
 	-- Creates a subclass of a class object, replacing any class properties

@@ -12,11 +12,6 @@
 -- Extends:
 --		<Sprite>
 
-require 'zoetrope.core.globals'
-require 'zoetrope.core.group'
-require 'zoetrope.core.sprite'
-require 'zoetrope.sprites.tile'
-
 Map = Sprite:extend({
 	-- Constant: NO_SPRITE
 	-- Represents a map entry with no sprite.
