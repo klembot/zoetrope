@@ -117,15 +117,37 @@ Keys = Sprite:extend({
 	keyPressed = function (self, key, unicode)
 		self.thisFrame[key] = true
 
-		-- FIXME: only append if the key is in printable range
-		self.frameString = self.frameString .. key
+		-- aliases for modifiers
+		if key == 'rshift' or key == 'lshift' or
+		   key == 'rctrl' or key == 'lctrl' or
+		   key == 'ralt' or key == 'lalt' or
+		   key == 'rmeta' or key == 'lmeta' or
+		   key == 'rsuper' or key == 'lsuper' then
+			self.thisFrame[string.sub(key, 2)] = true
+		end
+
 		if unicode then self.thisFrame[unicode] = true end
+
+		-- add to frameString if it's printable
+		if unicode > 31 and unicode < 127 then
+			self.frameString = self.frameString .. key
+		end
 	end,
 
 	-- Connects to the love.keyreleased callback
 
 	keyReleased = function (self, key, unicode)
 		self.thisFrame[key] = false
+
+		-- aliases for modifiers
+		if key == 'rshift' or key == 'lshift' or
+		   key == 'rctrl' or key == 'lctrl' or
+		   key == 'ralt' or key == 'lalt' or
+		   key == 'rmeta' or key == 'lmeta' or
+		   key == 'rsuper' or key == 'lsuper' then
+			self.thisFrame[string.sub(key, 2)] = true
+		end
+
 		if unicode then self.thisFrame[unicode] = false end
 	end,
 
