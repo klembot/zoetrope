@@ -393,8 +393,10 @@ Sprite = Class:extend({
 			if drag.x ~= 0 then
 				if vel.x > 0 then
 					vel.x = vel.x - drag.x * elapsed
+					if vel.x < 0 then vel.x = 0 end
 				elseif vel.x < 0 then
 					vel.x = vel.x + drag.x * elapsed
+					if vel.x > 0 then vel.x = 0 end
 				end
 			end
 		end
@@ -405,8 +407,10 @@ Sprite = Class:extend({
 			if drag.y ~= 0 then
 				if vel.y > 0 then
 					vel.y = vel.y - drag.y * elapsed
+					if vel.y < 0 then vel.y = 0 end
 				elseif vel.y < 0 then
 					vel.y = vel.y + drag.y * elapsed
+					if vel.y > 0 then vel.y = 0 end
 				end
 			end
 		end
