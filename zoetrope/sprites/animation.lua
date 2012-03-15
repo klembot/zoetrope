@@ -17,7 +17,6 @@ Animation = Sprite:extend({
 	-- Property: sequences
 	-- A lookup table of sequences. Each one is stored by name and has
 	-- the following properties:
-	-- * name - string name for the sequence.
 	-- * frames - table of frames to display. The first frame in the sheet is at index 1.
 	-- * fps - frames per second.
 	-- * loops - does the animation loop? defaults to true

@@ -82,7 +82,7 @@ Group: Utils  {
    File: Cached  (utils\cached.lua)
    File: DebugWatch  (utils\debugwatch.lua)
    File: Factory  (utils\factory.lua)
-   File: Jukebox  (utils\jukebox.lua)
+   File: Recorder  (utils\recorder.lua)
    File: SpriteLoader  (utils\spriteloader.lua)
    File: Storage  (utils\storage.lua)
    }  # Group: Utils
