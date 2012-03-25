@@ -64,6 +64,8 @@ Sprite = Class:extend({
 	-- Property: velocity
 	
 	velocity = { x = 0, y = 0, rotation = 0 },
+	minVelocity = { x = - math.huge, y = - math.huge, rotation = - math.huge },
+	maxVelocity = { x = math.huge, y = math.huge, rotation = math.huge },
 	acceleration = { x = 0, y = 0, rotation = 0 },
 	drag = { x = 0, y = 0, rotation = 0 },
 	scale = { x = 1, y = 1 },
@@ -130,8 +132,8 @@ Sprite = Class:extend({
 				hit = self:collide(spr.sprites) or hit
 			end
 			
-			if spr.solid and spr.x and spr.y and
-			   spr.width and spr.height then
+			if spr ~= self and spr.solid and
+			   spr.x and spr.y and spr.width and spr.height then
 				-- this is cribbed from
 				-- http://frey.co.nz/old/2007/11/area-of-two-rectangles-algorithm/
 
@@ -380,6 +382,8 @@ Sprite = Class:extend({
 		local vel = self.velocity
 		local acc = self.acceleration
 		local drag = self.drag
+		local minVel = self.minVelocity
+		local maxVel = self.maxVelocity
 
 		-- physics
 			
@@ -393,10 +397,8 @@ Sprite = Class:extend({
 			if drag.x ~= 0 then
 				if vel.x > 0 then
 					vel.x = vel.x - drag.x * elapsed
-					if vel.x < 0 then vel.x = 0 end
 				elseif vel.x < 0 then
 					vel.x = vel.x + drag.x * elapsed
-					if vel.x > 0 then vel.x = 0 end
 				end
 			end
 		end
@@ -407,10 +409,8 @@ Sprite = Class:extend({
 			if drag.y ~= 0 then
 				if vel.y > 0 then
 					vel.y = vel.y - drag.y * elapsed
-					if vel.y < 0 then vel.y = 0 end
 				elseif vel.y < 0 then
 					vel.y = vel.y + drag.y * elapsed
-					if vel.y > 0 then vel.y = 0 end
 				end
 			end
 		end
@@ -426,6 +426,13 @@ Sprite = Class:extend({
 				end
 			end
 		end
+
+		if minVel.x and vel.x < minVel.x then vel.x = minVel.x end
+		if maxVel.x and vel.x > maxVel.x then vel.x = maxVel.x end
+		if minVel.y and vel.y < minVel.y then vel.y = minVel.y end
+		if maxVel.y and vel.y > maxVel.y then vel.y = maxVel.y end
+		if minVel.rotation and vel.rotation < minVel.rotation then vel.rotation = minVel.rotation end
+		if maxVel.rotation and vel.rotation > maxVel.rotation then vel.rotation = maxVel.rotation end
 		
 		if self.onUpdate then self:onUpdate(elapsed) end
 	end,
