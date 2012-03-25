@@ -14,6 +14,8 @@ Tweener = Sprite:extend({
 	-- Property: easers
 	-- These are different methods of easing a tween, and
 	-- can be set via the ease property of an individual tween.
+	-- They should be referred to by their key name, not the property
+	-- (e.g. 'linear', no Tweener.easers.linear).
 	-- See http://www.gizma.com/easing/ for details.
 	
 	easers =
@@ -50,7 +52,7 @@ Tweener = Sprite:extend({
 	-- to repeat back and forth indefinitely (e.g. to have something glow).
 	
 	reverse = function (tween, tweener)
-		tween.destination = tween.start
+		tween.to = tween.from
 		tweener:start(tween)
 	end,
 
@@ -59,7 +61,7 @@ Tweener = Sprite:extend({
 	-- tween, it reverses the tween that just happened-- then stops the tween after that.
 	
 	reverseOnce = function (tween, tweener)
-		tween.destination = tween.start
+		tween.to = tween.from
 		tween.onComplete = nil
 		tweener:start(tween)	
 	end,
@@ -70,16 +72,15 @@ Tweener = Sprite:extend({
 	--
 	-- Arguments:
 	--		target - target object
-	--		property - name of property of the target object to tween;
-	--                 can be either a number or a table of numbers (e.g. a color)
-	--		destination - destination value, either number or color table
+	--		prop - name of property of the target object to tween;
+	--             can be either a number or a table of numbers (e.g. a color)
+	--		to - destination value, either number or color table
 	--		getter - getter function for the property; overrides property
 	--		setter - setter function for the property; overrides property
 	--		duration - how long the tween should last in seconds, default 1
 	--		force - override any pre-existing tweens on this object/property?
 	--		ease - function name (in Tweener.easers) to use to control how the value changes
-	--		onComplete - function to call when the tween finishes;
-	--              	 is passed the individual tween object 
+	--		onComplete - function to call when the tween finishes; is passed the individual tween object 
 	--
 	-- Returns:
 	--		nothing
@@ -89,15 +90,15 @@ Tweener = Sprite:extend({
 		tween.ease = tween.ease or 'linear'
 		
 		assert(type(tween.target) == 'table', 'tween target must be a table')
-		assert(not tween.property or tween.target[tween.property],
-			   'no such property ' .. tostring(tween.property) .. ' on target') 
+		assert(not tween.prop or tween.target[tween.prop],
+			   'no such property ' .. tostring(tween.prop) .. ' on target') 
 		assert(type(tween.duration) == 'number', 'tween duration must be a number')
 			
 		-- check for an existing tween for this target and property
 		
 		for i, otherTweener in ipairs(self.tweens) do
 			if tween.target == otherTweener.target and
-			   tween.property == otherTweener.property then
+			   tween.prop == otherTweener.prop then
 				if tween.force then
 					table.remove(self.tweens, i)
 				else
@@ -106,32 +107,31 @@ Tweener = Sprite:extend({
 			end
 		end
 		
-		-- add tween
-		
-		tween.start = self:getTweenValue(tween)
-		tween.type = type(tween.start)
+		-- add it
+		tween.from = self:getTweenValue(tween)
+		tween.type = type(tween.from)
 		
 		-- calculate change; if it's trivial, skip the tween
 		
 		if tween.type == 'number' then
-			tween.change = tween.destination - tween.start
+			tween.change = tween.to - tween.from
 			if math.abs(tween.change) < NEARLY_ZERO then return end
 		elseif tween.type == 'table' then
 			tween.change = {}
 			
 			local skip = true
 			
-			for i, value in ipairs(tween.start) do
-				tween.change[i] = tween.destination[i] - tween.start[i]
+			for i, value in ipairs(tween.from) do
+				tween.change[i] = tween.to[i] - tween.from[i]
 				
-				if tween.change[i] > NEARLY_ZERO then
+				if math.abs(tween.change[i]) > NEARLY_ZERO then
 					skip = false
 				end
 			end
 			
 			if skip then return end
 		else
-			error('tweened propety must either be a number or a table of numbers')
+			error('tweened property must either be a number or a table of numbers')
 		end
 			
 		tween.elapsed = 0
@@ -144,16 +144,15 @@ Tweener = Sprite:extend({
 	--
 	-- Arguments:
 	--		target - tween target
-	-- 		property - name of property being tweened; if omitted, stops
-	--				   all tweens on the target
+	-- 		prop - name of property being tweened; if omitted, stops all tweens on the target
 	--
 	-- Returns:
 	--		nothing
 
-	stop = function (self, target, property)
+	stop = function (self, target, prop)
 		for i, tween in ipairs(self.tweens) do
 			if not property or
-			   (tween.target == target and tween.property == property) then
+			   (tween.target == target and tween.prop == prop) then
 				table.remove(self.tweens, i)
 			end
 		end
@@ -167,7 +166,7 @@ Tweener = Sprite:extend({
 			if tween.elapsed >= tween.duration then
 				-- tween is completed
 				
-				self:setTweenValue(tween, tween.destination)
+				self:setTweenValue(tween, tween.to)
 				table.remove(self.tweens, i)
 				
 				-- this must happen after the tween is removed
@@ -180,12 +179,12 @@ Tweener = Sprite:extend({
 				
 				if tween.type == 'number' then
 					self:setTweenValue(tween, self.easers[tween.ease](tween.elapsed,
-									   tween.start, tween.change, tween.duration))
+									   tween.from, tween.change, tween.duration))
 				elseif tween.type == 'table' then
 					local now = {}
 					
-					for i, value in ipairs(tween.start) do
-						now[i] = self.easers[tween.ease](tween.elapsed, tween.start[i],
+					for i, value in ipairs(tween.from) do
+						now[i] = self.easers[tween.ease](tween.elapsed, tween.from[i],
 														 tween.change[i], tween.duration)
 					end
 					
@@ -201,7 +200,7 @@ Tweener = Sprite:extend({
 		if tween.getter then
 			return tween.getter(tween.target)
 		else
-			return tween.target[tween.property]
+			return tween.target[tween.prop]
 		end
 	end,
 
@@ -209,7 +208,7 @@ Tweener = Sprite:extend({
 		if tween.setter then
 			tween.setter(tween.target, value)
 		else
-			tween.target[tween.property] = value
+			tween.target[tween.prop] = value
 		end
 	end
 })

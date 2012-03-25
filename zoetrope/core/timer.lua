@@ -18,6 +18,7 @@ Timer = Sprite:extend({
 	--		* func - function to call
 	--		* delay - how long to wait to call it, in seconds
 	--		* repeats - if true, then the function is called periodically, not once
+	--		* bind - first argument to pass to the function, imitates bind:func()
 	--		* arg - a table of arguments to pass to the function when called
 	--
 	-- Returns:
@@ -53,9 +54,17 @@ Timer = Sprite:extend({
 			
 			if timer.timeLeft <= 0 then
 				if timer.arg then
-					timer.func(unpack(timer.arg))
+					if timer.bind then
+						timer.func(timer.bind, unpack(timer.arg))
+					else
+						timer.func(unpack(timer.arg))
+					end
 				else
-					timer.func()
+					if timer.bind then
+						timer.func(timer.bind)
+					else
+						timer.func()
+					end
 				end
 				
 				if timer.repeats then
