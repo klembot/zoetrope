@@ -23,6 +23,7 @@ Map = Sprite:extend({
 
 	-- Property: map
 	-- A two-dimensional table of values, each corresponding to an entry in the sprites property.
+	-- nb. The tile at (0, 0) visually is stored in [1, 1].
 	map = {},
 
 	-- Method: empty
@@ -147,7 +148,6 @@ Map = Sprite:extend({
 
 	subdisplace = function (self, other, xHint, yHint)	
 		local otherList = coerceToTable(other)
-		local other
 
 		for _, other in pairs(otherList) do
 			if other.solid then
@@ -173,7 +173,7 @@ Map = Sprite:extend({
 		end
 	end,
 
-	-- Method: collide
+	-- Method: subcollide
 	-- This acts as a wrapper to multiple collide() calls, as if
 	-- there really were all the sprites in their particular positions.
 	-- This is much more useful than Map:collide(), which simply checks
