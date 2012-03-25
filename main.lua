@@ -1,9 +1,8 @@
 require 'tests'
-require 'zoetrope.utils.debugwatch'
+require 'menu'
 
 function love.load()
 	print 'Welcome to the Zoetrope test suite.'
-	testApp = Input:new()
-	testApp.meta:add(DebugWatch:new())
+	testApp = Menu:new()
 	testApp:run()
 end
