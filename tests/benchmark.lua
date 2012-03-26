@@ -20,8 +20,8 @@ Block = Tile:extend({
 		self.velocity.rotation = math.random(math.pi / 2, 4 * math.pi)
 		self.acceleration.y = math.random(500, 1000)
 		self.rotation = math.random(0, math.pi * 4)
-		self:setScale(math.random(0.25, 2))
-		self:setAlpha(math.random(0, 255))
+		self.scale = math.random(0.25, 2)
+		self.alpha = math.random()
 	end,
 	
 	onUpdate = function (self, elapsed)

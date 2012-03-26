@@ -5,8 +5,8 @@ Scrolling = App:extend({
 		local x
 		
 		local layer1 = Group:new()
-		layer1.translateMultiplier.x = 0.25
-		layer1.translateMultiplier.y = 0.25
+		layer1.translateScale.x = 0.25
+		layer1.translateScale.y = 0.25
 		self:add(layer1)
 		
 		for x = 16, self.width * 5, 64 do
@@ -15,8 +15,8 @@ Scrolling = App:extend({
 		end
 		
 		local layer2 = Group:new()
-		layer2.translateMultiplier.x = 0.5
-		layer2.translateMultiplier.y = 0.5
+		layer2.translateScale.x = 0.5
+		layer2.translateScale.y = 0.5
 		self:add(layer2)
 		
 		for x = 16, self.width * 5, 64 do
@@ -33,8 +33,8 @@ Scrolling = App:extend({
 		end
 		
 		local layer4 = Group:new()
-		layer4.translateMultiplier.x = 0
-		layer4.translateMultiplier.y = 0
+		layer4.translateScale.x = 0
+		layer4.translateScale.y = 0
 		self:add(layer4)
 		
 		for x = 16, self.width * 5, 64 do
@@ -42,8 +42,8 @@ Scrolling = App:extend({
 								  fill = {255, 255, 255} }))
 		end
 		
-		self.view.tweener:start({ target = self.view.translate, property = 'x',
-								  destination = self.width * -4, duration = 10,
+		self.view.tweener:start({ target = self.view.translate, prop = 'x',
+								  to = self.width * -4, duration = 10,
 								  ease = 'quadInOut', onComplete = Tweener.reverse })
 	end
 })

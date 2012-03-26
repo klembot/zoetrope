@@ -15,8 +15,7 @@ Tweens = App:extend({
 		
 		local alphaBlock = Fill:new({ x = 200, y = 16, width = 32, height = 32 })
 		self:add(alphaBlock)
-		self.view.tweener:start({ target = alphaBlock, getter = alphaBlock.getAlpha,
-								  setter = alphaBlock.setAlpha, to = 0,
+		self.view.tweener:start({ target = alphaBlock, prop = 'alpha', to = 0,
 								  onComplete = Tweener.reverse})
 		
 		local colorBlock = Fill:new({ x = 300, y = 16, width = 32, height = 32,

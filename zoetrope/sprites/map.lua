@@ -278,9 +278,11 @@ Map = Sprite:extend({
 				else
 					love.graphics.setColor(255, 255, 255, 255)
 				end
+
+				local scaleX = sprite.scale * sprite.distort.x
+				local scaleY = sprite.scale * sprite.distort.y
 				
-				if sprite.rotation == 0 and sprite.scale.x == 1
-				   and sprite.scale.y == 1 then
+				if sprite.rotation == 0 and scaleX == 1 and scaleY == 1 then
 					for _, coords in pairs(list) do
 						love.graphics.drawq(sprite.image, sprite.quad,
 											coords[1], coords[2])
@@ -289,7 +291,7 @@ Map = Sprite:extend({
 					for _, coords in pairs(list) do
 						love.graphics.drawq(sprite.image, sprite.quad, coords[1],
 											coords[2], sprite.rotation,
-											sprite.scale.x, sprite.scale.y,
+											scaleX, scaleY,
 											sprite.width / 2, sprite.height / 2)
 					end
 				end

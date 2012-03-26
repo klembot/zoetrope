@@ -23,8 +23,15 @@ Tile = Sprite:extend({
 		if not (self.visible and self.image) then return end
 		x = math.floor(x or self.x)
 		y = math.floor(y or self.y)
-		local colored = self:isColorTransformed()
 		
+		-- set color if needed
+
+		local colored = self.alpha ~= 1 or self.tint[1] ~= 1 or self.tint[2] ~= 1 or self.tint[3] ~= 1
+
+		if colored then
+			love.graphics.setColor(self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255, self.alpha * 255)
+		end
+
 		-- if the source image has changed,
 		-- we need to recreate our quad
 		
@@ -36,16 +43,11 @@ Tile = Sprite:extend({
 			self.quadImage = self.image
 		end
 		
-		-- set color if needed
-		
-		if colored then
-			love.graphics.setColor(self:filterColor(255, 255, 255, 255))
-		end
-		
 		-- draw the quad
 
 		love.graphics.drawq(self.image, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
-							self.scale.x, self.scale.y,	self.width / 2, self.height / 2)
+							self.scale * self.distort.x, self.scale * self.distort.y,
+							self.width / 2, self.height / 2)
 		
 		-- reset color
 		

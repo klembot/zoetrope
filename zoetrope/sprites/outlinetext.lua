@@ -78,13 +78,14 @@ OutlineText = Sprite:extend({
 		local width = self.width
 		if width == 0 then width = math.huge end
 
-		-- set color if needed
+		-- set color
 		
-		if self:isColorTransformed() then
-			love.graphics.setColor(self:filterColor(self.color))
-		else
-			love.graphics.setColor(self.color)
-		end
+		local textAlpha = self.color[4] or 255
+
+		love.graphics.setColor(self.color[1] * self.tint[1],
+							   self.color[2] * self.tint[2],
+							   self.color[3] * self.tint[3],
+							   textAlpha * self.alpha)
 		
 		love.graphics.setFont(self.font or self.defaultFont)
 		love.graphics.printf(self.text, x, y, width, self.align)

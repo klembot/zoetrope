@@ -23,16 +23,15 @@ Fill = Sprite:extend({
 		y = math.floor(y or self.y)
 		if not self.visible then return end
 		
-		-- color transforms
-		
-		local needsFilter = self:isColorTransformed()
-		
 		-- rotate and scale
-		
-		if self.scale.x ~= 1 or self.scale.y ~= 1 or self.rotation ~= 0 then
+
+		local scaleX = self.scale * self.distort.x
+		local scaleY = self.scale * self.distort.y
+
+		if scaleX ~= 1 or scaleY ~= 1 or self.rotation ~= 0 then
 			love.graphics.push()
 			love.graphics.translate(x + self.width / 2, y + self.height / 2)
-			love.graphics.scale(self.scale.x, self.scale.y)
+			love.graphics.scale(scaleX, scaleY)
 			love.graphics.rotate(self.rotation)
 			love.graphics.translate(- (x + self.width / 2), - (y + self.height / 2))
 		end
@@ -40,21 +39,23 @@ Fill = Sprite:extend({
 		-- draw fill and border
 		
 		if self.fill then
-			if needsFilter then
-				love.graphics.setColor(self:filterColor(self.fill))
-			else
-				love.graphics.setColor(self.fill)
-			end
+			local fillAlpha = self.fill[4] or 255
+
+			love.graphics.setColor(self.fill[1] * self.tint[1],
+								   self.fill[2] * self.tint[2],
+								   self.fill[3] * self.tint[3],
+								   fillAlpha * self.alpha)
 			
 			love.graphics.rectangle('fill', x, y, self.width, self.height)
 		end
 		
 		if self.border then
-			if needsFilter then
-				love.graphics.setColor(self:filterColor(self.border))
-			else
-				love.graphics.setColor(self.border)
-			end
+			local borderAlpha = self.border[4] or 255
+
+			love.graphics.setColor(self.border[1] * self.tint[1],
+								   self.border[2] * self.tint[2],
+								   self.border[3] * self.tint[3],
+								   borderAlpha * self.alpha)
 			
 			love.graphics.rectangle('line', x, y, self.width, self.height)
 		end
@@ -67,7 +68,7 @@ Fill = Sprite:extend({
 		
 		love.graphics.setColor(255, 255, 255, 255)
 		
-		if self.scale.x ~= 1 or self.scale.y ~= 1 or self.rotation ~= 0 then
+		if scaleX ~= 1 or scaleY ~= 1 or self.rotation ~= 0 then
 			love.graphics.pop()
 		end
 	end

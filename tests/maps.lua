@@ -48,8 +48,6 @@ Maps = App:extend({
 		
 		self.player = Fill:new({ x = 300, y = 50, width = 16, height = 16 })
 		self:add(self.player)
-		Current.watch:addWatch('player x', 'Current.app.player.x')
-		Current.watch:addWatch('player y', 'Current.app.player.y')
 	end,
 	
 	onUpdate = function (self, elapsed)

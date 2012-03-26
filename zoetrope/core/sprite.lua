@@ -62,15 +62,25 @@ Sprite = Class:extend({
 	rotation = 0,
 
 	-- Property: velocity
-	
+	-- Motion either along the x or y axes, or rotation about its center, in
+	-- pixels per second.
 	velocity = { x = 0, y = 0, rotation = 0 },
+
+	-- Property: minVelocity
+	-- No matter what else may affect this sprite's velocity, it
+	-- will never go below these numbers.
 	minVelocity = { x = - math.huge, y = - math.huge, rotation = - math.huge },
+
+	-- Property: maxVelocity
+	-- No matter what else may affect this sprite's velocity, it will
+	-- never go above these numbers.
 	maxVelocity = { x = math.huge, y = math.huge, rotation = math.huge },
 	acceleration = { x = 0, y = 0, rotation = 0 },
 	drag = { x = 0, y = 0, rotation = 0 },
-	scale = { x = 1, y = 1 },
-	colorOffset = { 0, 0, 0, 0 },
-	colorScale = { 1, 1, 1, 1 },
+	scale = 1,
+	distort = { x = 1, y = 1 },
+	alpha = 1,
+	tint = { 1, 1, 1 },
 
 	-- Method: die
 	-- Makes the sprite totally inert. It will not receive
@@ -265,113 +275,6 @@ Sprite = Class:extend({
 	push = function (self, other, elapsed)
 		other.x = other.x + self.velocity.x * elapsed
 		other.y = other.y + self.velocity.y * elapsed
-	end,
-
-	-- Method: getScale
-	-- Gets the sprite scale. If the x and y scale differ,
-	-- this returns the average of the two.
-	--
-	-- Arguments:
-	--		none
-	-- 
-	-- Returns:
-	--		decimal scale
-
-	getScale = function (self)
-		return (self.scale.x + self.scale.y) / 2
-	end,
-
-	-- Method: setScale
-	-- Sets the sprite to scale proportionally by the amount passed.
-	--
-	-- Arguments:
-	--		value - decimal scale, where 1 is normal size and 2 is double
-	--
-	-- Returns:
-	--		nothing
-
-	setScale = function (self, value)
-		self.scale.x = value
-		self.scale.y = value
-	end,
-
-	-- Method: getAlpha
-	-- Gets the alpha value of this sprite.
-	--
-	-- Arguments:
-	--		none
-	-- 
-	-- Returns:
-	-- 		decimal alpha, 0-1
-
-	getAlpha = function (self)
-		return self.colorScale[4]
-	end,
-
-	-- Method: setAlpha
-	-- A shortcut for setting the alpha value of the sprite.
-	--
-	-- Arguments:
-	--		value - decimal alpha, 0-1
-	--
-	-- Returns:
-	--		nothing
-
-	setAlpha = function (self, value)
-		self.colorScale[4] = value
-	end,
-
-	-- Method: isColorTransformed
-	-- Checks whether any color transformation is set on this sprite,
-	-- either through colorOffset or colorScale.
-	--
-	-- Arguments:
-	--		none
-	--
-	-- Returns:
-	--		nothing
-
-	isColorTransformed = function (self)
-		local colOff = self.colorOffset
-		local colScale = self.colorScale
-
-		return colOff[1] ~= 0 or colOff[2] ~= 0
-			   or colOff[3] ~= 0 or colOff[4] ~= 0
-			   or colScale[1] ~= 1 or colScale[2] ~= 1
-			   or colScale[3] ~= 1 or colScale[4] ~= 1
-	end,
-
-	-- Method: filterColor
-	-- Alters a color based on this sprite's colorOffset
-	-- and colorScale properties.
-	--
-	-- Arguments:
-	--		Either a table of colors as a single argument,
-	--		or the 3 or 4 individual color elements as separate
-	--		arguments. If alpha is omitted, it is assumed to be 1.
-	--
-	-- Returns:
-	--		the new color in the format you passed
-
-	filterColor = function (self, ...)
-		local colOff = self.colorOffset
-		local colScale = self.colorScale
-
-		if arg.n == 1 then
-			local color = arg[1]
-			color[4] = color[4] or 255
-			
-			return { (color[1] + colOff[1]) * colScale[1],
-					 (color[2] + colOff[2]) * colScale[2],
-					 (color[3] + colOff[3]) * colScale[3],
-					 (color[4] + colOff[4]) * colScale[4] }
-		else
-			local alpha = arg[4] or 255
-			return (arg[1] + colOff[1]) * colScale[1],
-				   (arg[2] + colOff[2]) * colScale[2],
-				   (arg[3] + colOff[3]) * colScale[3],
-				   (alpha + colOff[4]) * colScale[4]
-		end
 	end,
 
 	startFrame = function (self, elapsed)

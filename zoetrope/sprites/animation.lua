@@ -178,16 +178,18 @@ Animation = Sprite:extend({
 		end
 		
 		-- set color if needed
-		local colored = self:isColorTransformed()
+
+		local colored = self.alpha ~= 1 or self.tint[1] ~= 1 or self.tint[2] ~= 1 or self.tint[3] ~= 1
 
 		if colored then
-			love.graphics.setColor(self:filterColor(255, 255, 255, 255))
+			love.graphics.setColor(self.alpha * 255, self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255)
 		end
-		
+
 		-- draw the quad
 			
 		love.graphics.drawq(self.image, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
-							self.scale.x, self.scale.y, self.width / 2, self.height / 2)
+							self.scale * self.distort.x, self.scale * self.distort.y,
+							self.width / 2, self.height / 2)
 		
 		-- reset color
 		
