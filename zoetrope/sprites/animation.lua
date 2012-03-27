@@ -182,7 +182,7 @@ Animation = Sprite:extend({
 		local colored = self.alpha ~= 1 or self.tint[1] ~= 1 or self.tint[2] ~= 1 or self.tint[3] ~= 1
 
 		if colored then
-			love.graphics.setColor(self.alpha * 255, self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255)
+			love.graphics.setColor(self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255, self.alpha * 255)
 		end
 
 		-- draw the quad
