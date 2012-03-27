@@ -61,19 +61,42 @@ App = Class:extend({
 	-- The height of the window in pixels. Changing this value has no effect. To
 	-- set this for real, edit conf.lua.
 
+	-- Property: fullscreen
+	-- Whether the app is currently running in fullscreen mode. Changing this value
+	-- has no effect. To change this, use the enterFullscreen(), exitFullscreen(), or
+	-- toggleFullscreen() methods.
+
+	-- Property: inset
+	-- The screen coordinates where the app's (0, 0) origin should lie. This is only
+	-- used by Zoetrope to either letterbox or pillar fullscreen apps, but there may
+	-- be other uses for it.
+	inset = { x = 0, y = 0},
+
 	new = function (self, obj)
 		obj = self:extend(obj)
-		
+	
+		-- view containers
+
 		obj.meta = obj.meta or Group:new()
 		obj.view = obj.view or View:new()		
 		
+		-- input
+
 		obj.keys = obj.keys or Keys:new()
 		obj.meta:add(obj.keys)
 		obj.mouse = obj.mouse or Mouse:new()
 		obj.meta:add(obj.mouse)
 		
-		obj.width = love.graphics.getWidth()
-		obj.height = love.graphics.getHeight()
+		-- screen dimensions and state
+
+		local conf = { screen = {}, modules = {} }
+		love.conf(conf)
+
+		obj.width = conf.screen.width or 800
+		obj.height = conf.screen.height or 600
+		obj.fullscreen = conf.screen.fullscreen or false
+
+		-- housekeeping
 		
 		Current.app = obj
 		if obj.onNew then obj:onNew() end
@@ -125,18 +148,59 @@ App = Class:extend({
 		love.mouse.setVisible(value)
 	end,
 
-	-- Method: toggleFullscreen
-	-- Toggles fullscreen appearance. Sadly there's no way
-	-- to tell whether we are fullscreen or not.
-	--
-	-- Arguments:
-	-- 		none
-	--
-	-- Returns:
-	--		nothing
+	enterFullscreen = function (self, hint)
+		local modes = love.graphics.getModes()
+
+		if not hint then
+			if self.width * 9 == self.height * 16 then
+				hint = 'letterbox'
+			elseif self.width * 3 == self.height * 4 then
+				hint = 'pillar'
+			end
+		end
+
+		-- find the mode with the highest screen area that
+		-- matches either width or height, according to our hint
+
+		local bestMode = { area = 0 }
+
+		for _, mode in pairs(modes) do
+			mode.area = mode.width * mode.height
+
+			if (mode.area > bestMode.area) and 
+			   ((hint == 'letterbox' and mode.width == self.width) or
+			    (hint == 'pillar' and mode.height == self.height)) then
+					bestMode = mode
+			end
+		end
+
+		-- if we found a match, switch to it
+
+		assert(bestMode.width, 'this app\'s width and height are not supported in fullscreen on this screen')
+		love.graphics.setMode(bestMode.width, bestMode.height, true)
+		self.fullscreen = true
+
+		-- and adjust inset and scissor
+
+		self.inset.x = math.floor((bestMode.width - self.width) / 2)
+		self.inset.y = math.floor((bestMode.height - self.height) / 2)
+		love.graphics.setScissor(self.inset.x, self.inset.y, self.width, self.height)
+	end,
+
+	exitFullscreen = function (self)
+		love.graphics.setMode(self.width, self.height, false)
+		love.graphics.setScissor(0, 0, self.width, self.height)
+		self.fullscreen = false
+		self.inset.x = 0
+		self.inset.y = 0
+	end,
 
 	toggleFullscreen = function (self)
-		love.graphics.toggleFullscreen()		
+		if self.fullscreen then
+			self:exitFullscreen()
+		else
+			self:enterFullscreen()
+		end
 	end,
 
 	-- Method: add
@@ -179,7 +243,7 @@ App = Class:extend({
 		if Current.view ~= self.view then
 			self.view = Current.view
 		end
-		
+
 		-- update everyone
 		-- app gets precedence, then meta view, then view
 
@@ -203,9 +267,13 @@ App = Class:extend({
 	end,
 	
 	draw = function (self)
+		local inset = self.inset.x ~= 0 or self.inset.y ~= 0
+
+		if inset then love.graphics.translate(self.inset.x, self.inset.y) end
 		self.view:draw()
 		self.meta:draw()
 		if self.onDraw then self:onDraw() end
+		if inset then love.graphics.translate(0, 0) end
 	end,
 
 	onFocus = function (self, value)

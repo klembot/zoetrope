@@ -8,6 +8,7 @@ MenuButton = Button:extend({
 									   width = 92, height = 16, text = self.label })
 	end,
 
+
 	onMouseUp = function (self)
 		Current.app = self.app:new()
 		Current.app:run()
@@ -38,10 +39,7 @@ Menu = App:extend({
 		local x = 16
 		local y = 16
 
-		print(#self.apps)
-
 		for i = 1, #self.apps, 2 do
-			print(i, self.apps[i])
 			self:add(MenuButton:new({ x = x, y = y, label = self.apps[i], app = self.apps[i + 1] }))
 
 			x = x + 136
@@ -50,6 +48,14 @@ Menu = App:extend({
 				x = 16
 				y = y + 30
 			end
+		end
+	end,
+
+	onUpdate = function (self, elapsed)
+		if Current.keys:justPressed('escape') then self:quit() end
+
+		if Current.keys:justPressed('f') then
+			self:toggleFullscreen()
 		end
 	end
 })
