@@ -128,8 +128,8 @@ Mouse = Sprite:extend({
 			self.lastFrame[key] = value
 		end
 	
-		self.x = love.mouse.getX()
-		self.y = love.mouse.getY()
+		self.x = love.mouse.getX() - Current.app.inset.x
+		self.y = love.mouse.getY() - Current.app.inset.y
 
 		Sprite.endFrame(self)
 	end,
