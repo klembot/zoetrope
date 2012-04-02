@@ -6,8 +6,8 @@ Block = Tile:extend({
 	width = 16,
 	height = 16,
 
-	blueGem = Cached:image('tests/assets/bluegem.png'),
-	greenGem = Cached:image('tests/assets/greengem.png'),
+	blueGem = 'tests/assets/bluegem.png',
+	greenGem = 'tests/assets/greengem.png',
 
 	onNew = function (self)
 		if (math.random() > 0.5) then
@@ -25,12 +25,12 @@ Block = Tile:extend({
 	end,
 	
 	onUpdate = function (self, elapsed)
-		if self.y > Current.app.height and self.velocity.y > 0 then
+		if self.y > the.app.height and self.velocity.y > 0 then
 			self.velocity.y = self.velocity.y * -1
 		end
 		
 		if (self.x < 0 and self.velocity.x < 0) or
-		   (self.x > Current.app.width and self.velocity.x > 0) then
+		   (self.x > the.app.width and self.velocity.x > 0) then
 		   self.velocity.x = self.velocity.x * -1
 		end
 	end
@@ -59,7 +59,7 @@ Benchmark = App:extend({
 			self.count = self.count + 1
 		end
 
-		if Current.keys:justPressed('f') then
+		if the.keys:justPressed('f') then
 			self:toggleFullscreen()
 		end
 	end,

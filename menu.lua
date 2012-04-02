@@ -10,8 +10,8 @@ MenuButton = Button:extend({
 
 
 	onMouseUp = function (self)
-		Current.app = self.app:new()
-		Current.app:run()
+		the.app = self.app:new()
+		the.app:run()
 	end
 })
 
@@ -44,7 +44,7 @@ Menu = App:extend({
 
 			x = x + 136
 
-			if x > Current.app.width - 100 then
+			if x > the.app.width - 100 then
 				x = 16
 				y = y + 30
 			end
@@ -52,9 +52,9 @@ Menu = App:extend({
 	end,
 
 	onUpdate = function (self, elapsed)
-		if Current.keys:justPressed('escape') then self:quit() end
+		if the.keys:justPressed('escape') then self:quit() end
 
-		if Current.keys:justPressed('f') then
+		if the.keys:justPressed('f') then
 			self:toggleFullscreen()
 		end
 	end

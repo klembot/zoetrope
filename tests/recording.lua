@@ -20,7 +20,7 @@ Recording = App:extend({
 	onUpdate = function (self, elapsed)
 		-- recorder
 
-		if Current.keys:justPressed('r') then
+		if the.keys:justPressed('r') then
 			if self.recorder.state == Recorder.IDLE then
 				print('Recording started')
 				self.recorder:startRecording()
@@ -30,7 +30,7 @@ Recording = App:extend({
 			end
 		end
 
-		if Current.keys:justPressed('p') then
+		if the.keys:justPressed('p') then
 			self.player.x = 100
 			self.player.y = 100
 			self.recorder:startPlaying()
@@ -42,20 +42,20 @@ Recording = App:extend({
 		self.player.velocity.x = 0
 		self.player.velocity.y = 0
 
-		if Current.keys:pressed('up') then
+		if the.keys:pressed('up') then
 			self.player.velocity.y = -100
-		elseif Current.keys:pressed('down') then
+		elseif the.keys:pressed('down') then
 			self.player.velocity.y = 100
-		elseif Current.keys:pressed('left') then
+		elseif the.keys:pressed('left') then
 			self.player.velocity.x = -100
-		elseif Current.keys:pressed('right') then
+		elseif the.keys:pressed('right') then
 			self.player.velocity.x = 100
 		end
 
 		-- mouse events
 
-		if Current.mouse:justPressed() then
-			self:add(Fill:new({ x = Current.mouse.x - 8, y = Current.mouse.y - 8, width = 16, height = 16,
+		if the.mouse:justPressed() then
+			self:add(Fill:new({ x = the.mouse.x - 8, y = the.mouse.y - 8, width = 16, height = 16,
 								velocity = { x = 0, y = 200, rotation = math.pi } }))
 		end
 	end

@@ -22,7 +22,7 @@ Sounds = App:extend({
 	end,
 
 	onUpdate = function (self, elapsed)
-		if Current.keys:justPressed(' ') then
+		if the.keys:justPressed(' ') then
 			playSound(self.beepPath)
 		end
 

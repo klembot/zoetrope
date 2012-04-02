@@ -6,7 +6,7 @@ Files = App:extend({
 		self.storage.data = { red = 'yes', green = true, blue = 1 }
 		self.storage:save()
 
-		self.label = OutlineText:new({ x = 4, y =4, width = Current.app.width, height = Current.app.height })
+		self.label = OutlineText:new({ x = 4, y =4, width = the.app.width, height = the.app.height })
 		self.label.text = 'Saved to storage.dat:\n' .. dumpTable(self.storage.data)
 		self:add(self.label)
 

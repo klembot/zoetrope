@@ -102,7 +102,7 @@ Map = Sprite:extend({
 	--  may pass as replacement class.
 	--
 	--  Arguments:
-	--		image - source image to use for tiles
+	--		image - image filename to use for tiles
 	--		class - class to create objects with; constructor
 	--				  will be called with properties: image, width,
 	--				  height, imageOffset (with x and y sub-properties)
@@ -116,10 +116,11 @@ Map = Sprite:extend({
 		if type(startIndex) ~= 'number' then startIndex = 0 end
 		
 		class = class or Tile
+		local imageObj = Cached:image(image)
 		self.sprites = {}
 		
-		local imageWidth = image:getWidth()
-		local imageHeight = image:getHeight()
+		local imageWidth = imageObj:getWidth()
+		local imageHeight = imageObj:getHeight()
 		 
 		local i = startIndex
 		

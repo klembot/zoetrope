@@ -8,7 +8,7 @@ UI = App:extend({
 	onRun = function (self)
 		local cursor = Cursor:new()
 		cursor:add(Tile:new({ image = self.cursorImage, width = 16, height = 16 }))
-		Current.mouse.useKeyboard = true
+		the.mouse.useKeyboard = true
 
 		local button = Button:new({ x = 100, y = 100, width = 100, height = 24 })
 		button.background = Fill:new({ width = 100, height = 24, fill = { 0, 0, 255 } })
@@ -24,11 +24,11 @@ UI = App:extend({
 		end
 
 		button.onMouseUp = function (self)
-			self.x = math.random(0, Current.app.width - self.width)
-			self.y = math.random(0, Current.app.height - self.height)
+			self.x = math.random(0, the.app.width - self.width)
+			self.y = math.random(0, the.app.height - self.height)
 		end
 
-		Current.watch:addWatch('mouse clicked', 'Current.mouse.thisFrame.l == true')
+		the.watch:addWatch('mouse clicked', 'the.mouse.thisFrame.l == true')
 
 		self:add(button)
 		self:add(cursor)

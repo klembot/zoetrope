@@ -34,8 +34,8 @@ Input = App:extend({
 		self.leftMouse.visible = self.mouse:pressed('l')
 		self.rightMouse.visible = self.mouse:pressed('r')
 
-		if Current.keys.frameString ~= '' then
-			print('Keyboard entry |' .. Current.keys.frameString .. '|')
+		if the.keys.frameString ~= '' then
+			print('Keyboard entry |' .. the.keys.frameString .. '|')
 		end
 	end
 })

@@ -27,7 +27,7 @@ Emitters = App:extend({
 	end,
 
 	onUpdate = function (self, elapsed)
-		if Current.keys:justPressed(' ') then
+		if the.keys:justPressed(' ') then
 			self.emitter:emit(#self.emitter.particles)
 		end
 	end

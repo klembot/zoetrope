@@ -19,10 +19,10 @@ Focus = App:extend({
 		self:add(Fill:new({ x = 0, y = 1248, width = 32, height = 32 }))
 		self:add(Fill:new({ x = 768, y = 1248, width = 32, height = 32 }))
 		
-		Current.watch:addWatch('sprite x', 'Current.app.player.x')
-		Current.watch:addWatch('sprite y', 'Current.app.player.y')
-		Current.watch:addWatch('view x', 'Current.view.translate.x')
-		Current.watch:addWatch('view y', 'Current.view.maxVisible.y')
+		the.watch:addWatch('sprite x', 'the.app.player.x')
+		the.watch:addWatch('sprite y', 'the.app.player.y')
+		the.watch:addWatch('view x', 'the.view.translate.x')
+		the.watch:addWatch('view y', 'the.view.maxVisible.y')
 	end,
 	
 	onUpdate = function (self, elapsed)

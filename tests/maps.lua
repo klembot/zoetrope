@@ -15,7 +15,7 @@ Maps = App:extend({
 			end
 		end
 		
-		local mario = Cached:image('tests/assets/bluegem.png')
+		local mario = 'tests/assets/bluegem.png'
 		
 		map.sprites[1] = Fill:new({ width = 16, height = 16, fill = {255, 0, 0} })
 		map.sprites[2] = Fill:new({ width = 16, height = 16, fill = {0, 255, 0} })
@@ -33,7 +33,7 @@ Maps = App:extend({
 		-- map with loadTiles() used
 		
 		local map3 = Map:new({ x = 0, y = 300, spriteWidth = 16, spriteHeight = 16 })
-		map3:loadTiles(Cached:image('tests/assets/tiles.png'))
+		map3:loadTiles('tests/assets/tiles.png')
 		map3:empty(16, 16)
 		
 		for x = 1, 16 do

@@ -2,15 +2,15 @@ require 'zoetrope'
 
 SpriteTypes = App:extend({
 	title = 'Sprite Types',
-	blueGem = Cached:image('tests/assets/bluegem.png'),
-	chestAnim = love.graphics.newImage('tests/assets/animation.png'),
+	blueGem = 'tests/assets/bluegem.png',
+	chestAnim = 'tests/assets/animation.png',
 	
 	onNew = function (self)
 		print 'This demonstrates the different types of sprites available in Zoetrope.'
 	end,
 	
 	onRun = function (self)
-		self.font = BitmapFont:new({ imagePath = 'tests/assets/press-start.png' })
+		self.font = BitmapFont:new({ image = 'tests/assets/press-start.png' })
 		
 		self:add(Fill:new({
 			x = 16, y = 16, width = 32, height = 32,
