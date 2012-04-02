@@ -31,7 +31,7 @@
 --		<Class>
 
 BitmapFont = Class:extend({
-	-- Property: imagePath
+	-- Property: image
 	-- The filename to the source image to use. You *must* set this instead of
 	-- image directly. Once a bitmap font is created, this property may not be changed.
 	
@@ -51,17 +51,16 @@ BitmapFont = Class:extend({
 	tracking = 2,
 
 	-- four private properties:
-	-- image - an Image corresponding to the imagePath property
+	-- image - the image property coerced to an Image object 
 	-- imageData - an ImageData copy of the image property, see https://love2d.org/wiki/ImageData
 	-- quads - a table of quads suitable for drawing via a sprite batch, indexed by glyph
 	-- batch - a sprite batch used for drawing calls
 
 	new = function (self, obj)
-		assert(obj.imagePath, 'image path must be set when creating a bitmap font')
-		assert(type(obj.imagePath) == 'string', 'image path must be a string')
 		obj = self:extend(obj)
+		assert(type(obj.image) == 'string', 'bitmap font images must be a string pathname')
 		obj:loadImage()
-	
+
 		if obj.onNew then obj:onNew() end	
 		return obj
 	end,
@@ -132,13 +131,13 @@ BitmapFont = Class:extend({
 	--		nothing
 
 	loadImage = function (self)
-		-- initialize image and batch
-		self.image = love.graphics.newImage(self.imagePath)
-		self.batch = love.graphics.newSpriteBatch(self.image)
-
 		-- initialize quads and convert image to imagedata
 		self.quads = {}
-		self.imageData = love.image.newImageData(self.imagePath)
+		self.imageData = love.image.newImageData(self.image)
+
+		-- initialize image and batch
+		self.image = love.graphics.newImage(self.image)
+		self.batch = love.graphics.newSpriteBatch(self.image)
 
 		-- locally cache info we'll be using a lot in our loop
 		local imageData = self.imageData
@@ -162,9 +161,7 @@ BitmapFont = Class:extend({
 		local sentinel = pixels[0][0]
 
 		-- scan downward to find height
-		local y
-
-		for y = 1, imageHeight do
+		for y = 1, imageHeight - 1 do
 			if pixels[0][y][1] == sentinel[1] and pixels[0][y][2] == sentinel[2] and
 		 	   pixels[0][y][3] == sentinel[3] then
 				self.height = y 
@@ -174,14 +171,16 @@ BitmapFont = Class:extend({
 
 		-- if we didn't find another sentinel, assume a single row
 
-		if not self.height then self.height = y end
+		if not self.height then
+			self.height = imageHeight - 1
+		end
 
 		-- which character in the alphabet are we determining bounds for?
 		local currentChar = 1
 
 		-- loop through the image
 
-		for y = 0, imageHeight, self.height do
+		for y = 0, imageHeight - 1, self.height do
 			-- starting x position of the current character's rect
 			local startX = 1
 

@@ -51,8 +51,8 @@ Button = Sprite:extend({
 	update = function (self, elapsed)
 		local bg = self.background
 		local label = self.label
-		local mouseX = Current.mouse.x
-		local mouseY = Current.mouse.y
+		local mouseX = the.mouse.x
+		local mouseY = the.mouse.y
 
 		-- keep dimensions in sync with background
 
@@ -76,12 +76,12 @@ Button = Sprite:extend({
 
 		-- check for clicks
 
-		if mouseOver and Current.mouse:justPressed() then
+		if mouseOver and the.mouse:justPressed() then
 			self.beingClicked = true
 			self:callHook('onMouseDown')
 		end
 
-		if self.beingClicked and Current.mouse:justReleased() then
+		if self.beingClicked and the.mouse:justReleased() then
 			if mouseOver then
 				self:callHook('onMouseUp')
 			else

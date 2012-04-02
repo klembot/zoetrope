@@ -1,10 +1,10 @@
 -- Section: Globals
 
--- Variable: Current
+-- Variable: the
 -- This is a repository table for the current app, view, keys, and mouse.
 -- You can use this for other objects that are useful to track.
 
-Current = {}
+the = {}
 
 -- Constant: NEARLY_ZERO
 -- Any number less than this is considered 0 by Zoetrope.

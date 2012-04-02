@@ -58,6 +58,10 @@ Benchmark = App:extend({
 			self:add(Block:new({ x = math.random(0, 800), y = math.random(0, 600) }))
 			self.count = self.count + 1
 		end
+
+		if Current.keys:justPressed('f') then
+			self:toggleFullscreen()
+		end
 	end,
 	
 	onDraw = function (self)

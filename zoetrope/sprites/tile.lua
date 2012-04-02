@@ -4,12 +4,8 @@
 -- Extends:
 --		<Sprite>
 
-Tile = Sprite:extend({
-	-- this must be a nonsense value, not nil,
-	-- for the tile to see that an image has been set if it
-	-- was initially nil
-	quadImage = -1,
-	
+Tile = Sprite:extend(
+{
 	-- Property: image
 	-- The image to tile across the sprite.
 
@@ -18,6 +14,17 @@ Tile = Sprite:extend({
 	-- the sprite's rectangle. To draw as normal, set both x and y
 	-- to 0.
 	imageOffset = { x = 0, y = 0 },
+
+	-- private property: keeps track of properties that need action
+	-- to be taken when they are changed
+	-- image must be a nonsense value, not nil,
+	-- for the tile to see that an image has been set if it
+	-- was initially nil
+	set = { image = -1 },
+
+	-- private property imageObj: actual Image instance used to draw
+	-- this is normally set via the image property, but you may set it directly
+	-- so long as you never change that image property afterwards.
 
 	draw = function (self, x, y)
 		if not (self.visible and self.image) then return end
@@ -35,17 +42,19 @@ Tile = Sprite:extend({
 		-- if the source image has changed,
 		-- we need to recreate our quad
 		
-		if self.image and self.image ~= self.quadImage then	
+		if self.image and self.image ~= self.set.image then	
+			self.imageObj = Cached:image(self.image)
+
 			self.quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
 											  self.width, self.height,
-											  self.image:getWidth(), self.image:getHeight())
-			self.image:setWrap('repeat', 'repeat')
-			self.quadImage = self.image
+											  self.imageObj:getWidth(), self.imageObj:getHeight())
+			self.imageObj:setWrap('repeat', 'repeat')
+			self.set.image = self.image
 		end
 		
 		-- draw the quad
 
-		love.graphics.drawq(self.image, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self.imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		

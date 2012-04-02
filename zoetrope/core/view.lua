@@ -1,7 +1,7 @@
 -- Class: View
 -- A view is a group that packages several useful objects with it.
 -- It's helpful to use, but not required. When a view is created, it
--- automatically sets Current.view for itself.
+-- automatically sets the.view for itself.
 --
 -- Extends:
 --		<Group>
@@ -43,7 +43,7 @@ View = Group:extend({
 		obj.tweener = Tweener:new()
 		obj:add(obj.tweener)
 		obj.factory = Factory:new()
-		Current.view = obj
+		the.view = obj
 		
 		if obj.onNew then obj:onNew() end
 		return obj
@@ -63,24 +63,24 @@ View = Group:extend({
 	clampTo = function (self, sprite)
 		self.minVisible.x = sprite.x
 		
-		if sprite.x + sprite.width > Current.app.width then
+		if sprite.x + sprite.width > the.app.width then
 			self.maxVisible.x = sprite.x + sprite.width
 		else
-			self.maxVisible.x = Current.app.width
+			self.maxVisible.x = the.app.width
 		end
 		
 		self.minVisible.y = sprite.y
 		
-		if sprite.y + sprite.height > Current.app.height then
+		if sprite.y + sprite.height > the.app.height then
 			self.maxVisible.y = sprite.y + sprite.height
 		else
-			self.maxVisible.y = Current.app.height
+			self.maxVisible.y = the.app.height
 		end
 	end,
 
 	update = function (self, elapsed)
-		local screenWidth = Current.app.width
-		local screenHeight = Current.app.height
+		local screenWidth = the.app.width
+		local screenHeight = the.app.height
 
 		-- follow the focused sprite
 		

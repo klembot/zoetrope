@@ -98,7 +98,7 @@ App = Class:extend({
 
 		-- housekeeping
 		
-		Current.app = obj
+		the.app = obj
 		if obj.onNew then obj:onNew() end
 		return obj
 	end,
@@ -203,6 +203,12 @@ App = Class:extend({
 		end
 	end,
 
+	saveScreenshot = function (self, filename)
+		local screenshot = love.graphics.newScreenshot()
+		local data = screenshot:encode('bmp')
+		love.filesystem.write(filename, data)
+	end,
+
 	-- Method: add
 	-- A shortcut for adding a sprite to the app's view.
 	--
@@ -240,8 +246,8 @@ App = Class:extend({
 		
 		-- did our view change from under us?
 		
-		if Current.view ~= self.view then
-			self.view = Current.view
+		if the.view ~= self.view then
+			self.view = the.view
 		end
 
 		-- update everyone

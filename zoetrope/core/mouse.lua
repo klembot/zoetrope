@@ -20,7 +20,7 @@ Mouse = Sprite:extend({
 	
 	new = function (self, obj)
 		obj = self:extend(obj)
-		Current.mouse = obj
+		the.mouse = obj
 		love.mousepressed = function (x, y, button) obj:mousePressed(button) end
 		love.mousereleased = function (x, y, button) obj:mouseReleased(button) end
 		if obj.onNew then obj:onNew() end
@@ -128,8 +128,8 @@ Mouse = Sprite:extend({
 			self.lastFrame[key] = value
 		end
 	
-		self.x = love.mouse.getX() - Current.app.inset.x
-		self.y = love.mouse.getY() - Current.app.inset.y
+		self.x = love.mouse.getX() - the.app.inset.x
+		self.y = love.mouse.getY() - the.app.inset.y
 
 		Sprite.endFrame(self)
 	end,

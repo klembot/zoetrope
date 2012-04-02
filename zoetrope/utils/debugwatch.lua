@@ -25,9 +25,9 @@ DebugWatch = Group:extend({
 		obj.watches = {}
 		obj.lineHeight = OutlineText.defaultFont:getHeight()
 		
-		obj.fill = Fill:new({ width = Current.app.width, fill = self.fill })
-		obj.text = OutlineText:new({ width = Current.app.width,
-								   height = Current.app.height })
+		obj.fill = Fill:new({ width = the.app.width, fill = self.fill })
+		obj.text = OutlineText:new({ width = the.app.width,
+								   height = the.app.height })
 		obj:add(obj.fill)
 		obj:add(obj.text)
 		
@@ -35,7 +35,7 @@ DebugWatch = Group:extend({
 			obj:addWatch('FPS', 'love.timer.getFPS()')
 		end
 		
-		Current.watch = obj
+		the.watch = obj
 		if obj.onNew then obj.onNew() end
 		return obj
 	end,
@@ -56,7 +56,7 @@ DebugWatch = Group:extend({
 	--- Toggles visibility and updates watch expressions.
 
 	update = function (self, elapsed)
-		if Current.keys:justPressed(self.toggleKey) then
+		if the.keys:justPressed(self.toggleKey) then
 			self.visible = not self.visible
 		end
 		

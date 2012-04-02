@@ -90,6 +90,7 @@ Tweener = Sprite:extend({
 		tween.ease = tween.ease or 'linear'
 		
 		assert(type(tween.target) == 'table', 'tween target must be a table')
+		assert(tween.prop, 'tween prop (property) is not defined')
 		assert(not tween.prop or tween.target[tween.prop],
 			   'no such property ' .. tostring(tween.prop) .. ' on target') 
 		assert(type(tween.duration) == 'number', 'tween duration must be a number')
@@ -131,7 +132,7 @@ Tweener = Sprite:extend({
 			
 			if skip then return end
 		else
-			error('tweened property must either be a number or a table of numbers')
+			error('tweened property must either be a number or a table of numbers, is ' .. tween.type)
 		end
 			
 		tween.elapsed = 0

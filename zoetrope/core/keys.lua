@@ -29,7 +29,7 @@ Keys = Sprite:extend({
 	
 	new = function (self, obj)
 		obj = self:extend(obj)
-		Current.keys = obj
+		the.keys = obj
 		love.keypressed = function (key, unicode) obj:keyPressed(key, unicode) end
 		love.keyreleased = function (key, unicode) obj:keyReleased(key, unicode) end
 		if obj.onNew then obj:onNew() end

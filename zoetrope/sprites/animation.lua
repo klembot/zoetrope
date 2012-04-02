@@ -23,6 +23,9 @@ Animation = Sprite:extend({
 	-- * loops - does the animation loop? defaults to true
 	sequences = {},
 
+	-- Property: image
+	-- A string filename to the image to use as a sprite strip.
+
 	-- Property: currentSequence
 	-- A reference to the current animation sequence table.
 
@@ -42,6 +45,10 @@ Animation = Sprite:extend({
 	-- private property: used to check whether the source image
 	-- for our quad is up-to-date
 	set = {},
+
+	-- private property imageObj: actual Image instance used to draw
+	-- this is normally set via the image property, but you may set it directly
+	-- so long as you never change that image property afterwards.
 
 	-- Method: play 
 	-- Begins playing an animation in the sprite's library.
@@ -106,10 +113,11 @@ Animation = Sprite:extend({
 
 	updateQuad = function (self)
 		if self.set.image == self.image then return end
+		self.imageObj = Cached:image(self.image)
 
 		self.quad = love.graphics.newQuad(0, 0, self.width, self.height,
-										  self.image:getWidth(), self.image:getHeight())
-		self.imageWidth = self.image:getWidth()
+										  self.imageObj:getWidth(), self.imageObj:getHeight())
+		self.imageWidth = self.imageObj:getWidth()
 		self.set.image = self.image
 	end,
 
@@ -187,7 +195,7 @@ Animation = Sprite:extend({
 
 		-- draw the quad
 			
-		love.graphics.drawq(self.image, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self.imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		

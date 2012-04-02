@@ -244,7 +244,7 @@ Map = Sprite:extend({
 		-- we draw to fill the entire app windoow
 		
 		local startX, startY = self:pixelToMap(-x, -y)
-		local endX, endY = self:pixelToMap(Current.app.width - x, Current.app.height - y)
+		local endX, endY = self:pixelToMap(the.app.width - x, the.app.height - y)
 		
 		-- queue each sprite drawing operation
 		
@@ -266,43 +266,10 @@ Map = Sprite:extend({
 		end
 		
 		-- draw each sprite in turn
-		-- if a sprite has a quad, and image, we handle drawing right here;
-		-- otherwise we punt to its draw method
 		
 		for sprite, list in pairs(toDraw) do
-			local coords
-				
-			if sprite.quad and sprite.image then
-				if sprite.color then
-					love.graphics.setColor(sprite.color)
-				else
-					love.graphics.setColor(255, 255, 255, 255)
-				end
-
-				local scaleX = sprite.scale * sprite.distort.x
-				local scaleY = sprite.scale * sprite.distort.y
-				
-				if sprite.rotation == 0 and scaleX == 1 and scaleY == 1 then
-					for _, coords in pairs(list) do
-						love.graphics.drawq(sprite.image, sprite.quad,
-											coords[1], coords[2])
-					end
-				else
-					for _, coords in pairs(list) do
-						love.graphics.drawq(sprite.image, sprite.quad, coords[1],
-											coords[2], sprite.rotation,
-											scaleX, scaleY,
-											sprite.width / 2, sprite.height / 2)
-					end
-				end
-				
-				if sprite.color then
-					love.graphics.setColor(255, 255, 255, 255)
-				end
-			else			
-				for _, coords in pairs(list) do
-					sprite:draw(coords[1], coords[2])
-				end
+			for _, coords in pairs(list) do
+				sprite:draw(coords[1], coords[2])
 			end
 		end
 		
