@@ -111,9 +111,19 @@ BitmapText = Sprite:extend({
 			self:layoutLines()
 		end
 
+		-- set color if needed
+
+		local colored = self.alpha ~= 1 or self.tint[1] ~= 1 or self.tint[2] ~= 1 or self.tint[3] ~= 1
+
+		if colored then
+			love.graphics.setColor(self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255, self.alpha * 255)
+		end
+
 		for _, line in pairs(self.lines) do
-			self.font:drawText(line.text, self.x + line.inset, y, tracking)
+			self.font:drawText(line.text, x + line.inset, y, tracking)
 			y = y + self.font.height + self.leading
 		end
+
+		if colored then love.graphics.setColor(255, 255, 255, 255) end
 	end
 })
