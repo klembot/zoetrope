@@ -63,20 +63,21 @@ Map = Sprite:extend({
 	-- must have the same number of columns.
 	--
 	-- Arguments:
-	--		source - source text to use, probably comma-separated text
+	--		file - filename of source text to use
 	--		colSeparator - character to use as separator of columns, default ','
 	--		rowSeparator - character to use as separator of rows, default newline
 	--
 	-- Returns:
 	--		self, for chaining
 
-	loadMap = function (self, source, colSeparator, rowSeparator)
+	loadMap = function (self, file, colSeparator, rowSeparator)
 		colSeparator = colSeparator or ','
 		rowSeparator = rowSeparator or '\n'
 		
 		-- load data
 		
 		local x, y
+		local source = Cached:text(file)
 		local rows = split(source, rowSeparator)
 		
 		for y = 1, #rows do
@@ -102,7 +103,7 @@ Map = Sprite:extend({
 	--  may pass as replacement class.
 	--
 	--  Arguments:
-	--		image - image filename to use for tiles
+	--		image - source image to use for tiles
 	--		class - class to create objects with; constructor
 	--				  will be called with properties: image, width,
 	--				  height, imageOffset (with x and y sub-properties)
@@ -116,11 +117,10 @@ Map = Sprite:extend({
 		if type(startIndex) ~= 'number' then startIndex = 0 end
 		
 		class = class or Tile
-		local imageObj = Cached:image(image)
 		self.sprites = {}
 		
-		local imageWidth = imageObj:getWidth()
-		local imageHeight = imageObj:getHeight()
+		local imageWidth = image:getWidth()
+		local imageHeight = image:getHeight()
 		 
 		local i = startIndex
 		
