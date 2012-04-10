@@ -26,6 +26,11 @@ Group = Class:extend({
 	-- If false, none of its member sprites will be drawn.
 	visible = true,
 
+	-- Property: solid
+	-- If false, nothing will collide against this group. This does not prevent
+	-- collision checking against individual sprites in this group, however.
+	solid = true,
+
 	-- Property: sprites
 	-- A table of member sprites, in drawing order.
 	sprites = {},
@@ -94,6 +99,8 @@ Group = Class:extend({
 	collide = function (self, other)
 		local hit = false
 
+		if not self.solid then return false end
+
 		for _, spr in pairs(self.sprites) do
 			if spr.solid then
 				hit = spr:collide(other) or hit
@@ -114,6 +121,38 @@ Group = Class:extend({
 
 	count = function (self)
 		return #self.sprites
+	end,
+
+	-- Method: die
+	-- Makes the group totally inert. It will not receive
+	-- update events, draw anything, or be collided.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	-- 		nothing
+
+	die = function (self)
+		self.active = false
+		self.visible = false
+		self.solid = false
+	end,
+
+	-- Method: revive
+	-- Makes this group completely active. It will receive
+	-- update events, draw itself, and be collided.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	-- 		nothing
+
+	revive = function (self)
+		self.active = true
+		self.visible = true
+		self.solid = true
 	end,
 
 	-- passes startFrame events to member sprites

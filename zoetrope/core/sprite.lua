@@ -130,6 +130,10 @@ Sprite = Class:extend({
 
 	collide = function (self, other)
 		if not self.solid or self == other then return false end
+		
+		if other.instanceOf and other:instanceOf(Group) and not other.solid then
+			return false
+		end
 
 		local hit = false	
 		local otherList = coerceToTable(other)
@@ -138,7 +142,7 @@ Sprite = Class:extend({
 			-- recurse into subgroups
 			-- order is important here to avoid short-circuiting inappopriately
 			
-			if type(spr.sprites) == 'table' then
+			if type(spr.sprites) == 'table' and spr.solid then
 				hit = self:collide(spr.sprites) or hit
 			end
 			
