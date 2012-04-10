@@ -2,8 +2,9 @@
 
 -- Variable: the
 -- This is a repository table for the current app, view, keys, and mouse.
--- You can use this for other objects that are useful to track.
-
+-- You can use this for other objects that are useful to track. This should
+-- be considered read-only; references here are for convenience and changing
+-- things here will have no effect.
 the = {}
 
 -- Constant: NEARLY_ZERO
@@ -84,6 +85,7 @@ function playSound (path, volume, hint)
 	local source = love.audio.newSource(path, sourceType)
 	source:setVolume(volume)
 	source:play()
+	return source
 end
 
 -- Function: coerceToTable

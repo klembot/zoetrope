@@ -44,14 +44,15 @@ App = Class:extend({
 	
 	-- Property: view
 	-- The current <View>. When the app is running, this is also accessible
-	-- globally via <Current>.view.
+	-- globally via <the>.view. This property is read-only. To change this,
+	-- you must call <changeView>.
 
 	-- Property: meta
 	-- A <Group> that persists across all views during the app's lifespan.
 
 	-- Property: keys
 	-- A <Keys> object that listens to the keyboard. When the app is running, this
-	-- is also accessible globally via <Current>.keys.
+	-- is also accessible globally via <the>.keys.
 
 	-- Property: width
 	-- The width of the window in pixels. Changing this value has no effect. To
@@ -121,6 +122,7 @@ App = Class:extend({
 		love.draw = function() self:draw() end
 		love.focus = function (value) self:onFocus(value) end	
 	end,
+
 	
 	-- Method: quit
 	-- Quits the application immediately.
@@ -235,6 +237,8 @@ App = Class:extend({
 	end,
 
 	update = function (self, elapsed)
+		local view = self.view
+		local realElapsed = elapsed
 		elapsed = elapsed * self.timeScale
 
 		-- if we are not active at all, sleep for a half-second
@@ -244,10 +248,10 @@ App = Class:extend({
 			return
 		end
 		
-		-- did our view change from under us?
+		-- sync the.view with our current view
 		
-		if the.view ~= self.view then
-			self.view = the.view
+		if the.view ~= view then
+			the.view = view
 		end
 
 		-- update everyone
@@ -256,19 +260,19 @@ App = Class:extend({
 		if self.onStartFrame then self:onStartFrame(elapsed) end
 		self.meta:startFrame(elapsed)
 		
-		self.view:startFrame(elapsed)
-		self.view:update(elapsed)	
+		view:startFrame(elapsed)
+		view:update(elapsed)	
 		self.meta:update(elapsed)
 		if self.onUpdate then self:onUpdate(elapsed) end
 
-		self.view:endFrame(elapsed)
+		view:endFrame(elapsed)
 		self.meta:endFrame(elapsed)
 		if self.onEndFrame then self:onEndFrame(elapsed) end
 		
 		-- if we're going faster than our max fps, sleep it off
 		
-		if elapsed < 1 / self.fps then
-			love.timer.sleep(1000 * (1 / self.fps - elapsed))
+		if realElapsed < 1 / self.fps then
+			love.timer.sleep(1000 * (1 / self.fps - realElapsed))
 		end
 	end,
 	
