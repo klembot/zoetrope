@@ -32,8 +32,8 @@
 
 BitmapFont = Class:extend({
 	-- Property: image
-	-- The filename to the source image to use. You *must* set this instead of
-	-- image directly. Once a bitmap font is created, this property may not be changed.
+	-- The filename to the source image to use. Once a bitmap font is created, 
+	-- this property may not be changed.
 	
 	-- Property: height
 	-- The height of a single row of glyphs in the source image. This is calculated for
@@ -47,7 +47,7 @@ BitmapFont = Class:extend({
 
 	-- Constant: tracking
 	-- The amount of tracking (space between glyphs in pixels) used when drawing 
-	-- text to the screen. You can also specify it when calling drawText().
+	-- text to the screen. You can also specify it when calling <drawText()>.
 	tracking = 2,
 
 	-- four private properties:

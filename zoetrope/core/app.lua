@@ -9,7 +9,7 @@
 -- use the onUpdate handler instead of writing a custom <View>.
 -- 
 -- Once an app has begun running, it may be accessed globally via
--- <Current>.app.
+-- <the>.app.
 --
 -- Extends:
 --  	<Class>
@@ -44,8 +44,8 @@ App = Class:extend({
 	
 	-- Property: view
 	-- The current <View>. When the app is running, this is also accessible
-	-- globally via <the>.view. This property is read-only. To change this,
-	-- you must call <changeView>.
+	-- globally via <the>.view. In order to switch views, you must set this
+	-- property, *not* <the>.view.
 
 	-- Property: meta
 	-- A <Group> that persists across all views during the app's lifespan.
@@ -55,12 +55,14 @@ App = Class:extend({
 	-- is also accessible globally via <the>.keys.
 
 	-- Property: width
-	-- The width of the window in pixels. Changing this value has no effect. To
-	-- set this for real, edit conf.lua. 
+	-- The width of the app's canvas in pixels. Changing this value has no effect. To
+	-- set this for real, edit conf.lua. This may *not* correspond to the overall
+	-- resolution of the window when in fullscreen mode.
 
 	-- Property: height
 	-- The height of the window in pixels. Changing this value has no effect. To
-	-- set this for real, edit conf.lua.
+	-- set this for real, edit conf.lua. This may *not* correspond to the overall
+	-- resolution of the window when in fullscreen mode.
 
 	-- Property: fullscreen
 	-- Whether the app is currently running in fullscreen mode. Changing this value

@@ -6,9 +6,12 @@
 -- like control or alt).
 --
 -- Only one Keys object can be active at one time. The one currently
--- listening to the keyboard can be accessed globally via <Current>.keys.
+-- listening to the keyboard can be accessed globally via <the>.keys.
 --
 -- See http://love2d.org/wiki/KeyConstant for a list of key names.
+-- This class aliases modifiers for you, so that if you want to check
+-- whether either the left or right Control key is pressed, you can check
+-- on 'ctrl' instead of both 'lctrl' and 'rctrl'.
 --
 -- Extends:
 --		<Sprite>

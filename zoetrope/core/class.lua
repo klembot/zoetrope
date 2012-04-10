@@ -1,9 +1,9 @@
 -- Class: Class
 -- This is a simple OOP single-inheritance implementation based
--- on the one suggested by Programming in Lua.
+-- on the one suggested by <Programming in Lua at http://www.lua.org/pil/16.html>.
 --
 -- Event: onNew
--- 		Called once, when a new object is created via new().
+-- 		Called once, when a new object is created via <new()>.
 
 Class = {
 	-- Method: extend

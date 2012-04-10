@@ -85,7 +85,9 @@ Group = Class:extend({
 
 	-- Method: collide
 	-- Collides all solid sprites in the group with another
-	-- sprite, group, or table of sprites.
+	-- sprite, group, or table of sprites. This calls the <Sprite.onCollide>
+	-- event handlers on all sprites that collide with the same arguments
+	-- <Sprite.collide> does.
 	--
 	-- Arguments:
 	-- 		other - sprite, group, or table of sprites to collide with

@@ -32,7 +32,7 @@ RIGHT = 'right'
 -- trim() implementation for strings via http://lua-users.org/wiki/stringtrim
 -- 
 -- Arguments:
--- 		source string
+-- 		source - source string
 --
 -- Returns:
 -- 		string trimmed of leading and trailing whitespace
@@ -45,8 +45,8 @@ end
 -- split() implementation for strings via http://lua-users.org/wiki/splitjoin
 --
 -- Arguments:
---		* source string
---		* Lua pattern to split on
+--		source - source string
+--		pattern - Lua pattern to split on, see http://www.lua.org/pil/20.1.html
 --
 -- Returns:
 -- 		table of split strings	
@@ -70,7 +70,9 @@ function split (source, pattern)
 end
 
 -- Function: playSound
--- Plays a sound once. This is the easiest way to play a sound.
+-- Plays a sound once. This is the easiest way to play a sound. It's important
+-- to use the hint property appropriately; if set incorrectly, it can cause sound
+-- playback to stutter or lag.
 --
 -- Arguments:
 --		path - string pathname to sound
@@ -95,7 +97,7 @@ end
 -- A table of sprites is left as-is.
 --
 -- Arguments:
---		sprite, group, or table of sprites
+--		other - sprite, group, or table of sprites
 --
 -- Returns:
 --		table of sprites equivalent to passed argument
@@ -117,6 +119,7 @@ end
 -- does not exist in the table, this returns nil.
 --
 -- Arguments:
+--		table - table to search
 --		search - value to search for
 --
 -- Returns:
@@ -136,7 +139,7 @@ end
 -- reference will be copied shallowly. 
 --
 -- Arguments:
--- 		source table
+-- 		source - source table
 --
 -- Returns:
 -- 		new table
