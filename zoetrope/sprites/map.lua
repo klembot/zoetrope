@@ -119,8 +119,9 @@ Map = Sprite:extend({
 		class = class or Tile
 		self.sprites = {}
 		
-		local imageWidth = image:getWidth()
-		local imageHeight = image:getHeight()
+		local imageObj = Cached:image(image)
+		local imageWidth = imageObj:getWidth()
+		local imageHeight = imageObj:getHeight()
 		 
 		local i = startIndex
 		

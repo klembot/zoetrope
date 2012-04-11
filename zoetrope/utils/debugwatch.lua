@@ -1,11 +1,11 @@
 -- Class: DebugWatch
 -- A debug watch displays the value of an expression each frame.
--- It can be used to keep track of fps, the position of a 
--- It only updates when visible.
+-- It can be used to keep track of fps, the position of a sprite,
+-- and so on. It only updates when visible.
 
 DebugWatch = Group:extend({
 	-- Property: toggleKey
-	-- What key toggles visibility.
+	-- What key toggles visibility. By default, this is the tilde key.
 	toggleKey = '`',
 
 	-- Property: initWithFPS

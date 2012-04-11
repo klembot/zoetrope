@@ -57,5 +57,9 @@ Menu = App:extend({
 		if the.keys:justPressed('f') then
 			self:toggleFullscreen()
 		end
+
+		if the.keys:justPressed('f12') then
+			self:saveScreenshot('screenshot.png')
+		end
 	end
 })

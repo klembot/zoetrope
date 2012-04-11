@@ -92,12 +92,7 @@ App = Class:extend({
 		
 		-- screen dimensions and state
 
-		local conf = { screen = {}, modules = {} }
-		love.conf(conf)
-
-		obj.width = conf.screen.width or 800
-		obj.height = conf.screen.height or 600
-		obj.fullscreen = conf.screen.fullscreen or false
+		obj.width, obj.height, obj.fullscreen = love.graphics.getMode()
 
 		-- housekeeping
 		
@@ -136,7 +131,7 @@ App = Class:extend({
 	--		nothing
 
 	quit = function (self)
-		love.event.push('q')
+		love.quit()
 	end,
 
 	-- Method: useSysCursor
@@ -151,6 +146,19 @@ App = Class:extend({
 	useSysCursor = function (self, value)
 		love.mouse.setVisible(value)
 	end,
+
+	-- Method: enterFullscreen
+	-- Enters fullscreen mode. If the app is already in fullscreen, this has no effect.
+	-- This tries to use the highest resolution that will not result in distortion, and
+	-- adjust the app's offset property to accomodate this.
+	--
+	-- Arguments:
+	--		hint - whether to try to letterbox (vertical black bars) or pillar the app
+	--			   (horizontal black bars). You don't need to specify this; the method
+	--			   will try to infer based on the aspect ratio of your app.
+	--
+	-- Returns:
+	--		nothing
 
 	enterFullscreen = function (self, hint)
 		local modes = love.graphics.getModes()
@@ -191,6 +199,15 @@ App = Class:extend({
 		love.graphics.setScissor(self.inset.x, self.inset.y, self.width, self.height)
 	end,
 
+	-- Method: exitFullscreen
+	-- Exits fullscreen mode. If the app is already windowed, this has no effect.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
 	exitFullscreen = function (self)
 		love.graphics.setMode(self.width, self.height, false)
 		love.graphics.setScissor(0, 0, self.width, self.height)
@@ -198,6 +215,15 @@ App = Class:extend({
 		self.inset.x = 0
 		self.inset.y = 0
 	end,
+
+	-- Method: toggleFullscreen
+	-- Toggles between windowed and fullscreen mode.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
 
 	toggleFullscreen = function (self)
 		if self.fullscreen then
@@ -207,10 +233,20 @@ App = Class:extend({
 		end
 	end,
 
+	-- Method: saveScreenshot
+	-- Saves a snapshot of the current frame to disk.
+	--
+	-- Arguments:
+	--		filename - filename to save as, image format is implied by suffix.
+	--				   This is forced inside the app's data directory,
+	--				   see https://love2d.org/wiki/love.filesystem for details.
+	--
+	-- Returns:
+	--		nothing
+
 	saveScreenshot = function (self, filename)
 		local screenshot = love.graphics.newScreenshot()
-		local data = screenshot:encode('bmp')
-		love.filesystem.write(filename, data)
+		screenshot:encode(filename)
 	end,
 
 	-- Method: add
@@ -246,7 +282,7 @@ App = Class:extend({
 		-- if we are not active at all, sleep for a half-second
 
 		if not self.active then
-			love.timer.sleep(500)
+			love.timer.sleep(0.5)
 			return
 		end
 		
@@ -274,7 +310,7 @@ App = Class:extend({
 		-- if we're going faster than our max fps, sleep it off
 		
 		if realElapsed < 1 / self.fps then
-			love.timer.sleep(1000 * (1 / self.fps - realElapsed))
+			love.timer.sleep(1 / self.fps - realElapsed)
 		end
 	end,
 	
