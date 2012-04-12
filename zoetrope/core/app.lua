@@ -131,7 +131,7 @@ App = Class:extend({
 	--		nothing
 
 	quit = function (self)
-		love.quit()
+		love.event.quit()
 	end,
 
 	-- Method: useSysCursor
