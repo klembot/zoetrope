@@ -90,7 +90,7 @@ Animation = Sprite:extend({
 			index = index or self.currentSequence[self.frameIndex]
 		end
 		
-		index = index or 1
+		index = index or self.currentFrame or 1
 
 		if self.set.image ~= self.image then
 			self:updateQuad()
