@@ -3,6 +3,12 @@
 -- reusing object instances instead of creating them and deleting
 -- them as needed. This approach saves CPU and memory.
 --
+-- Be careful of accidentally adding an instance to a view twice.
+-- This will manifest itself as the sprite moving twice as fast, for
+-- example, each time it is recycled. The easiest way to avoid this
+-- problem is for the object to add itself to the view in its onNew
+-- handler, since that will only be called once.
+--
 -- If you only want a certain number of instances of a class ever
 -- created, first call preload() to create as many instances as you want,
 -- then freeze() to prevent any new instances from being created.
