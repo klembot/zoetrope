@@ -45,7 +45,6 @@ Button = Sprite:extend({
 
 		if bg then bg:draw(x + bg.x, y + bg.y) end
 		if label then label:draw(x + label.x, y + label.y) end
-		print(x + label.x, y + label.y)
 		Sprite.draw(self, x, y)
 	end,
 
