@@ -22,6 +22,7 @@ Menu = App:extend({
 		'Collisions', Collisions,
 		'Emitters', Emitters,
 		'Files', Files,
+		'Factory', FactoryApp,
 		'Focus', Focus,
 		'Hello World', HelloWorld,
 		'Input', Input,

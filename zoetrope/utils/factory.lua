@@ -26,8 +26,8 @@ Factory = Class:extend({
 
 	-- Method: create
 	-- Creates a fresh object, either by reusing a previously
-	-- recycled one or creating a new instance. If the object is
-	-- a <Sprite> instance, then this function calls <Sprite.revive> on it.
+	-- recycled one or creating a new instance. If the object has
+	-- a revive method, it calls it.
 	--
 	-- Arguments:
 	--		prototype - <Class> object
@@ -39,7 +39,7 @@ Factory = Class:extend({
 	create = function (self, prototype, props)
 		local newObj
 		
-		if (self.recycled[prototype] and #self.recycled[prototype] > 0) then
+		if self.recycled[prototype] and #self.recycled[prototype] > 0 then
 			newObj = table.remove(self.recycled[prototype])
 			newObj:mixin(props)
 		else
@@ -52,17 +52,14 @@ Factory = Class:extend({
 			end
 		end
 
-		if newObj:instanceOf(Sprite) then
-			newObj:revive()
-		end
-
+		if newObj.revive then newObj:revive() end
 		if newObj.onReset then newObj:onReset() end
 		return newObj
 	end,
 
 	-- Method: recycle
 	-- Marks an object as ready to be recycled. If the object
-	-- is a <Sprite> instance, then this function calls die() on it.
+	-- has a die method, then this function it.
 	--
 	-- Arguments:
 	-- 		object - object to recycle
@@ -77,9 +74,7 @@ Factory = Class:extend({
 
 		table.insert(self.recycled[object.prototype], object)
 
-		if object:instanceOf(Sprite) then
-			object:die()
-		end
+		if object.die then object:die() end
 	end,
 
 	-- Method: preload

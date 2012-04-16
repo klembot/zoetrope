@@ -168,6 +168,8 @@ Emitter = Group:extend({
 	end,
 
 	update = function (self, elapsed)
+		if not self.active then return end
+
 		if self.emitting then
 			self.emitTimer = self.emitTimer + elapsed
 
