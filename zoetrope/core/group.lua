@@ -216,10 +216,10 @@ Group = Class:extend({
 		
 		for _, spr in pairs(self.sprites) do	
 			if spr.visible and spr.draw then
-				if spr.x and spr.y then
-					spr:draw(spr.x + scrollX, spr.y + scrollY)
-				elseif spr.translate then
+				if spr.translate then
 					spr:draw(spr.translate.x + scrollX, spr.translate.y + scrollY)
+				elseif spr.x and spr.y then
+					spr:draw(spr.x + scrollX, spr.y + scrollY)
 				end
 			end
 		end
