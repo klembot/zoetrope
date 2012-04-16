@@ -144,7 +144,8 @@ Emitter = Group:extend({
 					end
 				end
 			end
-
+	
+			if emitted.onEmit then emitted:onEmit(self) end
 			if self.onEmit then self:onEmit(emitted) end
 		end
 	end,
