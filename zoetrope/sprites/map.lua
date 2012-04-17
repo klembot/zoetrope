@@ -153,21 +153,30 @@ Map = Sprite:extend({
 
 		for _, other in pairs(otherList) do
 			if other.solid then
-				local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
-				local endX, endY = self:pixelToMap(other.x + other.width - self.x,
-												   other.y + other.height - self.y)
-				local x, y
-				
-				for x = startX, endX do
-					for y = startY, endY do
-						local spr = self.sprites[self.map[x][y]]
-						
-						if spr and spr.solid then
-							-- position it as if it were onscreen
+				if type(other.sprites) == 'table' then
+					-- recurse into subgroups
+					-- order is important here to avoid short-circuiting inappopriately
+		
+					hit = self:collide(other.sprites) or hit
+				else
+					-- a normal sprite
+
+					local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
+					local endX, endY = self:pixelToMap(other.x + other.width - self.x,
+													   other.y + other.height - self.y)
+					local x, y
+					
+					for x = startX, endX do
+						for y = startY, endY do
+							local spr = self.sprites[self.map[x][y]]
 							
-							spr.x = self.x + (x - 1) * self.spriteWidth
-							spr.y = self.y + (y - 1) * self.spriteHeight
-							spr:displace(other, xHint, yHint)
+							if spr and spr.solid then
+								-- position our map sprite as if it were onscreen
+								
+								spr.x = self.x + (x - 1) * self.spriteWidth
+								spr.y = self.y + (y - 1) * self.spriteHeight
+								spr:displace(other, xHint, yHint)
+							end
 						end
 					end
 				end
@@ -191,23 +200,34 @@ Map = Sprite:extend({
 		local otherList = coerceToTable(other)
 		local hit = false
 		
-		for _, spr in pairs(otherList) do
-			local startX, startY = self:pixelToMap(spr.x - self.x, spr.y - self.y)
-			local endX, endY = self:pixelToMap(spr.x + spr.width - self.x,
-											   spr.y + spr.height - self.y)
-			local x, y
-			
-			for x = startX, endX do
-				for y = startY, endY do
-					local spr = self.sprites[self.map[x][y]]
+		for _, other in pairs(otherList) do
+			if other.solid then
+				if type(other.sprites) == 'table' then
+					-- recurse into subgroups
+					-- order is important here to avoid short-circuiting inappopriately
+		
+					hit = self:collide(other.sprites) or hit
+				else
+					-- a normal sprite
+
+					local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
+					local endX, endY = self:pixelToMap(other.x + other.width - self.x,
+													   other.y + other.height - self.y)
+					local x, y
 					
-					if spr and spr.solid then
-						-- position it as if it were onscreen
-						
-						spr.x = self.x + (x - 1) * self.spriteWidth
-						spr.y = self.y + (y - 1) * self.spriteHeight
-						
-						hit = spr:collide(other) or hit
+					for x = startX, endX do
+						for y = startY, endY do
+							local spr = self.sprites[self.map[x][y]]
+							
+							if spr and spr.solid then
+								-- position our map sprite as if it were onscreen
+								
+								spr.x = self.x + (x - 1) * self.spriteWidth
+								spr.y = self.y + (y - 1) * self.spriteHeight
+								
+								hit = spr:collide(other) or hit
+							end
+						end
 					end
 				end
 			end
