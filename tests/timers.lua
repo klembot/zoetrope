@@ -14,6 +14,7 @@ Timers = App:extend({
 		self.view.timer:start({ delay = 0.5, func = self.toggle, arg = { self.red } })
 		self.view.timer:start({ delay = 1, func = self.toggle, arg = { self.green }, repeats = true })
 		self.view.timer:start({ delay = 1.5, func = self.toggle, arg = { self.blue } })
+		self.view.timer:start({ delay = 0, func = self.view.flash, bind = self.view })
 	end,
 	
 	toggle = function (sprite)
