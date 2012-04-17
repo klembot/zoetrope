@@ -58,7 +58,7 @@ BitmapFont = Class:extend({
 
 	new = function (self, obj)
 		obj = self:extend(obj)
-		assert(type(obj.image) == 'string', 'bitmap font images must be a string pathname')
+		assert(type(obj.image) == 'string', 'bitmap font image property must be a string pathname')
 		obj:loadImage()
 
 		if obj.onNew then obj:onNew() end	
@@ -103,6 +103,7 @@ BitmapFont = Class:extend({
 	--		nothing
 
 	drawText = function (self, text, x, y, tracking)
+		assert(type(text) == 'string', 'asked to draw a ' .. type(text) .. ', not a string')
 		tracking = tracking or self.tracking
 		self.batch:clear()
 
