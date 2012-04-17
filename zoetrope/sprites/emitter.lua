@@ -167,6 +167,25 @@ Emitter = Group:extend({
 		self.emitting = false
 	end,
 
+	-- Method: extinguish
+	-- This immediately calls die() on all particles, then the emitter itself.
+	-- This differs from a regular die() call in that if you call revive() on the
+	-- emitter later, particles will not appear where they last left off.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	extinguish = function (self)
+		for _, spr in pairs(self.sprites) do
+			spr:die()
+		end
+
+		self:die()
+	end,
+
 	update = function (self, elapsed)
 		if not self.active then return end
 
