@@ -95,6 +95,7 @@ Tweener = Sprite:extend({
 		assert(not tween.prop or tween.target[tween.prop],
 			   'no such property ' .. tostring(tween.prop) .. ' on target') 
 		assert(type(tween.duration) == 'number', 'tween duration must be a number')
+		assert(self.easers[tween.ease], 'easer ' .. tween.ease .. ' is not defined')
 			
 		-- check for an existing tween for this target and property
 		
@@ -104,6 +105,11 @@ Tweener = Sprite:extend({
 				if tween.force then
 					table.remove(self.tweens, i)
 				else
+					if STRICT then
+						io.stderr.write('Warning: asked to tween a value that\'s already being tweened, ' ..
+										'giving up (use force = true to override this)')
+					end
+
 					return
 				end
 			end
@@ -117,7 +123,13 @@ Tweener = Sprite:extend({
 		
 		if tween.type == 'number' then
 			tween.change = tween.to - tween.from
-			if math.abs(tween.change) < NEARLY_ZERO then return end
+			if math.abs(tween.change) < NEARLY_ZERO then
+				if STRICT then
+					io.stderr.write('Warning: asked to tween a value to its current state, giving up')
+				end
+
+				return
+			end
 		elseif tween.type == 'table' then
 			tween.change = {}
 			
@@ -131,7 +143,13 @@ Tweener = Sprite:extend({
 				end
 			end
 			
-			if skip then return end
+			if skip then
+				if STRICT then
+					io.stderr.write('Warning: asked to tween a value to its current state, giving up')
+				end
+
+				return
+			end
 		else
 			error('tweened property must either be a number or a table of numbers, is ' .. tween.type)
 		end
@@ -152,11 +170,18 @@ Tweener = Sprite:extend({
 	--		nothing
 
 	stop = function (self, target, prop)
+		local found = false
+
 		for i, tween in ipairs(self.tweens) do
 			if not property or
 			   (tween.target == target and tween.prop == prop) then
+			   	found = true
 				table.remove(self.tweens, i)
 			end
+		end
+
+		if STRICT and not found then
+			io.stderr.write('Warning: asked to stop a tween, but no active tweens match it')
 		end
 	end,
 

@@ -62,6 +62,11 @@ Group = Class:extend({
 	add = function (self, sprite)
 		assert(sprite, 'asked to add nil to a group')
 		assert(sprite ~= self, "can't add a group to itself")
+	
+		if STRICT and self:contains(sprite) then
+			io.stderr:write('Warning: adding a sprite to a group it already belongs to')
+		end
+
 		table.insert(self.sprites, sprite)
 	end,
 
@@ -79,8 +84,11 @@ Group = Class:extend({
 		for i, spr in ipairs(self.sprites) do
 			if spr == sprite then
 				table.remove(self.sprites, i)
+				return
 			end
 		end
+
+		if STRICT then io.stderr:write('asked to remove a sprite from a group it was not a member of') end
 	end,
 
 	-- Method: collide
@@ -99,9 +107,14 @@ Group = Class:extend({
 	--		<Sprite.collide>
 
 	collide = function (self, other)
+		if STRICT then
+			assert(other:instanceOf(Group) or other:instanceOf(Sprite), 'asked to collide non-group/sprite ' ..
+				   type(other))
+		end
+
 		local hit = false
 
-		if not self.solid then return false end
+		if not self.solid or not other then return false end
 
 		for _, spr in pairs(self.sprites) do
 			if spr.solid then
@@ -155,6 +168,30 @@ Group = Class:extend({
 		self.active = true
 		self.visible = true
 		self.solid = true
+	end,
+
+	-- Method: contains
+	-- Returns whether this group contains a sprite.
+	--
+	-- Arguments:
+	--		sprite - sprite to look for
+	--		recurse - check subgroups? defaults to true
+	--
+	-- Returns:
+	--		boolean
+
+	contains = function (self, sprite, recurse)
+		if recurse ~= false then recurse = true end
+
+		for _, spr in pairs(self.sprites) do
+			if spr == sprite then return true end
+
+			if recurse and spr:instanceOf(Group) and spr:contains(sprite) then
+				return true
+			end
+		end
+
+		return false
 	end,
 
 	-- passes startFrame events to member sprites

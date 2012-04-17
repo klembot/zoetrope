@@ -27,6 +27,12 @@ Timer = Sprite:extend({
 	start = function (self, timer)
 		assert(type(timer.func) == 'function', 'func property of timer must be a function')
 		assert(type(timer.delay) == 'number', 'delay property of timer must be a number')
+		assert(not arg or type(arg) == 'table', 'arg property of timer, if specified, must be a table')
+		assert(not bind or type(bind) == 'table', 'bind property of timer, if specified, should be a table')
+
+		if STRICT and timer.delay <= 0 then
+			io.stderr:write('Warning: timer delay is ' .. timer.delay .. ', will be triggered immediately')
+		end
 		
 		self.active = true
 		timer.timeLeft = timer.delay
@@ -41,10 +47,17 @@ Timer = Sprite:extend({
 	--		func - function to stop; if omitted, stops all timers
 
 	stop = function (self, func)
+		local found = false
+
 		for i, timer in ipairs(self.timers) do
 			if not func or timer.func == func then
 				table.remove(self.timers, i)
+				found = true
 			end
+		end
+
+		if STRICT and not found then
+			io.stderr:write('Warning: asked to stop a timer on a function that was not queued')
 		end
 	end,
 

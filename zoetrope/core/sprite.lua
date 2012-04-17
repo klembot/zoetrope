@@ -292,6 +292,31 @@ Sprite = Class:extend({
 		local minVel = self.minVelocity
 		local maxVel = self.maxVelocity
 
+		-- check existence of properties
+
+		if STRICT then
+			assert(vel, 'active sprite has no velocity property')
+			assert(vel.x, 'active sprite has no velocity.x property')
+			assert(vel.y, 'active sprite has no velocity.y property')
+			assert(vel.rotation, 'active sprite has no velocity.rotation property')
+			assert(acc, 'active sprite has no acceleration property')
+			assert(acc.x, 'active sprite has no acceleration.x property')
+			assert(acc.y, 'active sprite has no acceleration.y property')
+			assert(acc.rotation, 'active sprite has no acceleration.rotation property')
+			assert(drag, 'active sprite has no drag property')
+			assert(drag.x, 'active sprite has no drag.x property')
+			assert(drag.y, 'active sprite has no drag.y property')
+			assert(drag.rotation, 'active sprite has no drag.rotation property')
+			assert(minVel, 'active sprite has no minVelocity property')
+			assert(minVel.x, 'active sprite has no minVelocity.x property')
+			assert(minVel.y, 'active sprite has no minVelocity.y property')
+			assert(minVel.rotation, 'active sprite has no minVelocity.rotation property')
+			assert(maxVel, 'active sprite has no maxVelocity property')
+			assert(maxVel.x, 'active sprite has no maxVelocity.x property')
+			assert(maxVel.y, 'active sprite has no maxVelocity.y property')
+			assert(maxVel.rotation, 'active sprite has no maxVelocity.rotation property')
+		end
+
 		-- physics
 			
 		if vel.x ~= 0 then self.x = self.x + vel.x * elapsed end

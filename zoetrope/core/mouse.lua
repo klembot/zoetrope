@@ -38,9 +38,15 @@ Mouse = Sprite:extend({
 	-- 		boolean
 
 	pressed = function (self, ...)
-		if #arg == 0 then arg[1] = 'l' end
+		local buttons = {...}
+
+		if #buttons == 0 then buttons[1] = 'l' end
 	
-		for _, value in pairs(arg) do
+		for _, value in pairs(buttons) do
+			if STRICT then
+				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] then
 				return true
 			end
@@ -60,9 +66,15 @@ Mouse = Sprite:extend({
 	-- 		boolean
 
 	justPressed = function (self, ...)
-		if #arg == 0 then arg[1] = 'l' end
+		local buttons = {...}
+
+		if #buttons == 0 then buttons[1] = 'l' end
 	
-		for _, value in pairs(arg) do
+		for _, value in pairs(buttons) do
+			if STRICT then
+				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] and not self.lastFrame[value] then
 				return true
 			end
@@ -82,9 +94,14 @@ Mouse = Sprite:extend({
 	-- 		boolean
 
 	released = function (self, ...)
-		if #arg == 0 then arg[1] = 'l' end
+		local buttons = {...}
+		if #buttons == 0 then buttons[1] = 'l' end
 	
-		for _, value in pairs(arg) do
+		for _, value in pairs(buttons) do
+			if STRICT then
+				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] then
 				return false
 			end
@@ -104,9 +121,14 @@ Mouse = Sprite:extend({
 	-- 		boolean
 
 	justReleased = function (self, ...)
-		if #arg == 0 then arg[1] = 'l' end	
+		local buttons = {...}
+		if #buttons == 0 then buttons[1] = 'l' end	
 	
-		for _, value in pairs(arg) do
+		for _, value in pairs(buttons) do
+			if STRICT then
+				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
+			end
+
 			if self.lastFrame[value] and not self.thisFrame[value] then
 				return true
 			end

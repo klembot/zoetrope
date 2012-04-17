@@ -119,7 +119,6 @@ App = Class:extend({
 		love.draw = function() self:draw() end
 		love.focus = function (value) self:onFocus(value) end	
 	end,
-
 	
 	-- Method: quit
 	-- Quits the application immediately.
@@ -144,6 +143,11 @@ App = Class:extend({
 	--		nothing
 	
 	useSysCursor = function (self, value)
+		if STRICT then
+			assert(value == true or value == false,
+				   'tried to set system cursor visibility to ' .. type(value))
+		end
+
 		love.mouse.setVisible(value)
 	end,
 
@@ -161,6 +165,10 @@ App = Class:extend({
 	--		nothing
 
 	enterFullscreen = function (self, hint)
+		if STRICT then
+			assert(not self.fullscreen, 'asked to enter fullscreen when already in fullscreen')
+		end
+
 		local modes = love.graphics.getModes()
 
 		if not hint then
@@ -209,6 +217,10 @@ App = Class:extend({
 	--		nothing
 
 	exitFullscreen = function (self)
+		if STRICT then
+			assert(self.fullscreen, 'asked to exit fullscreen when already out of fullscreen')
+		end
+	
 		love.graphics.setMode(self.width, self.height, false)
 		love.graphics.setScissor(0, 0, self.width, self.height)
 		self.fullscreen = false
@@ -245,6 +257,10 @@ App = Class:extend({
 	--		nothing
 
 	saveScreenshot = function (self, filename)
+		if not filename then
+			error('asked to save screenshot to a nil filename')
+		end
+
 		local screenshot = love.graphics.newScreenshot()
 		screenshot:encode(filename)
 	end,

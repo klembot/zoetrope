@@ -49,7 +49,12 @@ Keys = Sprite:extend({
 	-- 		boolean
 
 	pressed = function (self, ...)
-		for _, value in pairs(arg) do
+		local keys = {...}
+		for _, value in pairs(keys) do
+			if STRICT then
+				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] then
 				return true
 			end
@@ -68,7 +73,13 @@ Keys = Sprite:extend({
 	-- 		boolean
 
 	justPressed = function (self, ...)
-		for _, value in pairs(arg) do
+		local keys = {...}
+
+		for _, value in pairs(keys) do
+			if STRICT then
+				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] and not self.lastFrame[value] then
 				return true
 			end
@@ -87,7 +98,13 @@ Keys = Sprite:extend({
 	-- 		boolean
 
 	released = function (self, ...)
-		for _, value in pairs(arg) do
+		local keys = {...}
+
+		for _, value in pairs(keys) do
+			if STRICT then
+				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
+			end
+
 			if self.thisFrame[value] then
 				return false
 			end
@@ -106,7 +123,13 @@ Keys = Sprite:extend({
 	-- 		boolean
 
 	justReleased = function (self, ...)
-		for _, value in pairs(arg) do
+		local keys = {...}
+
+		for _, value in pairs(keys) do
+			if STRICT then
+				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
+			end
+
 			if self.lastFrame[value] and not self.thisFrame[value] then
 				return true
 			end
