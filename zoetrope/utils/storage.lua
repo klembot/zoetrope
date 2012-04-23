@@ -48,12 +48,14 @@ Storage = Class:extend({
 	-- Loads data from disk.
 	--
 	-- Arguments:
-	--		ignoreError - silently ignore any errors loading
+	--		ignoreError - silently ignore any errors loading, default to true
 	--
 	-- Returns:
 	--		whether loading actually worked, boolean
 
 	load = function (self, ignoreError)
+		if ignoreError ~= false then ignoreError = true end
+
 		local ok, data = pcall(love.filesystem.read, self.filename)
 
 		if ok then
