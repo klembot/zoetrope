@@ -59,14 +59,10 @@ Text = Sprite:extend({
 			end
 		end
 
-		local width = self.fontObj:getWidth(self.text)
-		local lineHeight = font:getHeight()
+		local _, lines = self.fontObj:getWrap(self.text, self.width)
+		local lineHeight = self.fontObj:getHeight()
 
-		if not self.width or self.width <= 0 or width < self.width then
-			return width, lineHeight
-		else
-			return self.width, math.floor(width / self.width) 
-		end
+		return self.width, lines * lineHeight
 	end,
 
 	-- Method: centerAround
