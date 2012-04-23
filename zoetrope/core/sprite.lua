@@ -75,11 +75,38 @@ Sprite = Class:extend({
 	-- No matter what else may affect this sprite's velocity, it will
 	-- never go above these numbers.
 	maxVelocity = { x = math.huge, y = math.huge, rotation = math.huge },
+
+	-- Property: acceleration
+	-- Acceleration along the x or y axes, or rotation about its center, in
+	-- pixels per second squared.
 	acceleration = { x = 0, y = 0, rotation = 0 },
+
+	-- Property: drag
+	-- This property is only active when the related acceleration is 0. In those
+	-- instances, it applies acceleration towards 0 for the given property. i.e.
+	-- when the velocity is positive, it applies a negative acceleration.
 	drag = { x = 0, y = 0, rotation = 0 },
+
+	-- Property: scale
+	-- This affects how the sprite is drawn onscreen. e.g. a sprite with scale 2 will
+	-- display twice as big. Scaling is centered around the sprite's center. This has
+	-- no effect on collision detection.
 	scale = 1,
+
+	-- Property: distort
+	-- This allows you to scale a sprite in a distorted fashion by defining ratios
+	-- between x and y scales.
 	distort = { x = 1, y = 1 },
+
+	-- Property: alpha
+	-- This affects the transparency at which the sprite is drawn onscreen. 1 is fully
+	-- opaque; 0 is completely transparent.
 	alpha = 1,
+
+	-- Property: tint
+	-- This tints the sprite a color onscreen. This goes in RGB order; each number affects
+	-- how that particular channel is drawn. e.g. to draw the sprite in red only, set tint to
+	-- { 1, 0, 0 }.
 	tint = { 1, 1, 1 },
 
 	-- Method: die

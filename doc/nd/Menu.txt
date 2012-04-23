@@ -51,7 +51,7 @@ File: Button  (ui\button.lua)
 Group: Core  {
 
    File: App  (core\app.lua)
-   File: BitmapFont  (core\bitmapfont.lua)
+   File: Cached  (core\cached.lua)
    File: Class  (core\class.lua)
    File: Globals  (core\globals.lua)
    File: Group  (core\group.lua)
@@ -69,17 +69,15 @@ File: Cursor  (ui\cursor.lua)
 Group: Sprites  {
 
    File: Animation  (sprites\animation.lua)
-   File: BitmapText  (sprites\bitmaptext.lua)
    File: Emitter  (sprites\emitter.lua)
    File: Fill  (sprites\fill.lua)
    File: Map  (sprites\map.lua)
-   File: OutlineText  (sprites\outlinetext.lua)
+   File: Text  (sprites\text.lua)
    File: Tile  (sprites\tile.lua)
    }  # Group: Sprites
 
 Group: Utils  {
 
-   File: Cached  (utils\cached.lua)
    File: DebugWatch  (utils\debugwatch.lua)
    File: Factory  (utils\factory.lua)
    File: Recorder  (utils\recorder.lua)

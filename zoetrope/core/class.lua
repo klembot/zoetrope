@@ -1,6 +1,18 @@
 -- Class: Class
 -- This is a simple OOP single-inheritance implementation based
 -- on the one suggested by <Programming in Lua at http://www.lua.org/pil/16.html>.
+-- One big difference from what you may be expecting is that there are no
+-- constructors per se; all subclasses share the same constructor method,
+-- which takes a table of properties that are mixed into the instance.
+-- e.g. Code like this:
+--
+-- (begin code)
+-- MyClass = Class:extend({ color = 'red', name = 'robin' })
+-- myObject = MyClass:new({ color = 'blue' })
+-- (end code)
+--
+-- Would set myObject to have a color of 'blue' and a name of 'robin'. There is a
+-- <onNew> event handler you can use to perform initialization based on these values.
 --
 -- Event: onNew
 -- 		Called once, when a new object is created via <new()>.
