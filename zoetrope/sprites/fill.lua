@@ -60,16 +60,14 @@ Fill = Sprite:extend({
 			love.graphics.rectangle('line', x, y, self.width, self.height)
 		end
 		
-		-- pass up the chain, restore state
-		
-		Sprite.draw(self, x, y)
-		
-		-- reset color
+		-- reset color and rotation
 		
 		love.graphics.setColor(255, 255, 255, 255)
 		
 		if scaleX ~= 1 or scaleY ~= 1 or self.rotation ~= 0 then
 			love.graphics.pop()
 		end
+		
+		Sprite.draw(self, x, y)
 	end
 })
