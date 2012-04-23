@@ -18,12 +18,13 @@ DebugWatch = Group:extend({
 	-- Background color of the text.
 	fill = { 0, 0, 0, 200 },
 
+	lineHeight = 16,
+
 	new = function (self, obj)
 		obj = self:extend(obj)
 		
 		obj.visible = false
 		obj.watches = {}
-		obj.lineHeight = OutlineText.defaultFont:getHeight()
 		
 		obj.fill = Fill:new({ width = the.app.width, fill = self.fill })
 		obj.text = OutlineText:new({ width = the.app.width,
