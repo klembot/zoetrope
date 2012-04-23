@@ -4,8 +4,8 @@ MenuButton = Button:extend({
 	onNew = function (self)
 		self.background = Fill:new({ width = 100, height = 24,
 									 fill = { 64, 64, 64 }, border = { 255, 255, 255 } })
-		self.label = OutlineText:new({ x = 4, y = 6, align = 'center',
-									   width = 92, height = 16, text = self.label })
+		self.label = Text:new({ x = 4, y = 6, align = 'center',
+							    width = 92, height = 16, text = self.label })
 	end,
 
 
