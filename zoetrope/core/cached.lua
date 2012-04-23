@@ -18,7 +18,8 @@ Cached = Class:extend({
 	-- Property: defaultGlyphs
 	-- The default character order of a bitmap font, if none is specified
 	-- in a <font> call.
-	defaultGlyphs = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_',
+	defaultGlyphs = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' ..
+					'abcdefghijklmnopqrstuvwxyz{|}~',
 
 	-- private property: library
 	-- a table to store already-instantiated assets

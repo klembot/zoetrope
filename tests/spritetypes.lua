@@ -49,11 +49,13 @@ SpriteTypes = App:extend({
 		self:add(Text:new({ x = 516, y = 250, text = 'This is an outline (TrueType) font, right aligned.',
 							width = 150, tint = { 0, 0, 1 }, align = 'right' }))
 
-		self:add(Text:new({ x = 16, y = 300, text = 'This is an outline (TrueType) font, left aligned.',
-								   width = 150, color = {0, 0, 255}, scale = 2, alpha = 0.5 }))
-		self:add(Text:new({ x = 316, y = 300, text = 'This is an outline (TrueType) font, center aligned.',
-								   width = 150, color = {0, 0, 255}, align = 'center', rotation = math.rad(45) }))
-		self:add(Text:new({ x = 516, y = 300, text = 'This is an outline (TrueType) font, right aligned.',
-							width = 150, color = {0, 0, 255}, align = 'right' }))
+		self:add(Text:new({ x = 316, y = 300, text = 'This is an outline (TrueType) font, left aligned.',
+								   width = 150, tint = {0, 0, 1}, scale = 2, alpha = 0.5, rotation = math.rad(45) }))
+
+		self:add(Text:new({ x = 16, y = 400, text = 'This is a bitmap font.', width = 200, height = 100,
+							font = 'tests/assets/press-start.png' }))
+
+		self:add(Text:new({ x = 316, y = 400, text = 'This is a bitmap font.', width = 200, height = 100,
+							font = 'tests/assets/press-start.png', scale = 2, alpha = 0.5, rotation = math.rad(45) }))
 	end
 })
