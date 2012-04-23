@@ -112,9 +112,7 @@ Animation = Sprite:extend({
 	--		nothing
 
 	updateQuad = function (self)
-		if self.set.image == self.image then return end
 		self.imageObj = Cached:image(self.image)
-
 		self.quad = love.graphics.newQuad(0, 0, self.width, self.height,
 										  self.imageObj:getWidth(), self.imageObj:getHeight())
 		self.imageWidth = self.imageObj:getWidth()
