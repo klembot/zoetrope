@@ -202,9 +202,7 @@ Group = Class:extend({
 		if self.onStartFrame then self:onStartFrame(elapsed) end
 		
 		for _, spr in pairs(self.sprites) do
-			if spr.active and spr.startFrame then
-				spr:startFrame(elapsed)
-			end
+			if spr.active then spr:startFrame(elapsed) end
 		end
 	end,
 
@@ -216,9 +214,7 @@ Group = Class:extend({
 		if self.onUpdate then self:onUpdate(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
-			if spr.active and spr.update then
-				spr:update(elapsed)
-			end
+			if spr.active then spr:update(elapsed) end
 		end
 	end,
 
@@ -230,9 +226,7 @@ Group = Class:extend({
 		if self.onEndFrame then self.onEndFrame(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
-			if spr.active and spr.endFrame then
-				spr:endFrame(elapsed)
-			end
+			if spr.active then spr:endFrame(elapsed) end
 		end
 	end,
 
@@ -252,7 +246,7 @@ Group = Class:extend({
 		local scrollY = y * self.translateScale.y
 		
 		for _, spr in pairs(self.sprites) do	
-			if spr.visible and spr.draw then
+			if spr.visible then
 				if spr.translate then
 					spr:draw(spr.translate.x + scrollX, spr.translate.y + scrollY)
 				elseif spr.x and spr.y then
