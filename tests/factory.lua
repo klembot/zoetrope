@@ -20,7 +20,7 @@ FactoryParticle = Fill:extend({
 
 FactoryApp = App:extend({
 	onNew = function (self)
-		self.label = OutlineText:new({ x = 4, y = 4 })
+		self.label = Text:new({ x = 4, y = 4, width = 200 })
 		self:add(self.label)
 	end,
 

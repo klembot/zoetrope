@@ -3,7 +3,7 @@ require 'zoetrope'
 UI = App:extend({
 	name = 'UI Test',
 	
-	cursorImage = Cached:image('tests/assets/bluegem.png'),
+	cursorImage = 'tests/assets/bluegem.png',
 
 	onRun = function (self)
 		local cursor = Cursor:new()
@@ -12,7 +12,7 @@ UI = App:extend({
 
 		local button = Button:new({ x = 100, y = 100, width = 100, height = 24 })
 		button.background = Fill:new({ width = 100, height = 24, fill = { 0, 0, 255 } })
-		button.label = OutlineText:new({ text = 'Hello' })
+		button.label = Text:new({ text = 'Hello', width = 100 })
 		button.label:centerAround(button.background.width / 2, button.background.height / 2)
 
 		button.onMouseEnter = function (self)
@@ -28,6 +28,7 @@ UI = App:extend({
 			self.y = math.random(0, the.app.height - self.height)
 		end
 
+		DebugWatch:new()
 		the.watch:addWatch('mouse clicked', 'the.mouse.thisFrame.l == true')
 
 		self:add(button)

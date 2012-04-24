@@ -27,8 +27,7 @@ DebugWatch = Group:extend({
 		obj.watches = {}
 		
 		obj.fill = Fill:new({ width = the.app.width, fill = self.fill })
-		obj.text = OutlineText:new({ width = the.app.width,
-								   height = the.app.height })
+		obj.text = Text:new({ width = the.app.width, height = the.app.height })
 		obj:add(obj.fill)
 		obj:add(obj.text)
 		

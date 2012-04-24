@@ -14,7 +14,7 @@ Recording = App:extend({
 		self:add(self.player)
 
 		self:add(cursor)
-		self:add(OutlineText:new({ x = 4, y = 4, text = 'Arrow keys move, clicks create new sprites. R key starts/stops recording. P key plays back recorded input.' }))
+		self:add(Text:new({ x = 4, y = 4, width = the.app.width, text = 'Arrow keys move, clicks create new sprites. R key starts/stops recording. P key plays back recorded input.' }))
 	end,
 
 	onUpdate = function (self, elapsed)
