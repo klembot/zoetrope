@@ -40,21 +40,27 @@ Sound = Sprite:extend({
 	--		nothing
 
 	play = function (self, volume, force)
-		assert(self.source, "can't play a sound without a source set")
-		assert(type(self.source) == 'userdata', 'source sound is a ' .. type(self.source) .. ', not a sound')
+		assert(type(self.source) == 'string', 'source property must be a string, is ' .. type(self.source))
+
+		-- if our source has changed, force all properties to be sync'd
+
+		if self.set.source ~= self.source then
+			self.set = { source = self.source }
+			self.sourceObj = love.audio.newSource(self.source)
+		end
 
 		if volume then
 			assert(type(volume) == 'number', 'sound volume must be a number')
 			self.set.volume = volume
 			self.volume = volume
-			self.source:setVolume(volume)
+			self.sourceObj:setVolume(volume)
 		end
 
 		if force then
-			self.source:stop()
+			self.sourceObj:stop()
 		end
 
-		self.source:play()
+		self.sourceObj:play()
 	end,
 
 	-- Method: pause
@@ -67,7 +73,14 @@ Sound = Sprite:extend({
 	--		nothing
 
 	pause = function (self)
-		self.source:pause()
+		-- if our source has changed, force all properties to be sync'd
+
+		if self.set.source ~= self.source then
+			self.set = { source = self.source }
+			self.sourceObj = love.audio.newSource(self.source)
+		end
+
+		self.sourceObj:pause()
 	end,
 
 	-- Method: resume
@@ -80,7 +93,14 @@ Sound = Sprite:extend({
 	--		nothing
 
 	resume = function (self)
-		self.source:resume()
+		-- if our source has changed, force all properties to be sync'd
+
+		if self.set.source ~= self.source then
+			self.set = { source = self.source }
+			self.sourceObj = love.audio.newSource(self.source)
+		end
+
+		self.sourceObj:resume()
 	end,
 
 	-- Method: isPlaying
@@ -93,7 +113,7 @@ Sound = Sprite:extend({
 	--		nothing
 
 	isPlaying = function (self)
-		return not (self.source:isStopped() or self.source:isPaused())
+		return not (self.sourceObj:isStopped() or self.sourceObj:isPaused())
 	end,
 
 	update = function (self, elapsed)
@@ -101,17 +121,18 @@ Sound = Sprite:extend({
 
 		if self.set.source ~= self.source then
 			self.set = { source = self.source }
+			self.sourceObj = love.audio.newSource(self.source)
 		end
 
 		-- sync all set properties with the source
 
 		if self.set.volume ~= self.volume then
-			self.source:setVolume(self.volume)
+			self.sourceObj:setVolume(self.volume)
 			self.set.volume = self.volume
 		end
 
 		if self.set.loops ~= self.loops then
-			self.source:setLooping(self.loops)
+			self.sourceObj:setLooping(self.loops)
 			self.set.loops = self.loops
 		end
 
