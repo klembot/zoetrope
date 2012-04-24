@@ -26,6 +26,11 @@
 --
 -- Event: onEndFrame
 -- Called once each frame like onUpdate, but guaranteed to fire after all others' onUpdate handlers.
+--
+-- Event: onCollide
+-- Called when the sprite intersects another during a collide() call. When a collision is detected,
+-- this event occurs for both sprites. The sprite is passed two arguments: the horizontal and vertical
+-- overlap between the other sprite, in pixels.
 
 Sprite = Class:extend({
 	-- Property: active
