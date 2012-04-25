@@ -157,6 +157,31 @@ function copyTable (source)
 	return result
 end
 
+-- Function: shuffleTable
+-- Shuffles the contents of a table in place.
+-- via http://www.gammon.com.au/forum/?id=9908
+--
+-- Arguments:
+--		table - table to shuffle
+--
+-- Returns:
+--		table passed
+
+function shuffleTable (table)
+  local n = #table
+ 
+  while n >= 2 do
+    -- n is now the last pertinent index
+    local k = math.random(n) -- 1 <= k <= n
+    -- Quick swap
+    table[n], table[k] = table[k], table[n]
+    n = n - 1
+  end
+ 
+  return table
+end
+
+
 -- Function: dumpTable
 -- Returns a string representation of an entire table's contents.
 --
