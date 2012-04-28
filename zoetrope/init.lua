@@ -9,7 +9,7 @@ require 'zoetrope.core.group'
 require 'zoetrope.core.keys'
 require 'zoetrope.core.mouse'
 require 'zoetrope.core.timer'
-require 'zoetrope.core.tweener'
+require 'zoetrope.core.tween'
 require 'zoetrope.core.view'
 
 require 'zoetrope.sprites.animation'

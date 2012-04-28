@@ -12,8 +12,8 @@ View = Group:extend({
 	-- Property: timer
 	-- A built-in <Timer> object for use as needed.
 
-	-- Property: tweener
-	-- A built-in <Tweener> object for use as needed.
+	-- Property: tween
+	-- A built-in <Tween> object for use as needed.
 
 	-- Property: factory
 	-- A built-in <Factory> object for use as needed.
@@ -45,8 +45,8 @@ View = Group:extend({
 
 		obj.timer = Timer:new()
 		obj:add(obj.timer)
-		obj.tweener = Tweener:new()
-		obj:add(obj.tweener)
+		obj.tween = Tween:new()
+		obj:add(obj.tween)
 		obj.factory = Factory:new()
 
 		obj.fx = Fill:new({ visible = false })
