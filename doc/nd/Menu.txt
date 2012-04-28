@@ -57,10 +57,9 @@ Group: Core  {
    File: Group  (core\group.lua)
    File: Keys  (core\keys.lua)
    File: Mouse  (core\mouse.lua)
-   File: Sound  (core\sound.lua)
    File: Sprite  (core\sprite.lua)
    File: Timer  (core\timer.lua)
-   File: Tweener  (core\tweener.lua)
+   File: Tweener  (core\tween.lua)
    File: View  (core\view.lua)
    }  # Group: Core
 
