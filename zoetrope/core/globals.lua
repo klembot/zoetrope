@@ -69,6 +69,23 @@ function split (source, pattern)
 	return result
 end
 
+-- Function: sound
+-- Loads a sound but does not play it. It's important to use the hint property
+-- appropriately; if set incorrectly, it can cause sound playback to stutter or lag.
+--
+-- Arguments:
+--		path - string pathname to sound
+--		hint - either 'short' or 'long', depending on length of sound; default 'short'
+--
+-- Returns:
+--		LOVE sound source, see https://love2d.org/wiki/Source
+
+function sound (path, hint)
+	local sourceType = 'static'
+	if hint == 'long' then sourceType = 'stream' end
+	return love.audio.newSource(path, sourceType)
+end
+
 -- Function: playSound
 -- Plays a sound once. This is the easiest way to play a sound. It's important
 -- to use the hint property appropriately; if set incorrectly, it can cause sound
@@ -78,13 +95,13 @@ end
 --		path - string pathname to sound
 --		volume - volume to play at, from 0 to 1; default 1
 --		hint - either 'short' or 'long', depending on length of sound; default 'short'
+--
+-- Returns:
+--		LOVE sound source, see https://love2d.org/wiki/Source
 
 function playSound (path, volume, hint)
 	volume = volume or 1
-	local sourceType = 'static'
-	if hint == 'long' then sourceType = 'stream' end
-
-	local source = love.audio.newSource(path, sourceType)
+	local source = sound(path, hint)
 	source:setVolume(volume)
 	source:play()
 	return source
