@@ -1,5 +1,3 @@
--- Class: Emitter
--- An emitter periodically emits sprites with varying properties --
 -- for example, velocity. These are set with the emitter's min and
 -- max properties. For example, you could set the x velocity of
 -- particles to range between -100 and 100 with these statements:
@@ -79,7 +77,7 @@ Emitter = Group:extend({
 	emitTimer = 0,
 
 	-- which particle to emit next
-	emitIndex = 1,
+	_emitIndex = 1,
 
 	-- Method: loadParticles
 	-- Creates a number of particles to use based on a class.
@@ -114,10 +112,10 @@ Emitter = Group:extend({
 		if #self.sprites == 0 then return end
 
 		for i = 1, count do
-			local emitted = self.sprites[self.emitIndex]
-			self.emitIndex = self.emitIndex + 1
+			local emitted = self.sprites[self._emitIndex]
+			self._emitIndex = self._emitIndex + 1
 			
-			if self.emitIndex > #self.sprites then self.emitIndex = 1 end
+			if self._emitIndex > #self.sprites then self._emitIndex = 1 end
 
 			-- revive it and set properties
 

@@ -20,7 +20,7 @@ Tile = Sprite:extend(
 	-- image must be a nonsense value, not nil,
 	-- for the tile to see that an image has been set if it
 	-- was initially nil
-	set = { image = -1 },
+	_set = { image = -1 },
 
 	-- private property imageObj: actual Image instance used to draw
 	-- this is normally set via the image property, but you may set it directly
@@ -42,19 +42,19 @@ Tile = Sprite:extend(
 		-- if the source image has changed,
 		-- we need to recreate our quad
 		
-		if self.image and self.image ~= self.set.image then	
-			self.imageObj = Cached:image(self.image)
+		if self.image and self.image ~= self._set.image then	
+			self._imageObj = Cached:image(self.image)
 
 			self.quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
 											  self.width, self.height,
-											  self.imageObj:getWidth(), self.imageObj:getHeight())
-			self.imageObj:setWrap('repeat', 'repeat')
-			self.set.image = self.image
+											  self._imageObj:getWidth(), self._imageObj:getHeight())
+			self._imageObj:setWrap('repeat', 'repeat')
+			self._set.image = self.image
 		end
 		
 		-- draw the quad
 
-		love.graphics.drawq(self.imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self._imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		

@@ -23,12 +23,11 @@
 --		<Class>
 
 Factory = Class:extend({
-	-- objects ready to be recycled, stored by prototype
-	recycled = {},
+	-- private property: objects ready to be recycled, stored by prototype
+	_recycled = {},
 
-	-- Property: frozen
-	-- Tracks which pools cannot be added to, stored by prototype.
-	frozen = {},
+	-- private property: tracks which pools cannot be added to, stored by prototype.
+	_frozen = {},
 
 	-- Method: create
 	-- Creates a fresh object, either by reusing a previously
@@ -45,13 +44,13 @@ Factory = Class:extend({
 	create = function (self, prototype, props)
 		local newObj
 		
-		if self.recycled[prototype] and #self.recycled[prototype] > 0 then
-			newObj = table.remove(self.recycled[prototype])
+		if self._recycled[prototype] and #self._recycled[prototype] > 0 then
+			newObj = table.remove(self._recycled[prototype])
 			newObj:mixin(props)
 		else
 			-- create a new instance if we're allowed to
 
-			if not self.frozen[prototype] then
+			if not self._frozen[prototype] then
 				newObj = prototype:new(props)
 			else
 				return nil
@@ -74,11 +73,11 @@ Factory = Class:extend({
 	--		nothing
 
 	recycle = function (self, object)
-		if not self.recycled[object.prototype] then
-			self.recycled[object.prototype] = {}
+		if not self._recycled[object.prototype] then
+			self._recycled[object.prototype] = {}
 		end
 
-		table.insert(self.recycled[object.prototype], object)
+		table.insert(self._recycled[object.prototype], object)
 
 		if object.die then object:die() end
 	end,
@@ -94,14 +93,14 @@ Factory = Class:extend({
 	--		nothing
 
 	preload = function (self, prototype, count)
-		if not self.recycled[prototype] then
-			self.recycled[prototype] = {}
+		if not self._recycled[prototype] then
+			self._recycled[prototype] = {}
 		end
 
 		local i
 
 		for i = 1, count do
-			table.insert(self.recycled[prototype], prototype:new())
+			table.insert(self._recycled[prototype], prototype:new())
 		end
 	end,
 
@@ -115,7 +114,7 @@ Factory = Class:extend({
 	--		nothing
 
 	freeze = function (self, prototype)
-		self.frozen[prototype] = true
+		self._frozen[prototype] = true
 	end,
 
 	-- Method: unfreeze
@@ -128,6 +127,6 @@ Factory = Class:extend({
 	--		nothing
 
 	unfreeze = function (self, prototype)
-		self.frozen[prototype] = false
+		self._frozen[prototype] = false
 	end
 })

@@ -29,7 +29,7 @@ Text = Sprite:extend({
 	align = 'left',
 
 	-- private property: used to check whether our font has changed
-	set = { font = {} },
+	_set = { font = {} },
 
 	-- Method: getSize
 	-- Returns the width and height of the text onscreen as line-wrapped
@@ -48,13 +48,13 @@ Text = Sprite:extend({
 
 		if type(self.font) == 'table' then
 			for key, value in pairs(self.font) do
-				if self.set.font[key] ~= self.font[key] then
+				if self._set.font[key] ~= self.font[key] then
 					self:updateFont()
 					break
 				end
 			end
 		else
-			if self.font ~= self.set.font then
+			if self.font ~= self._set.font then
 				self:updateFont()
 			end
 		end
@@ -121,13 +121,13 @@ Text = Sprite:extend({
 
 		if type(self.font) == 'table' then
 			for key, value in pairs(self.font) do
-				if self.set.font[key] ~= self.font[key] then
+				if self._set.font[key] ~= self.font[key] then
 					self:updateFont()
 					break
 				end
 			end
 		else
-			if self.font ~= self.set.font then
+			if self.font ~= self._set.font then
 				self:updateFont()
 			end
 		end

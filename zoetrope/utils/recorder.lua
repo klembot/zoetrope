@@ -9,11 +9,11 @@
 Recorder = Sprite:extend({
 	-- private property: elapsed
 	-- either time elapsed while recording or playing back, in seconds
-	elapsed = 0,
+	_elapsed = 0,
 
 	-- private property: mousePosTimer
 	-- used to make sure mouse motions are recorded even if no other event occurs
-	mousePosTimer = 0,
+	_mousePosTimer = 0,
 
 	-- Constant: IDLE
 	-- The recorder is currently doing nothing.
@@ -66,8 +66,8 @@ Recorder = Sprite:extend({
 		-- set up properties
 		self.record = record or self.record or {}
 		self.state = Recorder.RECORDING
-		self.elapsed = 0
-		self.mousePosTimer = 0
+		self._elapsed = 0
+		self._mousePosTimer = 0
 
 		-- insert ourselves into event handlers
 		self:stealInputs()
@@ -115,7 +115,7 @@ Recorder = Sprite:extend({
 
 		self.state = Recorder.PLAYING 
 
-		self.elapsed = 0
+		self._elapsed = 0
 		self.playbackIndex = 1
 		self:stealInputs()
 	end,
@@ -155,8 +155,8 @@ Recorder = Sprite:extend({
 	end,
 	
 	recordKeyPress = function (self, key, unicode)
-		table.insert(self.record, { self.elapsed, the.mouse.x, the.mouse.y, 'keypress', key, unicode })
-		self.mousePosTimer = 0
+		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keypress', key, unicode })
+		self._mousePosTimer = 0
 
 		if self.origKeyPressed then
 			self.origKeyPressed(key, unicode)
@@ -164,8 +164,8 @@ Recorder = Sprite:extend({
 	end,
 
 	recordKeyRelease = function (self, key, unicode)
-		table.insert(self.record, { self.elapsed, the.mouse.x, the.mouse.y, 'keyrelease', key, unicode })
-		self.mousePosTimer = 0
+		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keyrelease', key, unicode })
+		self._mousePosTimer = 0
 
 		if self.origKeyReleased then
 			self.origKeyReleased(key, unicode)
@@ -173,8 +173,8 @@ Recorder = Sprite:extend({
 	end,
 
 	recordMousePress = function (self, x, y, button)
-		table.insert(self.record, { self.elapsed, x, y, 'mousepress', button })
-		self.mousePosTimer = 0
+		table.insert(self.record, { self._elapsed, x, y, 'mousepress', button })
+		self._mousePosTimer = 0
 
 		if self.origMousePressed then
 			self.origMousePressed(x, y, button)
@@ -182,8 +182,8 @@ Recorder = Sprite:extend({
 	end,
 
 	recordMouseRelease = function (self, x, y, button)
-		table.insert(self.record, { self.elapsed, x, y, 'mouserelease', button })
-		self.mousePosTimer = 0
+		table.insert(self.record, { self._elapsed, x, y, 'mouserelease', button })
+		self._mousePosTimer = 0
 
 		if self.origMouseReleased then
 			self.origMouseReleased(x, y, button)
@@ -194,24 +194,24 @@ Recorder = Sprite:extend({
 		-- increment timers
 
 		if self.state ~= Recorder.IDLE then
-			self.elapsed = self.elapsed + elapsed
+			self._elapsed = self._elapsed + elapsed
 		end
 
 		-- record mouse position if the timer has expired
 
 		if self.state == Recorder.RECORDING then
-			self.mousePosTimer = self.mousePosTimer + elapsed
+			self._mousePosTimer = self._mousePosTimer + elapsed
 
-			if self.mousePosTimer > self.mousePosInterval then
-				table.insert(self.record, { self.elapsed, the.mouse.x, the.mouse.y })
+			if self._mousePosTimer > self.mousePosInterval then
+				table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y })
 
-				self.mousePosTimer = 0
+				self._mousePosTimer = 0
 			end
 		end
 
 		-- handle playback
 
-		if self.state == Recorder.PLAYING and self.elapsed >= self.record[self.playbackIndex][1] then
+		if self.state == Recorder.PLAYING and self._elapsed >= self.record[self.playbackIndex][1] then
 			local event = self.record[self.playbackIndex]
 	
 			love.mouse.setPosition(event[2], event[3])

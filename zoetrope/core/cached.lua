@@ -23,7 +23,7 @@ Cached = Class:extend({
 
 	-- private property: library
 	-- a table to store already-instantiated assets
-	library = { image = {}, text = {}, sound = {}, font = {} },
+	_library = { image = {}, text = {}, sound = {}, font = {} },
 
 	-- Method: image
 	-- Returns a cached image asset.
@@ -35,15 +35,15 @@ Cached = Class:extend({
 	--		Love image object
 
 	image = function (self, key)
-		if not self.library.image[key] then
-			self.library.image[key] = love.graphics.newImage(key)
+		if not self._library.image[key] then
+			self._library.image[key] = love.graphics.newImage(key)
 		end
 
 		if alias then
-			self.library.image[alias] = self.library.image[key]
+			self._library.image[alias] = self._library.image[key]
 		end
 
-		return self.library.image[key]
+		return self._library.image[key]
 	end,
 
 	-- Method: text
@@ -56,11 +56,11 @@ Cached = Class:extend({
 	--		string
 
 	text = function (self, key)
-		if not self.library.text[key] then
-			self.library.text[key] = love.filesystem.read(key)
+		if not self._library.text[key] then
+			self._library.text[key] = love.filesystem.read(key)
 		end
 
-		return self.library.text[key]
+		return self._library.text[key]
 	end,
 
 	-- Method: sound
@@ -77,11 +77,11 @@ Cached = Class:extend({
 	--		<playSound>
 
 	sound = function (self, key)
-		if not self.library.sound[key] then
-			self.library.sound[key] = love.audio.newSource(key, 'static')
+		if not self._library.sound[key] then
+			self._library.sound[key] = love.audio.newSource(key, 'static')
 		end
 
-		return self.library.sound[key]
+		return self._library.sound[key]
 	end,
 
 	-- Method: font
@@ -107,7 +107,7 @@ Cached = Class:extend({
 
 		if #arg > 1 then libKey = libKey .. arg[2] end
 
-		if not self.library.font[libKey] then
+		if not self._library.font[libKey] then
 			local font, image
 
 			if #arg == 1 then
@@ -132,9 +132,9 @@ Cached = Class:extend({
 				error("too many arguments; should be at most two")
 			end
 
-			self.library.font[libKey] = font
+			self._library.font[libKey] = font
 		end
 
-		return self.library.font[libKey]
+		return self._library.font[libKey]
 	end
 })

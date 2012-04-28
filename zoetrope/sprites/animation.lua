@@ -44,7 +44,7 @@ Animation = Sprite:extend({
 
 	-- private property: used to check whether the source image
 	-- for our quad is up-to-date
-	set = {},
+	_set = {},
 
 	-- private property imageObj: actual Image instance used to draw
 	-- this is normally set via the image property, but you may set it directly
@@ -92,7 +92,7 @@ Animation = Sprite:extend({
 		
 		index = index or self.currentFrame or 1
 
-		if self.set.image ~= self.image then
+		if self._set.image ~= self.image then
 			self:updateQuad()
 		end
 
@@ -112,11 +112,11 @@ Animation = Sprite:extend({
 	--		nothing
 
 	updateQuad = function (self)
-		self.imageObj = Cached:image(self.image)
+		self._imageObj = Cached:image(self.image)
 		self.quad = love.graphics.newQuad(0, 0, self.width, self.height,
-										  self.imageObj:getWidth(), self.imageObj:getHeight())
-		self.imageWidth = self.imageObj:getWidth()
-		self.set.image = self.image
+										  self._imageObj:getWidth(), self._imageObj:getHeight())
+		self.imageWidth = self._imageObj:getWidth()
+		self._set.image = self.image
 	end,
 
 	-- private method: updateFrame
@@ -133,7 +133,7 @@ Animation = Sprite:extend({
 		assert(type(self.currentFrame) == 'number', "current frame is not a number")
 		assert(self.image, "asked to set the frame of a nil image")
 
-		if self.set.image ~= self.image then
+		if self._set.image ~= self.image then
 			self:updateQuad()
 		end
 
@@ -179,7 +179,7 @@ Animation = Sprite:extend({
 		
 		-- if our image changed, update the quad
 		
-		if self.set.image ~= self.image then
+		if self._set.image ~= self.image then
 			self:updateQuad()
 		end
 		
@@ -193,7 +193,7 @@ Animation = Sprite:extend({
 
 		-- draw the quad
 			
-		love.graphics.drawq(self.imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self._imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		

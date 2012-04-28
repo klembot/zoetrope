@@ -24,11 +24,11 @@ Keys = Sprite:extend({
 	
 	frameString = '',
 
-	-- what keys are pressed this frame
-	thisFrame = {},
+	-- private property: what keys are pressed this frame
+	_thisFrame = {},
 
-	-- what keys were pressed last frame
-	lastFrame = {},
+	-- private property: what keys were pressed last frame
+	_lastFrame = {},
 	
 	new = function (self, obj)
 		obj = self:extend(obj)
@@ -55,7 +55,7 @@ Keys = Sprite:extend({
 				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] then
+			if self._thisFrame[value] then
 				return true
 			end
 		end
@@ -80,7 +80,7 @@ Keys = Sprite:extend({
 				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] and not self.lastFrame[value] then
+			if self._thisFrame[value] and not self._lastFrame[value] then
 				return true
 			end
 		end
@@ -105,7 +105,7 @@ Keys = Sprite:extend({
 				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] then
+			if self._thisFrame[value] then
 				return false
 			end
 		end
@@ -130,7 +130,7 @@ Keys = Sprite:extend({
 				assert(type(value) == 'string', 'all keys are strings; asked to check a ' .. type(value))
 			end
 
-			if self.lastFrame[value] and not self.thisFrame[value] then
+			if self._lastFrame[value] and not self._thisFrame[value] then
 				return true
 			end
 		end
@@ -141,7 +141,7 @@ Keys = Sprite:extend({
 	-- Connects to the love.keypressed callback
 
 	keyPressed = function (self, key, unicode)
-		self.thisFrame[key] = true
+		self._thisFrame[key] = true
 
 		-- aliases for modifiers
 		if key == 'rshift' or key == 'lshift' or
@@ -149,10 +149,10 @@ Keys = Sprite:extend({
 		   key == 'ralt' or key == 'lalt' or
 		   key == 'rmeta' or key == 'lmeta' or
 		   key == 'rsuper' or key == 'lsuper' then
-			self.thisFrame[string.sub(key, 2)] = true
+			self._thisFrame[string.sub(key, 2)] = true
 		end
 
-		if unicode then self.thisFrame[unicode] = true end
+		if unicode then self._thisFrame[unicode] = true end
 
 		-- add to frameString if it's printable
 		if unicode > 31 and unicode < 127 then
@@ -163,7 +163,7 @@ Keys = Sprite:extend({
 	-- Connects to the love.keyreleased callback
 
 	keyReleased = function (self, key, unicode)
-		self.thisFrame[key] = false
+		self._thisFrame[key] = false
 
 		-- aliases for modifiers
 		if key == 'rshift' or key == 'lshift' or
@@ -171,15 +171,15 @@ Keys = Sprite:extend({
 		   key == 'ralt' or key == 'lalt' or
 		   key == 'rmeta' or key == 'lmeta' or
 		   key == 'rsuper' or key == 'lsuper' then
-			self.thisFrame[string.sub(key, 2)] = true
+			self._thisFrame[string.sub(key, 2)] = true
 		end
 
-		if unicode then self.thisFrame[unicode] = false end
+		if unicode then self._thisFrame[unicode] = false end
 	end,
 
 	endFrame = function (self, elapsed)
-		for key, value in pairs(self.thisFrame) do
-			self.lastFrame[key] = value
+		for key, value in pairs(self._thisFrame) do
+			self._lastFrame[key] = value
 		end
 
 		self.frameString = ''

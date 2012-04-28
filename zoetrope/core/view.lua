@@ -37,7 +37,7 @@ View = Group:extend({
 	-- of these x and y coordinates is visible.
 	maxVisible = { x = math.huge, y = math.huge },
 
-	-- private property: fx
+	-- private property: _fx
 	-- used to perform fades and flashes.
 
 	new = function (self, obj)
@@ -49,7 +49,7 @@ View = Group:extend({
 		obj:add(obj.tween)
 		obj.factory = Factory:new()
 
-		obj.fx = Fill:new({ visible = false })
+		obj._fx = Fill:new({ visible = false })
 
 		-- set the.view briefly, so that during the onNew() handler
 		-- we appear to be the current view
@@ -107,10 +107,10 @@ View = Group:extend({
 	--		nothing
 
 	fade = function (self, color, duration, onComplete)
-		self.fx.visible = true
-		self.fx.fill = color
-		self.fx.alpha = 0
-		self.tweener:start({ target = self.fx, prop = 'alpha', to = 1, duration = duration or 1,
+		self._fx.visible = true
+		self._fx.fill = color
+		self._fx.alpha = 0
+		self.tweener:start({ target = self._fx, prop = 'alpha', to = 1, duration = duration or 1,
 							 ease = 'quadIn', force = true, onComplete = onComplete })
 	end,
 
@@ -128,14 +128,14 @@ View = Group:extend({
 	flash = function (self, color, duration)
 		local s = self
 		local done = function (t)
-			s.fx.visible = false
+			s._fx.visible = false
 			if onComplete then onComplete(t) end
 		end
 
-		self.fx.visible = true
-		self.fx.fill = color
-		self.fx.alpha = 1
-		self.tweener:start({ target = self.fx, prop = 'alpha', to = 0, duration = duration or 1,
+		self._fx.visible = true
+		self._fx.fill = color
+		self._fx.alpha = 1
+		self.tweener:start({ target = self._fx, prop = 'alpha', to = 0, duration = duration or 1,
 							 ease = 'quadOut', force = true, onComplete = done })
 	end,
 
@@ -154,11 +154,11 @@ View = Group:extend({
 		alpha = alpha or 1
 
 		if color and alpha > 0 then
-			self.fx.visible = true
-			self.fx.fill = color
-			self.fx.alpha = alpha or 1
+			self._fx.visible = true
+			self._fx.fill = color
+			self._fx.alpha = alpha or 1
 		else
-			self.fx.visible = false
+			self._fx.visible = false
 		end
 	end,
 
@@ -206,10 +206,10 @@ View = Group:extend({
 
 		-- draw our fx layer on top of everything
 
-		if self.fx.visible then
-			self.fx.width = the.app.width
-			self.fx.height = the.app.height
-			self.fx:draw(x, y)
+		if self._fx.visible then
+			self._fx.width = the.app.width
+			self._fx.height = the.app.height
+			self._fx:draw(x, y)
 		end
 	end
 })

@@ -12,11 +12,11 @@ Mouse = Sprite:extend({
 
 	-- private property: thisFrame
 	-- what mouse buttons are pressed this frame
-	thisFrame = {},
+	_thisFrame = {},
 
 	-- private property: lastFrame
 	-- what mouse buttons were pressed last frame
-	lastFrame = {},
+	_lastFrame = {},
 	
 	new = function (self, obj)
 		obj = self:extend(obj)
@@ -47,7 +47,7 @@ Mouse = Sprite:extend({
 				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] then
+			if self._thisFrame[value] then
 				return true
 			end
 		end
@@ -75,7 +75,7 @@ Mouse = Sprite:extend({
 				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] and not self.lastFrame[value] then
+			if self._thisFrame[value] and not self._lastFrame[value] then
 				return true
 			end
 		end
@@ -102,7 +102,7 @@ Mouse = Sprite:extend({
 				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
 			end
 
-			if self.thisFrame[value] then
+			if self._thisFrame[value] then
 				return false
 			end
 		end
@@ -129,7 +129,7 @@ Mouse = Sprite:extend({
 				assert(type(value) == 'string', 'all mouse buttons are strings; asked to check a ' .. type(value))
 			end
 
-			if self.lastFrame[value] and not self.thisFrame[value] then
+			if self._lastFrame[value] and not self._thisFrame[value] then
 				return true
 			end
 		end
@@ -138,16 +138,16 @@ Mouse = Sprite:extend({
 	end,
 
 	mousePressed = function (self, button)
-		self.thisFrame[button] = true
+		self._thisFrame[button] = true
 	end,
 
 	mouseReleased = function (self, button)
-		self.thisFrame[button] = false
+		self._thisFrame[button] = false
 	end,
 
 	endFrame = function (self, elapsed)
-		for key, value in pairs(self.thisFrame) do
-			self.lastFrame[key] = value
+		for key, value in pairs(self._thisFrame) do
+			self._lastFrame[key] = value
 		end
 	
 		self.x = love.mouse.getX() - the.app.inset.x
