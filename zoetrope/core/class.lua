@@ -31,6 +31,7 @@ Class = {
 
 	extend = function (self, obj)
 		obj = obj or {}
+		assert(type(obj) == 'table', 'asked to extend a non-table value: ' .. obj)
 	
 		-- copy any table properties into the subclass, so that
 		-- it does not accidentally overwrite them
@@ -79,6 +80,7 @@ Class = {
 	--		current object
 	
 	mixin = function (self, obj)
+		assert(type(obj) == 'table', 'asked to mix in a non-table value: ' .. obj)
 		for key, value in pairs(obj) do
 			self[key] = obj[key]
 		end
