@@ -19,6 +19,7 @@ Focus = App:extend({
 		self:add(Fill:new({ x = 0, y = 1248, width = 32, height = 32 }))
 		self:add(Fill:new({ x = 768, y = 1248, width = 32, height = 32 }))
 		
+		the.app.meta:add(DebugWatch:new())
 		the.watch:addWatch('sprite x', 'the.app.player.x')
 		the.watch:addWatch('sprite y', 'the.app.player.y')
 		the.watch:addWatch('view x', 'the.view.translate.x')
