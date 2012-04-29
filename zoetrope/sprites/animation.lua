@@ -113,9 +113,9 @@ Animation = Sprite:extend({
 
 	updateQuad = function (self)
 		self._imageObj = Cached:image(self.image)
-		self.quad = love.graphics.newQuad(0, 0, self.width, self.height,
+		self._quad = love.graphics.newQuad(0, 0, self.width, self.height,
 										  self._imageObj:getWidth(), self._imageObj:getHeight())
-		self.imageWidth = self._imageObj:getWidth()
+		self._imageWidth = self._imageObj:getWidth()
 		self._set.image = self.image
 	end,
 
@@ -138,9 +138,9 @@ Animation = Sprite:extend({
 		end
 
 		local frameX = (self.currentFrame - 1) * self.width
-		local viewportX = frameX % self.imageWidth
-		local viewportY = math.floor(frameX / self.imageWidth)
-		self.quad:setViewport(viewportX, viewportY, self.width, self.height)
+		local viewportX = frameX % self._imageWidth
+		local viewportY = self.height * math.floor(frameX / self._imageWidth)
+		self._quad:setViewport(viewportX, viewportY, self.width, self.height)
 	end,
 
 	update = function (self, elapsed)
@@ -193,7 +193,7 @@ Animation = Sprite:extend({
 
 		-- draw the quad
 			
-		love.graphics.drawq(self._imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self._imageObj, self._quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		
