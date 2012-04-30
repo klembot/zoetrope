@@ -42,8 +42,8 @@ Scrolling = App:extend({
 								  fill = {255, 255, 255} }))
 		end
 		
-		self.view.tweener:start({ target = self.view.translate, prop = 'x',
+		self.view.tween:start({ target = self.view.translate, prop = 'x',
 								  to = self.width * -4, duration = 10,
-								  ease = 'quadInOut', onComplete = Tweener.reverse })
+								  ease = 'quadInOut', onComplete = Tween.reverse })
 	end
 })
