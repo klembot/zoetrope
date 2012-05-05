@@ -29,59 +29,74 @@ Cached = Class:extend({
 	-- Returns a cached image asset.
 	--
 	-- Arguments:
-	--		key - pathname to image file
+	--		path - pathname to image file
 	--
 	-- Returns:
 	--		Love image object
 
-	image = function (self, key)
-		if not self._library.image[key] then
-			self._library.image[key] = love.graphics.newImage(key)
+	image = function (self, path)
+		assert(type(path) == 'string', 'path must be a string')
+
+		if not self._library.image[path] then
+			self._library.image[path] = love.graphics.newImage(path)
 		end
 
-		if alias then
-			self._library.image[alias] = self._library.image[key]
-		end
-
-		return self._library.image[key]
+		return self._library.image[path]
 	end,
 
 	-- Method: text
 	-- Returns a cached text asset.
 	--
 	-- Arguments:
-	--		key - pathname to text file or alias previously set
+	--		path - pathname to text file
 	--
 	-- Returns:
 	--		string
 
-	text = function (self, key)
-		if not self._library.text[key] then
-			self._library.text[key] = love.filesystem.read(key)
+	text = function (self, path)
+		assert(type(path) == 'string', 'path must be a string')
+
+		if not self._library.text[path] then
+			self._library.text[path] = love.filesystem.read(path)
 		end
 
-		return self._library.text[key]
+		return self._library.text[path]
 	end,
 
 	-- Method: sound
-	-- Returns a cached sound asset. Be careful using this method.
-	-- A single sound can only be played one at a time.
+	-- Returns a cached sound asset .
 	--
 	-- Arguments:
-	--		key - pathname to sound file
-	--
+	--		path - pathname to sound file
+	--		length - either 'short' or 'long'. *It's very important to pass
+	--				 the correct option here.* A short sound is loaded entirely
+	--				 into memory, while a long one is streamed from disk. If you
+	--				 mismatch, you'll either hear a delay in the sound (short sounds
+	--				 played from disk) or your app will freeze (long sounds played from
+	--				 memory).
+	-- 
 	-- Returns:
-	--		Love sound object
+	--		Either a Love SoundData object (for short sounds) or a
+	--		Love Decoder object (for long sounds). Either can be used to
+	--		create a Love Source object.
 	--
 	-- See Also:
-	--		<playSound>
+	--		<playSound>, <sound>
 
-	sound = function (self, key)
-		if not self._library.sound[key] then
-			self._library.sound[key] = love.audio.newSource(key, 'static')
+	sound = function (self, path, length)
+		assert(type(path) == 'string', 'path must be a string')
+
+		if not self._library.sound[path] then
+			if length == 'short' then
+				self._library.sound[path] = love.sound.newSoundData(path)
+			elseif length == 'long' then
+				self._library.sound[path] = love.sound.newDecoder(path)
+			else
+				error('length must be either "short" or "long"')
+			end
 		end
 
-		return self._library.sound[key]
+		return self._library.sound[path]
 	end,
 
 	-- Method: font

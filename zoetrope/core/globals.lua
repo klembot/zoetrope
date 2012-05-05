@@ -81,9 +81,7 @@ end
 --		LOVE sound source, see https://love2d.org/wiki/Source
 
 function sound (path, hint)
-	local sourceType = 'static'
-	if hint == 'long' then sourceType = 'stream' end
-	return love.audio.newSource(path, sourceType)
+	return love.audio.newSource(Cached:sound(path, hint or 'short'))
 end
 
 -- Function: playSound
