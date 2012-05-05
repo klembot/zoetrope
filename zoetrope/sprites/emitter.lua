@@ -1,3 +1,5 @@
+-- Class: Emitter
+-- An emitter periodically emits sprites with varying properties --
 -- for example, velocity. These are set with the emitter's min and
 -- max properties. For example, you could set the x velocity of
 -- particles to range between -100 and 100 with these statements:
