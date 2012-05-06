@@ -59,7 +59,7 @@ Group: Core  {
    File: Mouse  (core\mouse.lua)
    File: Sprite  (core\sprite.lua)
    File: Timer  (core\timer.lua)
-   File: Tweener  (core\tween.lua)
+   File: Tween  (core\tween.lua)
    File: View  (core\view.lua)
    }  # Group: Core
 

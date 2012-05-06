@@ -1,6 +1,6 @@
--- Class: Tweener
--- A tweener transitions a property from one state to another
--- in in-game time. A tweener instance is designed to manage
+-- Class: Tween
+-- A tween transitions a property from one state to another
+-- in in-game time. A tween instance is designed to manage
 -- many of these transitions at once, in fact. In order for it
 -- to work properly, it must receive update events, so it must
 -- be added somewhere in the current view or app. If you are using
