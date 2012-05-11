@@ -1,6 +1,6 @@
--- Class: Tween
--- A tween transitions a property from one state to another
--- in in-game time. A tween instance is designed to manage
+-- Class: Tweener
+-- A tweener transitions a property from one state to another
+-- in in-game time. A tweener instance is designed to manage
 -- many of these transitions at once, in fact. In order for it
 -- to work properly, it must receive update events, so it must
 -- be added somewhere in the current view or app. If you are using
@@ -173,8 +173,7 @@ Tween = Sprite:extend({
 		local found = false
 
 		for i, tween in ipairs(self.tweens) do
-			if not property or
-			   (tween.target == target and tween.prop == prop) then
+			if tween.target == target and (not prop or tween.prop == prop) then
 			   	found = true
 				table.remove(self.tweens, i)
 			end
