@@ -110,7 +110,7 @@ View = Group:extend({
 		self._fx.visible = true
 		self._fx.fill = color
 		self._fx.alpha = 0
-		self.tweener:start({ target = self._fx, prop = 'alpha', to = 1, duration = duration or 1,
+		self.tween:start({ target = self._fx, prop = 'alpha', to = 1, duration = duration or 1,
 							 ease = 'quadIn', force = true, onComplete = onComplete })
 	end,
 
@@ -135,7 +135,7 @@ View = Group:extend({
 		self._fx.visible = true
 		self._fx.fill = color
 		self._fx.alpha = 1
-		self.tweener:start({ target = self._fx, prop = 'alpha', to = 0, duration = duration or 1,
+		self.tween:start({ target = self._fx, prop = 'alpha', to = 0, duration = duration or 1,
 							 ease = 'quadOut', force = true, onComplete = done })
 	end,
 
