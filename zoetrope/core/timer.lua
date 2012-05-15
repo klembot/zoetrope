@@ -45,12 +45,16 @@ Timer = Sprite:extend({
 	--
 	-- Arguments:
 	--		func - function to stop; if omitted, stops all timers
+	--		bind - bind to stop; if omitted, stops all function calls of func argument
+	--
+	-- Returns:
+	--		nothing
 
-	stop = function (self, func)
+	stop = function (self, func, bind)
 		local found = false
 
 		for i, timer in ipairs(self.timers) do
-			if not func or timer.func == func then
+			if not func or (timer.func == func and (not bind or timer.bind == bind)) then
 				table.remove(self.timers, i)
 				found = true
 			end
