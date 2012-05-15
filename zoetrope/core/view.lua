@@ -62,8 +62,9 @@ View = Group:extend({
 		-- then reset it so that nothing breaks for the remainder
 		-- of the frame for the old, outgoing view members.
 		-- our parent app will restore us into the.view at the top of the next frame
+		-- exception: there was no old view.
 
-		the.view = oldView
+		if oldView then the.view = oldView end
 		return obj
 	end,
 
