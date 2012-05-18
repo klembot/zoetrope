@@ -46,8 +46,6 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
-File: Button  (ui\button.lua)
-
 Group: Core  {
 
    File: App  (core\app.lua)
@@ -64,8 +62,6 @@ Group: Core  {
    File: View  (core\view.lua)
    }  # Group: Core
 
-File: Cursor  (ui\cursor.lua)
-
 Group: Sprites  {
 
    File: Animation  (sprites\animation.lua)
@@ -75,6 +71,12 @@ Group: Sprites  {
    File: Text  (sprites\text.lua)
    File: Tile  (sprites\tile.lua)
    }  # Group: Sprites
+
+Group: UI  {
+
+   File: Button  (ui\button.lua)
+   File: Cursor  (ui\cursor.lua)
+   }  # Group: UI
 
 Group: Utils  {
 
