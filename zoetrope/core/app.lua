@@ -89,7 +89,9 @@ App = Class:extend({
 		obj.meta:add(obj.keys)
 		obj.mouse = obj.mouse or Mouse:new()
 		obj.meta:add(obj.mouse)
-		
+		self.gamepads = {}
+		the.gamepads = self.gamepads
+
 		-- screen dimensions and state
 
 		obj.width, obj.height, obj.fullscreen = love.graphics.getMode()
@@ -112,12 +114,16 @@ App = Class:extend({
 
 	run = function (self)
 		math.randomseed(os.time())
-		if self.onRun then self:onRun() end
+		self:connectGamepads()
+
+		-- set up callbacks
 		
 		love.graphics.setCaption(self.name)
 		love.update = function (elapsed) self:update(elapsed) end
 		love.draw = function() self:draw() end
 		love.focus = function (value) self:onFocus(value) end	
+
+		if self.onRun then self:onRun() end
 	end,
 	
 	-- Method: quit
@@ -149,6 +155,32 @@ App = Class:extend({
 		end
 
 		love.mouse.setVisible(value)
+	end,
+
+	-- Method: connectGamepads
+	-- Tries to initialize as many gamepads as is set in the the app's numGamepads
+	-- property. This is automatically called for you when you run an app, but if
+	-- you want to check to see if the user has connected more gamepads since you
+	-- last checked, you can call this manually.
+	--
+	-- Returns:
+	--		number of gamepads activated
+
+	connectGamepads = function (self)
+		local gamepad
+
+		if self.numGamepads and self.numGamepads > 0 then
+			gamepadCount = math.min(self.numGamepads, love.joystick.getNumJoysticks())
+
+			for i = 1, gamepadCount do
+				if not self.gamepads[i] then
+					self.gamepads[i] = Gamepad:new({ number = i })
+					self.meta:add(self.gamepads[i])
+				end
+			end
+		end
+
+		return gamepadCount
 	end,
 
 	-- Method: enterFullscreen
