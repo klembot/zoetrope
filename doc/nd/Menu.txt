@@ -53,13 +53,14 @@ Group: Core  {
    File: App  (core\app.lua)
    File: Cached  (core\cached.lua)
    File: Class  (core\class.lua)
+   File: Gamepad  (core\gamepad.lua)
    File: Globals  (core\globals.lua)
    File: Group  (core\group.lua)
    File: Keys  (core\keys.lua)
    File: Mouse  (core\mouse.lua)
    File: Sprite  (core\sprite.lua)
    File: Timer  (core\timer.lua)
-   File: Tween  (core\tween.lua)
+   File: Tweener  (core\tween.lua)
    File: View  (core\view.lua)
    }  # Group: Core
 
