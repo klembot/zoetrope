@@ -36,7 +36,8 @@ Menu = App:extend({
 		'Sprite Types', SpriteTypes,
 		'Timers', Timers,
 		'Tweens', Tweens,
-		'UI', UI
+		'UI', UI,
+		'ViewFx', ViewFx
 	},
 
 	onNew = function (self)
