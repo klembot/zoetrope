@@ -37,6 +37,9 @@ View = Group:extend({
 	-- of these x and y coordinates is visible.
 	maxVisible = { x = math.huge, y = math.huge },
 
+	-- private property: _tint
+	-- used to implement tints.
+
 	-- private property: _fx
 	-- used to perform fades and flashes.
 
@@ -48,8 +51,6 @@ View = Group:extend({
 		obj.tween = Tween:new()
 		obj:add(obj.tween)
 		obj.factory = Factory:new()
-
-		obj._fx = Fill:new({ visible = false })
 
 		-- set the.view briefly, so that during the onNew() handler
 		-- we appear to be the current view
@@ -108,11 +109,11 @@ View = Group:extend({
 	--		nothing
 
 	fade = function (self, color, duration, onComplete)
-		self._fx.visible = true
-		self._fx.fill = color
-		self._fx.alpha = 0
-		self.tween:start({ target = self._fx, prop = 'alpha', to = 1, duration = duration or 1,
-							 ease = 'quadIn', force = true, onComplete = onComplete })
+		local alpha = color[4] or 255
+		self._fx = color
+		self._fx[4] = 0
+		self.tween:start({ target = self._fx, prop = 4, to = alpha, duration = duration or 1,
+						   ease = 'quadOut', force = true, onComplete = onComplete })
 	end,
 
 	-- Method: flash
@@ -129,15 +130,14 @@ View = Group:extend({
 	flash = function (self, color, duration)
 		local s = self
 		local done = function (t)
-			s._fx.visible = false
+			t.target = nil
 			if onComplete then onComplete(t) end
 		end
 
-		self._fx.visible = true
-		self._fx.fill = color
-		self._fx.alpha = 1
-		self.tween:start({ target = self._fx, prop = 'alpha', to = 0, duration = duration or 1,
-							 ease = 'quadOut', force = true, onComplete = done })
+		color[4] = color[4] or 255
+		self._fx = color
+		self.tween:start({ target = self._fx, prop = 4, to = 0, duration = duration or 1,
+						   ease = 'quadOut', force = true, onComplete = done })
 	end,
 
 	-- Method: tint
@@ -145,26 +145,22 @@ View = Group:extend({
 	-- call this method again with no arguments.
 	--
 	-- Arguments:
-	--		color - color table to tint with, e.g. { 0, 0, 0 }
-	--		alpha - how intense the color should be, defaults to 1
+	--		red - red component, 0-255
+	--		green - green component, 0-255
+	--		blue - blue component, 0-255
+	--		alpha - alpha, 0-255, default 255
 	--
 	-- Returns:
 	--		nothing
 
-	tint = function (self, color, alpha)
-		alpha = alpha or 1
+	tint = function (self, red, green, blue, alpha)
+		alpha = alpha or 255
 
-		if color and alpha > 0 then
-			self._fx.visible = true
-			self._fx.fill = color
-			self._fx.alpha = alpha or 1
+		if red and green and blue and alpha > 0 then
+			self._tint = { red, green, blue, alpha }
 		else
-			self._fx.visible = false
+			self._tint = nil
 		end
-	end,
-
-	shake = function (self, intensity, duration)
-
 	end,
 
 	update = function (self, elapsed)
@@ -205,12 +201,18 @@ View = Group:extend({
 	draw = function (self, x, y)
 		Group.draw(self, x, y)
 
-		-- draw our fx layer on top of everything
+		-- draw our fx and tint on top of everything
 
-		if self._fx.visible then
-			self._fx.width = the.app.width
-			self._fx.height = the.app.height
-			self._fx:draw(x, y)
+		if self._tint then
+			love.graphics.setColor(self._tint)
+			love.graphics.rectangle('fill', 0, 0, the.app.width, the.app.height)
+			love.graphics.setColor(255, 255, 255, 255)
+		end
+
+		if self._fx then
+			love.graphics.setColor(self._fx)
+			love.graphics.rectangle('fill', 0, 0, the.app.width, the.app.height)
+			love.graphics.setColor(255, 255, 255, 255)
 		end
 	end
 })
