@@ -8,6 +8,12 @@
 -- named 'left', 'right', 'up', 'down'. This consults the first two analog axes
 -- and the first hat of the gamepad (if they exist) to set these.
 --
+-- A gamepad is only recognized if it is plugged in when LOVE starts up. There's no way
+-- to tell if the user has unplugged it after that; it just acts inert. A gamepad object
+-- with no connected hardware at startup will exist and respond to calls like <pressed()>,
+-- but it will always return false. You can tell it's unplugged because its active property
+-- will be false, and its name will always be 'NO DEVICE CONNECTED'.
+--
 -- Extends:
 --		<Sprite>
 
@@ -65,40 +71,26 @@ Gamepad = Sprite:extend({
 		obj.axes = {}
 		obj.balls = {}
 		obj.hats = {}
-		obj:sync()
+
+		if obj.number <= love.joystick.getNumJoysticks() then
+			if not love.joystick.isOpen(obj.number) then love.joystick.open(obj.number) end
+			obj.name = love.joystick.getName(obj.number)
+			obj.numAxes = love.joystick.getNumAxes(obj.number)
+			obj.numBalls = love.joystick.getNumBalls(obj.number)
+			obj.numButtons = love.joystick.getNumButtons(obj.number)
+			obj.numHats = love.joystick.getNumHats(obj.number)
+		else
+			obj.name = 'NO DEVICE CONNECTED'
+			obj.numAxes = 0
+			obj.numBalls = 0
+			obj.numButtons = 0
+			obj.numHats = 0
+		end
 
 		love.joystickpressed = Gamepad._dispatchPress
 		love.joystickreleased = Gamepad._dispatchRelease
 		if obj.onNew then obj:onNew() end
 		return obj
-	end,
-
-	-- Method: sync
-	-- Syncs the name and characteristics of the gamepad object with the
-	-- the hardware connected. If no hardware is connected, this sets
-	-- sensible values instead.
-	--
-	-- Arguments:
-	--		none
-	--
-	-- Returns:
-	--		nothing
-
-	sync = function (self)
-		if self.number <= love.joystick.getNumJoysticks() then
-			if not love.joystick.isOpen(self.number) then love.joystick.open(self.number) end
-			self.name = love.joystick.getName(self.number)
-			self.numAxes = love.joystick.getNumAxes(self.number)
-			self.numBalls = love.joystick.getNumBalls(self.number)
-			self.numButtons = love.joystick.getNumButtons(self.number)
-			self.numHats = love.joystick.getNumHats(self.number)
-		else
-			self.name = 'NO DEVICE CONNECTED'
-			self.numAxes = 0
-			self.numBalls = 0
-			self.numButtons = 0
-			self.numHats = 0
-		end
 	end,
 
 	-- Method: pressed

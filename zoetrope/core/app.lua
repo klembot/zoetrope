@@ -89,8 +89,15 @@ App = Class:extend({
 		obj.meta:add(obj.keys)
 		obj.mouse = obj.mouse or Mouse:new()
 		obj.meta:add(obj.mouse)
-		self.gamepads = {}
-		the.gamepads = self.gamepads
+		obj.gamepads = {}
+		the.gamepads = obj.gamepads
+
+		if obj.numGamepads and obj.numGamepads > 0 then
+			for i = 1, obj.numGamepads do
+				obj.gamepads[i] = Gamepad:new({ number = i })
+				obj.meta:add(obj.gamepads[i])
+			end
+		end
 
 		-- screen dimensions and state
 
@@ -169,24 +176,6 @@ App = Class:extend({
 	--		number of gamepads currently connected
 
 	syncGamepads = function (self)
-		local gamepad
-		local gamepadCount = 0
-
-		if self.numGamepads and self.numGamepads > 0 then
-			gamepadCount = math.min(self.numGamepads, love.joystick.getNumJoysticks())
-
-			for i = 1, self.numGamepads do
-				if not self.gamepads[i] then
-					self.gamepads[i] = Gamepad:new({ number = i })
-					self.meta:add(self.gamepads[i])
-				else
-					self.gamepads[i].active = (i <= gamepadCount)
-				end
-
-				self.gamepads[i]:sync()
-			end
-		end
-
 		return gamepadCount
 	end,
 
