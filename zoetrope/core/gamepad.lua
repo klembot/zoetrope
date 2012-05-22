@@ -62,20 +62,43 @@ Gamepad = Sprite:extend({
 		obj = self:extend(obj)
 		assert(type(obj.number) == 'number', 'must set a gamepad number')
 
-		if not love.joystick.isOpen(obj.number) then love.joystick.open(obj.number) end
-		obj.name = love.joystick.getName(obj.number)
-		obj.numAxes = love.joystick.getNumAxes(obj.number)
-		obj.numBalls = love.joystick.getNumBalls(obj.number)
-		obj.numButtons = love.joystick.getNumButtons(obj.number)
-		obj.numHats = love.joystick.getNumHats(obj.number)
 		obj.axes = {}
 		obj.balls = {}
 		obj.hats = {}
+		obj:sync()
 
 		love.joystickpressed = Gamepad._dispatchPress
 		love.joystickreleased = Gamepad._dispatchRelease
 		if obj.onNew then obj:onNew() end
 		return obj
+	end,
+
+	-- Method: sync
+	-- Syncs the name and characteristics of the gamepad object with the
+	-- the hardware connected. If no hardware is connected, this sets
+	-- sensible values instead.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	sync = function (self)
+		if self.number <= love.joystick.getNumJoysticks() then
+			if not love.joystick.isOpen(self.number) then love.joystick.open(self.number) end
+			self.name = love.joystick.getName(self.number)
+			self.numAxes = love.joystick.getNumAxes(self.number)
+			self.numBalls = love.joystick.getNumBalls(self.number)
+			self.numButtons = love.joystick.getNumButtons(self.number)
+			self.numHats = love.joystick.getNumHats(self.number)
+		else
+			self.name = 'NO DEVICE CONNECTED'
+			self.numAxes = 0
+			self.numBalls = 0
+			self.numButtons = 0
+			self.numHats = 0
+		end
 	end,
 
 	-- Method: pressed

@@ -114,7 +114,7 @@ App = Class:extend({
 
 	run = function (self)
 		math.randomseed(os.time())
-		self:connectGamepads()
+		self:syncGamepads()
 
 		-- set up callbacks
 		
@@ -157,26 +157,33 @@ App = Class:extend({
 		love.mouse.setVisible(value)
 	end,
 
-	-- Method: connectGamepads
+	-- Method: syncGamepads
 	-- Tries to initialize as many gamepads as is set in the the app's numGamepads
 	-- property. This is automatically called for you when you run an app, but if
 	-- you want to check to see if the user has connected more gamepads since you
 	-- last checked, you can call this manually.
 	--
+	-- If a gamepad is currently disconnected, its active state is set to false.
+	--
 	-- Returns:
-	--		number of gamepads activated
+	--		number of gamepads currently connected
 
-	connectGamepads = function (self)
+	syncGamepads = function (self)
 		local gamepad
+		local gamepadCount = 0
 
 		if self.numGamepads and self.numGamepads > 0 then
 			gamepadCount = math.min(self.numGamepads, love.joystick.getNumJoysticks())
 
-			for i = 1, gamepadCount do
+			for i = 1, self.numGamepads do
 				if not self.gamepads[i] then
 					self.gamepads[i] = Gamepad:new({ number = i })
 					self.meta:add(self.gamepads[i])
+				else
+					self.gamepads[i].active = (i <= gamepadCount)
 				end
+
+				self.gamepads[i]:sync()
 			end
 		end
 
