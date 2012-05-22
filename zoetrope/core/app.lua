@@ -375,6 +375,12 @@ App = Class:extend({
 	onFocus = function (self, value)
 		if self.deactivateOnBlur then
 			self.active = value
+
+			if value then
+				love.audio.resume()
+			else
+				love.audio.pause()
+			end
 		end
 	end	
 })
