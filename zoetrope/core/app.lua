@@ -174,21 +174,6 @@ App = Class:extend({
 		love.mouse.setVisible(value)
 	end,
 
-	-- Method: syncGamepads
-	-- Tries to initialize as many gamepads as is set in the the app's numGamepads
-	-- property. This is automatically called for you when you run an app, but if
-	-- you want to check to see if the user has connected more gamepads since you
-	-- last checked, you can call this manually.
-	--
-	-- If a gamepad is currently disconnected, its active state is set to false.
-	--
-	-- Returns:
-	--		number of gamepads currently connected
-
-	syncGamepads = function (self)
-		return gamepadCount
-	end,
-
 	-- Method: enterFullscreen
 	-- Enters fullscreen mode. If the app is already in fullscreen, this has no effect.
 	-- This tries to use the highest resolution that will not result in distortion, and
