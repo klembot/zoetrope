@@ -53,6 +53,15 @@ Animation = Sprite:extend({
 	-- this is normally set via the image property, but you may set it directly
 	-- so long as you never change that image property afterwards.
 
+	new = function (self, obj)
+		obj = obj or {}
+		self:extend(obj)
+		obj:updateQuad()
+
+		if obj.onNew then obj:onNew() end
+		return obj
+	end,
+
 	-- Method: play 
 	-- Begins playing an animation in the sprite's library.
 	-- If the animation is already playing, this has no effect.
@@ -115,14 +124,16 @@ Animation = Sprite:extend({
 	--		nothing
 
 	updateQuad = function (self)
-		self._imageObj = Cached:image(self.image)
-		self._quad = love.graphics.newQuad(0, 0, self.width, self.height,
-										  self._imageObj:getWidth(), self._imageObj:getHeight())
-		self._imageWidth = self._imageObj:getWidth()
-		self._set.image = self.image
+		if self.image then 
+			self._imageObj = Cached:image(self.image)
+			if not self.width then self.width = self._imageObj:getHeight() end
+			if not self.height then self.height = self.width end
 
-		if not self.width then self.width = self._imageObj:getHeight() end
-		if not self.height then self.height = self.width end
+			self._quad = love.graphics.newQuad(0, 0, self.width, self.height,
+											  self._imageObj:getWidth(), self._imageObj:getHeight())
+			self._imageWidth = self._imageObj:getWidth()
+			self._set.image = self.image
+		end
 	end,
 
 	-- private method: updateFrame
