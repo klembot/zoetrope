@@ -131,7 +131,6 @@ App = Class:extend({
 
 	run = function (self)
 		math.randomseed(os.time())
-		self:syncGamepads()
 
 		-- set up callbacks
 		

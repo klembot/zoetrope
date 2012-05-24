@@ -1,7 +1,9 @@
 -- Class: Text
 -- Shows text onscreen using an outline (e.g. TrueType) or bitmap font. 
--- You can control the width of the text but the height is ignored; it
--- will always draw the entirety of its text property.
+-- You can control the width of the text but the height is ignored for
+-- display purposes; it will always draw the entirety of its text property.
+-- If you do not specify a height and width, the sprite will size itself
+-- so that it fits its entire text as a single line.
 --
 -- By default, an outline font will display as white. To change its color,
 -- change its <Sprite.tint> property.
@@ -31,6 +33,14 @@ Text = Sprite:extend({
 	-- private property: used to check whether our font has changed
 	_set = { font = {} },
 
+	new = function (self, obj)
+		obj = obj or {}
+		self:extend(obj)
+		obj:updateFont()
+		if obj.onNew then obj:onNew() end
+		return obj
+	end,
+
 	-- Method: getSize
 	-- Returns the width and height of the text onscreen as line-wrapped
 	-- to the sprite's boundaries. This disregards the sprite's height property.
@@ -59,8 +69,8 @@ Text = Sprite:extend({
 			end
 		end
 
-		local _, lines = self.fontObj:getWrap(self.text, self.width)
-		local lineHeight = self.fontObj:getHeight()
+		local _, lines = self._fontObj:getWrap(self.text, self.width)
+		local lineHeight = self._fontObj:getHeight()
 
 		return self.width, lines * lineHeight
 	end,
@@ -90,7 +100,7 @@ Text = Sprite:extend({
 	end,
 
 	-- private method: updateFont
-	-- Updates the fontObj property based on self.font.
+	-- Updates the _fontObj property based on self.font.
 	--
 	-- Arguments:
 	--		none
@@ -99,10 +109,15 @@ Text = Sprite:extend({
 	--		nothing
 
 	updateFont = function (self)
-		if type(self.font) == 'table' then
-			self.fontObj = Cached:font(unpack(self.font))
-		else
-			self.fontObj = Cached:font(self.font)
+		if self.font then
+			if type(self.font) == 'table' then
+				self._fontObj = Cached:font(unpack(self.font))
+			else
+				self._fontObj = Cached:font(self.font)
+			end
+
+			if not self.height then self.height = self._fontObj:getHeight() end
+			if not self.width and self.text then self.width = self._fontObj:getWidth(self.text) end
 		end
 	end,
 
@@ -152,7 +167,7 @@ Text = Sprite:extend({
 			love.graphics.setColor(self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255, self.alpha * 255)
 		end
 		
-		love.graphics.setFont(self.fontObj)
+		love.graphics.setFont(self._fontObj)
 		love.graphics.printf(self.text, x, y, self.width, self.align)
 
 		-- reset color and rotation

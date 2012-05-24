@@ -55,11 +55,9 @@ Sprite = Class:extend({
 
 	-- Property: width
 	-- Width in pixels.
-	width = 0,
 
 	-- Property: height
 	-- Height in pixels.
-	height = 0,
 
 	-- Property: rotation
 	-- Rotation of drawn sprite in radians. This does not affect the bounds

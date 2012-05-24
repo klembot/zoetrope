@@ -1,5 +1,7 @@
 -- Class: Animation
--- An animation displays a sequence of frames.
+-- An animation displays a sequence of frames. If you do not specify
+-- a width and height for the sprite, it will size itself so that
+-- it is a square, where each side is as tall as the source image's height.
 --
 --
 -- Event: onEndSequence
@@ -24,7 +26,8 @@ Animation = Sprite:extend({
 	sequences = {},
 
 	-- Property: image
-	-- A string filename to the image to use as a sprite strip.
+	-- A string filename to the image to use as a sprite strip. A sprite
+	-- strip can have multiple rows of frames.
 
 	-- Property: currentSequence
 	-- A reference to the current animation sequence table.
@@ -117,6 +120,9 @@ Animation = Sprite:extend({
 										  self._imageObj:getWidth(), self._imageObj:getHeight())
 		self._imageWidth = self._imageObj:getWidth()
 		self._set.image = self.image
+
+		if not self.width then self.width = self._imageObj:getHeight() end
+		if not self.height then self.height = self.width end
 	end,
 
 	-- private method: updateFrame

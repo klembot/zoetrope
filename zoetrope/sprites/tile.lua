@@ -1,5 +1,7 @@
 -- Class: Tile
--- A tile repeats a single image across its dimensions.
+-- A tile repeats a single image across its dimensions. If you do
+-- not specify a width and height, the sprite will size itself so
+-- that it's exactly as big as its source image.
 --
 -- Extends:
 --		<Sprite>
@@ -26,6 +28,29 @@ Tile = Sprite:extend(
 	-- this is normally set via the image property, but you may set it directly
 	-- so long as you never change that image property afterwards.
 
+	new = function (self, obj)
+		obj = obj or {}
+		self:extend(obj)
+		
+		if obj.image then obj:updateQuad() end
+		if obj.onNew then obj:onNew() end
+		return obj
+	end,
+
+	updateQuad = function (self)
+		if self.image then
+			self._imageObj = Cached:image(self.image)
+			if not self.width then self.width = self._imageObj:getWidth() end
+			if not self.height then self.height = self._imageObj:getHeight() end
+
+			self.quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
+											  self.width, self.height,
+											  self._imageObj:getWidth(), self._imageObj:getHeight())
+			self._imageObj:setWrap('repeat', 'repeat')
+			self._set.image = self.image
+		end
+	end,
+
 	draw = function (self, x, y)
 		if not (self.visible and self.image) then return end
 		x = math.floor(x or self.x)
@@ -42,15 +67,7 @@ Tile = Sprite:extend(
 		-- if the source image has changed,
 		-- we need to recreate our quad
 		
-		if self.image and self.image ~= self._set.image then	
-			self._imageObj = Cached:image(self.image)
-
-			self.quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
-											  self.width, self.height,
-											  self._imageObj:getWidth(), self._imageObj:getHeight())
-			self._imageObj:setWrap('repeat', 'repeat')
-			self._set.image = self.image
-		end
+		if self.image and self.image ~= self._set.image then self:updateQuad() end
 		
 		-- draw the quad
 

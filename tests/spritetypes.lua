@@ -24,8 +24,8 @@ SpriteTypes = App:extend({
 		self:add(Tile:new({ x = 16, y = 144, width = 32, height = 32, image = self.blueGem }))
 		
 		self:add(Tile:new({
-			x = 72, y = 144, width = 32, height = 32, image = self.blueGem,
-			tint = { 0.5, 1, 0.5 }, alpha = 0.5, rotation = math.rad(45),
+			x = 72, y = 144, image = self.blueGem,
+			tint = { 0.5, 1, 0.5 }, alpha = 0.5, rotation = math.rad(45), scale = 3
 		}))
 		
 		local anim = Animation:new({ x = 150, y = 25, width = 16, height = 24, image = self.chestAnim })
@@ -52,10 +52,9 @@ SpriteTypes = App:extend({
 		self:add(Text:new({ x = 316, y = 300, text = 'This is an outline (TrueType) font, left aligned.',
 								   width = 150, tint = {0, 0, 1}, scale = 2, alpha = 0.5, rotation = math.rad(45) }))
 
-		self:add(Text:new({ x = 16, y = 400, text = 'This is a bitmap font.', width = 200, height = 100,
-							font = 'tests/assets/press-start.png' }))
+		self:add(Text:new({ x = 16, y = 400, text = 'This is a bitmap font.', font = 'tests/assets/press-start.png' }))
 
-		self:add(Text:new({ x = 316, y = 400, text = 'This is a bitmap font.', width = 200, height = 100,
+		self:add(Text:new({ x = 316, y = 400, text = 'This is a bitmap font.',
 							font = 'tests/assets/press-start.png', scale = 2, alpha = 0.5, rotation = math.rad(45) }))
 	end
 })
