@@ -22,6 +22,10 @@ App = Class:extend({
 	-- This is shown in the window title bar.
 	name = 'Zoetrope',
 	
+	-- Property: icon
+	-- A path to an image to use as the window icon (a 32x32 PNG is recommended).
+	-- This doesn't affect the actual executable's icon in the taskbar or dock. 
+
 	-- Property: fps
 	-- Maximum frames per second requested. In practice, your
 	-- FPS may vary from frame to frame. Every event handler (e.g. onUpdate)
@@ -77,6 +81,12 @@ App = Class:extend({
 
 	new = function (self, obj)
 		obj = self:extend(obj)
+
+		-- set icon if possible
+		
+		if self.icon then
+			love.graphics.setIcon(Cached:image(self.icon))
+		end
 	
 		-- view containers
 
