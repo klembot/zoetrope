@@ -10,8 +10,9 @@
 Mouse = Sprite:extend({
 	visible = false,
 
-	-- private property: thisFrame
-	-- what mouse buttons are pressed this frame
+	-- private property: _thisFrame
+	-- what buttons are pressed this frame
+	-- if you are interested in this, use allPressed() instead
 	_thisFrame = {},
 
 	-- private property: lastFrame
@@ -135,6 +136,25 @@ Mouse = Sprite:extend({
 		end
 		
 		return false
+	end,
+
+	-- Method: allPressed
+	-- Returns all buttons currently pressed this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string button descriptions; if nothing is pressed, nil
+
+	allPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if value then table.insert(result, key) end
+		end
+		
+		return unpack(result)
 	end,
 
 	mousePressed = function (self, button)

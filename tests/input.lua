@@ -34,8 +34,10 @@ Input = App:extend({
 		self.leftMouse.visible = self.mouse:pressed('l')
 		self.rightMouse.visible = self.mouse:pressed('r')
 
-		if the.keys.frameString ~= '' then
-			print('Keyboard entry |' .. the.keys.frameString .. '|')
+		local keys = { the.keys:allPressed() }
+
+		if #keys > 0 then
+			print(#keys .. ' keys pressed simultaneously')
 		end
 	end
 })

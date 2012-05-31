@@ -19,15 +19,15 @@
 Keys = Sprite:extend({
 	visible = false,
 
-	-- Property: frameString
-	-- A string of what keys have been pressed this frame, in order.
-	
-	frameString = '',
+	-- private property: _thisFrame
+	-- what keys are pressed this frame
+	-- if you are interested in this, use allPressed() instead
 
-	-- private property: what keys are pressed this frame
 	_thisFrame = {},
 
-	-- private property: what keys were pressed last frame
+	-- private property: _lastFrame
+	-- what keys were pressed last frame
+	
 	_lastFrame = {},
 	
 	new = function (self, obj)
@@ -138,25 +138,38 @@ Keys = Sprite:extend({
 		return false
 	end,
 
+	-- Method: allPressed
+	-- Returns all buttons currently pressed this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string button descriptions; if nothing is pressed, nil
+
+	allPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if value then table.insert(result, key) end
+		end
+		
+		return unpack(result)
+	end,
+
 	-- Connects to the love.keypressed callback
 
 	keyPressed = function (self, key, unicode)
 		self._thisFrame[key] = true
 
 		-- aliases for modifiers
+
 		if key == 'rshift' or key == 'lshift' or
 		   key == 'rctrl' or key == 'lctrl' or
 		   key == 'ralt' or key == 'lalt' or
 		   key == 'rmeta' or key == 'lmeta' or
 		   key == 'rsuper' or key == 'lsuper' then
 			self._thisFrame[string.sub(key, 2)] = true
-		end
-
-		if unicode then self._thisFrame[unicode] = true end
-
-		-- add to frameString if it's printable
-		if unicode > 31 and unicode < 127 then
-			self.frameString = self.frameString .. key
 		end
 	end,
 
@@ -166,6 +179,7 @@ Keys = Sprite:extend({
 		self._thisFrame[key] = false
 
 		-- aliases for modifiers
+
 		if key == 'rshift' or key == 'lshift' or
 		   key == 'rctrl' or key == 'lctrl' or
 		   key == 'ralt' or key == 'lalt' or
@@ -173,8 +187,6 @@ Keys = Sprite:extend({
 		   key == 'rsuper' or key == 'lsuper' then
 			self._thisFrame[string.sub(key, 2)] = true
 		end
-
-		if unicode then self._thisFrame[unicode] = false end
 	end,
 
 	endFrame = function (self, elapsed)
@@ -182,8 +194,6 @@ Keys = Sprite:extend({
 			self._lastFrame[key] = value
 		end
 
-		self.frameString = ''
-		
 		Sprite.endFrame(self, elapsed)
 	end,
 
