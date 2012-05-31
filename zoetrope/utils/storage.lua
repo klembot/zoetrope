@@ -7,11 +7,14 @@
 --
 -- Your data is saved on disk in JSON format. This means that if someone
 -- figures out where your data files are saved, it is very trivial for them
--- to change the data.
+-- to change the data. If saving or loading fails, then this class still
+-- retains your data across a single app session. If you want to be notified
+-- when errors occur, check the <save()> and <load()> methods' arguments.
 --
 -- Make sure to set your app's identity in conf.lua, so that your 
 -- files don't clobber some other app's. See https://love2d.org/wiki/Config_Files
 -- for details.
+--
 --
 -- Extends:
 --		<Class>
@@ -19,7 +22,7 @@
 Storage = Class:extend({
 	-- Property: data
 	-- Use this property to store whatever data you like. You can
-	-- nest tabes inside this.
+	-- nest tables inside this.
 	data = {},
 
 	-- Property: filename
@@ -31,6 +34,15 @@ Storage = Class:extend({
 
 	filename = 'storage.dat',
 
+	new = function (obj)
+		obj = obj or {}
+		self:extend(obj)
+
+		if obj.filename then obj:load() end
+
+		if obj.onNew then obj:onNew() end
+	end,
+
 	-- Method: save
 	-- Saves data to disk.
 	--
@@ -40,8 +52,14 @@ Storage = Class:extend({
 	-- Returns:
 	--		nothing
 
-	save = function (self)
-		love.filesystem.write(self.filename, json.encode(self.data))
+	save = function (self, ignoreError)
+		if ignoreError ~= false then ignoreError = true end
+
+		local ok, message = pcall(love.filesystem.write, self.filename, json.encode(self.data))
+
+		if not ok and not ignoreError then
+			error("could not save storage from disk: " .. message)
+		end
 	end,
 
 	-- Method: load
