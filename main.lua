@@ -1,6 +1,6 @@
 require 'tests'
 
---STRICT = true
+STRICT = true
 
 MenuButton = Button:extend({
 	onNew = function (self)
@@ -29,6 +29,7 @@ Menu = App:extend({
 		'Gamepad', GamepadApp,
 		'Hello World', HelloWorld,
 		'Input', Input,
+		'Loading', Loading,
 		'Maps', Maps,
 		'Recording', Recording,
 		'Scrolling', Scrolling,

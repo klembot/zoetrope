@@ -117,7 +117,7 @@ Map = Sprite:extend({
 		if type(startIndex) ~= 'number' then startIndex = 0 end
 		
 		class = class or Tile
-		self.sprites = {}
+		self.sprites = self.sprites or {}
 		
 		local imageObj = Cached:image(image)
 		local imageWidth = imageObj:getWidth()
