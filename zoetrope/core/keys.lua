@@ -145,13 +145,51 @@ Keys = Sprite:extend({
 	--		none
 	--
 	-- Returns:
-	--		string button descriptions; if nothing is pressed, nil
+	--		string key descriptions; if nothing is pressed, nil
 
 	allPressed = function (self)
 		local result = {}
 
 		for key, value in pairs(self._thisFrame) do
 			if value then table.insert(result, key) end
+		end
+		
+		return unpack(result)
+	end,
+
+	-- Method: allJustPressed
+	-- Returns all keys just pressed this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string key descriptions; if nothing is just pressed, nil
+
+	allJustPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if value and not self._lastFrame[key] then table.insert(result, key) end
+		end
+		
+		return unpack(result)
+	end,
+
+	-- Method: allJustReleased
+	-- Returns all keys just released this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string key descriptions; if nothing is just pressed, nil
+
+	allJustPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if not value and self._lastFrame[key] then table.insert(result, key) end
 		end
 		
 		return unpack(result)

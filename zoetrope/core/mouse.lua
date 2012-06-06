@@ -157,6 +157,44 @@ Mouse = Sprite:extend({
 		return unpack(result)
 	end,
 
+	-- Method: allJustPressed
+	-- Returns all buttons just pressed this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string button descriptions; if nothing is just pressed, nil
+
+	allJustPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if value and not self._lastFrame[key] then table.insert(result, key) end
+		end
+		
+		return unpack(result)
+	end,
+
+	-- Method: allJustReleased
+	-- Returns all buttons just released this frame.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		string buttons descriptions; if nothing is just pressed, nil
+
+	allJustPressed = function (self)
+		local result = {}
+
+		for key, value in pairs(self._thisFrame) do
+			if not value and self._lastFrame[key] then table.insert(result, key) end
+		end
+		
+		return unpack(result)
+	end,
+
 	mousePressed = function (self, button)
 		self._thisFrame[button] = true
 	end,
