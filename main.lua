@@ -10,7 +10,6 @@ MenuButton = Button:extend({
 							    width = 92, height = 16, text = self.label })
 	end,
 
-
 	onMouseUp = function (self)
 		the.app = self.app:new()
 		the.app:run()
@@ -55,6 +54,9 @@ Menu = App:extend({
 				y = y + 30
 			end
 		end
+
+		self.meta:add(DebugConsole:new())
+		print('Welcome to the Zoetrope test suite.')
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -71,7 +73,6 @@ Menu = App:extend({
 })
 
 function love.load()
-	print 'Welcome to the Zoetrope test suite.'
 	testApp = Menu:new()
 	testApp:run()
 end
