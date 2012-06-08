@@ -22,6 +22,7 @@ require 'zoetrope.sprites.tile'
 
 require 'zoetrope.ui.button'
 require 'zoetrope.ui.cursor'
+require 'zoetrope.ui.textinput'
 
 require 'zoetrope.utils.debug'
 require 'zoetrope.utils.factory'

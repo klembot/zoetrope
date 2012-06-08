@@ -19,6 +19,14 @@
 Keys = Sprite:extend({
 	visible = false,
 
+	-- Property: typed
+	-- This is literally what is being typed during the current frame.
+	-- e.g. if the user holds the shift key and presses the 'a' key,
+	-- this will be set to 'A'. Consult <allPressed()> if you
+	-- want to know what specific keys are being pressed.
+
+	typed = '',
+
 	-- private property: _thisFrame
 	-- what keys are pressed this frame
 	-- if you are interested in this, use allPressed() instead
@@ -185,7 +193,7 @@ Keys = Sprite:extend({
 	-- Returns:
 	--		string key descriptions; if nothing is just pressed, nil
 
-	allJustPressed = function (self)
+	allJustReleased = function (self)
 		local result = {}
 
 		for key, value in pairs(self._thisFrame) do
@@ -199,6 +207,9 @@ Keys = Sprite:extend({
 
 	keyPressed = function (self, key, unicode)
 		self._thisFrame[key] = true
+		if unicode and unicode >= 32 then
+			self.typed = self.typed .. string.char(unicode)
+		end
 
 		-- aliases for modifiers
 
@@ -223,7 +234,7 @@ Keys = Sprite:extend({
 		   key == 'ralt' or key == 'lalt' or
 		   key == 'rmeta' or key == 'lmeta' or
 		   key == 'rsuper' or key == 'lsuper' then
-			self._thisFrame[string.sub(key, 2)] = true
+			self._thisFrame[string.sub(key, 2)] = false
 		end
 	end,
 
@@ -232,6 +243,7 @@ Keys = Sprite:extend({
 			self._lastFrame[key] = value
 		end
 
+		self.typed = ''
 		Sprite.endFrame(self, elapsed)
 	end,
 

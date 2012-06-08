@@ -28,10 +28,13 @@ UI = App:extend({
 			self.y = math.random(0, the.app.height - self.height)
 		end
 
-		DebugWatch:new()
-		the.watch:addWatch('mouse clicked', 'the.mouse.thisFrame.l == true')
+		local input = TextInput:new({ x = 100, y = 200, width = 100, height = 24 })
+
+		self.meta:add(DebugConsole:new())
+		the.console:watch('mouse clicked', 'the.mouse._thisFrame.l == true')
 
 		self:add(button)
+		self:add(input)
 		self:add(cursor)
 		self:useSysCursor(false)
 	end

@@ -31,7 +31,7 @@ App = Class:extend({
 	-- FPS may vary from frame to frame. Every event handler (e.g. onUpdate)
 	-- is passed the exact elapsed time in seconds.
 	fps = 60,
-
+	
 	-- Property: timeScale
 	-- Multiplier for elapsed time; 1.0 is normal, 0 is completely frozen.
 	timeScale = 1,
