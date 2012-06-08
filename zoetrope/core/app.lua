@@ -96,6 +96,7 @@ App = Class:extend({
 		-- input
 
 		obj.keys = obj.keys or Keys:new()
+		love.keyboard.setKeyRepeat(0.4, 0.04)
 		obj.meta:add(obj.keys)
 		obj.mouse = obj.mouse or Mouse:new()
 		obj.meta:add(obj.mouse)

@@ -18,6 +18,14 @@ DebugConsole = Group:extend({
 	-- How wide the sidebar, where watch values are displaed, should be.
 	watchWidth = 150,
 
+	-- Property: inputHistory
+	-- A table of previously-entered commands.
+	inputHistory = {},
+
+	-- Property: inputHistoryIndex
+	-- Which history entry, if any, we are displaying.
+	inputHistoryIndex = 1,
+
 	-- Property: bg
 	-- The background used to darken the view.
 
@@ -143,11 +151,12 @@ DebugConsole = Group:extend({
 			-- update log
 
 			if self._updateLog then
-				local maxHeight = the.app.height - 8
+				local maxHeight = the.app.height - 20
 				local _, height = self.log:getSize()
 
 				while height > maxHeight do
 					self.log.text = string.gsub(self.log.text, '^.-\n', '') 
+					_, height = self.log:getSize()
 				end
 
 				self.prompt.y = height + 4
@@ -155,9 +164,32 @@ DebugConsole = Group:extend({
 				self._updateLog = false
 			end
 
+			if the.keys:justPressed('up') and self.inputHistoryIndex > 1 then
+				-- save what the user was in the middle of typing
+
+				self.inputHistory[self.inputHistoryIndex] = self.input.text
+
+				self.input.text = self.inputHistory[self.inputHistoryIndex - 1]
+				self.input.caret = string.len(self.input.text)
+				self.inputHistoryIndex = self.inputHistoryIndex - 1
+			end
+
+			if the.keys:justPressed('down') and self.inputHistoryIndex < #self.inputHistory then
+				self.input.text = self.inputHistory[self.inputHistoryIndex + 1]
+				self.input.caret = string.len(self.input.text)
+				self.inputHistoryIndex = self.inputHistoryIndex + 1
+			end
+
 			if the.keys:justPressed('return') then
 				print('>' .. self.input.text)
 				self:execute('return ' .. self.input.text)
+				table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
+
+				while #self.inputHistory > self.inputHistoryIndex do
+					table.remove(self.inputHistory)
+				end
+
+				self.inputHistoryIndex = self.inputHistoryIndex + 1
 				self.input.text = ''
 				self.input.caret = 0
 			end
