@@ -28,7 +28,12 @@ Text = Sprite:extend({
 	-- Horizontal alignment, see http://love2d.org/wiki/AlignMode.
 	-- This affects how lines wrap relative to each other, not how
 	-- a single line will wrap relative to the sprite's width and height.
+	-- If <wordWrap> is set to false, then this has no effect. 
 	align = 'left',
+
+	-- Property: wordWrap
+	-- Wrap lines to the width of the sprite?
+	wordWrap = true,
 
 	-- private property: used to check whether our font has changed
 	_set = { font = {} },
@@ -146,6 +151,7 @@ Text = Sprite:extend({
 				self:updateFont()
 			end
 		end
+
 		-- rotate and scale
 
 		local scaleX = self.scale * self.distort.x
@@ -168,7 +174,12 @@ Text = Sprite:extend({
 		end
 		
 		love.graphics.setFont(self._fontObj)
-		love.graphics.printf(self.text, x, y, self.width, self.align)
+
+		if self.wordWrap then
+			love.graphics.printf(self.text, x, y, self.width, self.align)
+		else
+			love.graphics.print(self.text, x, y)
+		end
 
 		-- reset color and rotation
 	

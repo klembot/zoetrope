@@ -62,10 +62,6 @@ Menu = App:extend({
 	onUpdate = function (self, elapsed)
 		if the.keys:justPressed('escape') then self:quit() end
 
-		if the.keys:justPressed('f') then
-			self:toggleFullscreen()
-		end
-
 		if the.keys:justPressed('f12') then
 			self:saveScreenshot('screenshot.png')
 		end
