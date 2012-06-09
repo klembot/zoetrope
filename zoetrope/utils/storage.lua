@@ -5,7 +5,7 @@
 -- a user can email a save game to a friend), you'll need to create a
 -- separate storage instance for each one.
 --
--- Your data is saved on disk in JSON format. This means that if someone
+-- Your data is saved on disk in Lua format. This means that if someone
 -- figures out where your data files are saved, it is very trivial for them
 -- to change the data. If saving or loading fails, then this class still
 -- retains your data across a single app session. If you want to be notified

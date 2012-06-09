@@ -76,14 +76,14 @@ Group: UI  {
 
    File: Button  (ui\button.lua)
    File: Cursor  (ui\cursor.lua)
+   File: TextInput  (ui\textinput.lua)
    }  # Group: UI
 
 Group: Utils  {
 
-   File: DebugWatch  (utils\debugwatch.lua)
+   File: DebugConsole  (utils\debug.lua)
    File: Factory  (utils\factory.lua)
    File: Recorder  (utils\recorder.lua)
-   File: SpriteLoader  (utils\spriteloader.lua)
    File: Storage  (utils\storage.lua)
    }  # Group: Utils
 
