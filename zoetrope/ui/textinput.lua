@@ -4,6 +4,14 @@
 --
 -- Extends:
 --		<Text>
+--
+-- Events:
+--		onChange - Occurs when the input's text has changed, either by a
+--				   user's input or programmtically.
+--		onType - Occurs when the input is about to accept input from a key.
+--				 This event handler is passed the key about to be inserted.
+--				 If the handler returns false, *not* nil or any other value,
+--				 then the key is ignored.
 
 TextInput = Text:extend({
 	text = '',
@@ -33,9 +41,11 @@ TextInput = Text:extend({
 	update = function (self, elapsed)
 		if self.listening then
 			if the.keys.typed ~= '' then
-				self.text = string.sub(self.text, 1, self.caret) .. the.keys.typed
-							.. string.sub(self.text, self.caret + 1)
-				self.caret = self.caret + string.len(the.keys.typed)
+				if (self.onType and self:onType(the.keys.typed)) or not self.onType then
+					self.text = string.sub(self.text, 1, self.caret) .. the.keys.typed
+								.. string.sub(self.text, self.caret + 1)
+					self.caret = self.caret + string.len(the.keys.typed)
+				end
 			end
 
 			if the.keys:justPressed('backspace') and self.caret > 0 then
@@ -64,14 +74,25 @@ TextInput = Text:extend({
 			end
 		end
 
+		-- update caret position
+
 		if self._set.caret ~= self.caret and self._fontObj then
 			self._caretX = self._fontObj:getWidth(string.sub(self.text, 1, self.caret))
 			self._caretHeight = self._fontObj:getHeight()
 			self._set.caret = self.caret
 		end
 
+		-- update caret timer
+
 		self._blinkTimer = self._blinkTimer + elapsed
 		if self._blinkTimer > self.blinkRate * 2 then self._blinkTimer = 0 end
+
+		-- call onChange handler as needed
+
+		if self.text ~= self._set.text then
+			if self.onChange then self:onChange() end
+			self._set.text = self.text
+		end
 
 		Text.update(self, elapsed)
 	end,
