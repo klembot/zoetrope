@@ -196,53 +196,52 @@ function shuffleTable (table)
   return table
 end
 
-
--- Function: dumpTable
--- Returns a string representation of an entire table's contents.
+-- Function: dump
+-- Returns a string representation of a variable in a way
+-- that can be reconstituted via loadstring(). Yes, this
+-- is basically a serialization function, but that's so much
+-- to type :) This ignores any userdata, functions, or circular
+-- references.
+-- via http://www.lua.org/pil/12.1.2.html
 --
 -- Arguments:
---		source - table to describe
---		recurse - recurse into subtables? defaults to true
---		hideFuns - don't print functions? defaults to false
---		indent - how many spaces to place in front of each line
+--		source - variable to describe
+--		ignore - a table of references to ignore (to avoid cycles),
+--				 defaults to empty table. This uses the references as keys,
+--				 *not* as values, to speed up lookup.
 --
 -- Returns:
 --		string description
 
-function dumpTable (source, recurse, hideFuncs, indent)
-	if not source then
-		return 'nil'
-	end
-
-	assert(type(source) == 'table',
-		   "source argument to dumpTable() must be a table")
-
-	-- defaults
+function dump (source, ignore)
+	ignore = ignore or { source = true }
+	local sourceType = type(source)
 	
-	if type(recurse) == 'nil' then recurse = true end
-	indent = indent or 0
-	local prefix = string.rep(' ', indent)
-	local result = ''
-	
-	for key, value in pairs(source) do
-		local valueType = type(value)
-		
-		if not hideFuncs or valueType ~= 'function' then
-			local line = prefix .. key .. ' (' .. valueType .. ')'
-			
-			if valueType == 'string' or valueType == 'number'
-			   or valueType == 'boolean' then
-				line = line .. ': ' .. tostring(value)
+	if sourceType == 'table' then
+		local result = '{ '
+
+		for key, value in pairs(source) do
+			if not ignore[value] then
+				local dumpValue = dump(value, ignore)
+
+				if dumpValue ~= '' then
+					result = result .. '["' .. key .. '"] = ' .. dumpValue .. ', '
+				end
+
+				ignore[value] = true
 			end
-			
-			if valueType == 'table' and recurse then
-				line = line .. ': \n' .. dumpTable(value, true, hideFuncs,
-												   indent + 2)
-			end
-		
-			result = result .. line .. '\n'
 		end
+
+		if result ~= '{ ' then
+			return string.sub(result, 1, -3) .. ' }'
+		else
+			return '{}'
+		end
+	elseif sourceType == 'string' then
+		return string.format('%q', source)
+	elseif sourceType ~= 'userdata' and sourceType ~= 'function' then
+		return tostring(source)
+	else
+		return ''
 	end
-	
-	return result
 end

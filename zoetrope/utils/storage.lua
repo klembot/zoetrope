@@ -34,13 +34,14 @@ Storage = Class:extend({
 
 	filename = 'storage.dat',
 
-	new = function (obj)
+	new = function (self, obj)
 		obj = obj or {}
 		self:extend(obj)
 
 		if obj.filename then obj:load() end
 
 		if obj.onNew then obj:onNew() end
+		return obj
 	end,
 
 	-- Method: save
@@ -55,7 +56,7 @@ Storage = Class:extend({
 	save = function (self, ignoreError)
 		if ignoreError ~= false then ignoreError = true end
 
-		local ok, message = pcall(love.filesystem.write, self.filename, json.encode(self.data))
+		local ok, message = pcall(love.filesystem.write, self.filename, dump(self.data))
 
 		if not ok and not ignoreError then
 			error("could not save storage from disk: " .. message)
@@ -77,7 +78,7 @@ Storage = Class:extend({
 		local ok, data = pcall(love.filesystem.read, self.filename)
 
 		if ok then
-			self.data = json.decode(data)
+			self.data = loadstring('return ' .. data)()
 		else
 			if not ignoreError then
 				error("could not load storage from disk: " .. data)

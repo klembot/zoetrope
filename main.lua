@@ -34,6 +34,7 @@ Menu = App:extend({
 		'Scrolling', Scrolling,
 		'Sounds', Sounds,
 		'Sprite Types', SpriteTypes,
+		'Storage', StorageApp,
 		'Timers', Timers,
 		'Tweens', Tweens,
 		'UI', UI,

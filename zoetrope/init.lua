@@ -1,5 +1,4 @@
 require 'zoetrope.core.class'
-require 'zoetrope.lib.json'
 
 require 'zoetrope.core.app'
 require 'zoetrope.core.cached'
