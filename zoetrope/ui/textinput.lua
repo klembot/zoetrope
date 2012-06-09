@@ -32,6 +32,12 @@ TextInput = Text:extend({
 	-- Used to keep track of caret blinking.
 	_blinkTimer = 0,
 
+	-- internal property: _repeatKey
+	-- Used to keep track of what movement key is being held down.
+	
+	-- internal property: _repeatTimer
+	-- Used to keep track of how quickly movement keys repeat.
+
 	-- internal property: _caretHeight
 	-- How tall the caret is onscreen, based on the font.
 
@@ -40,6 +46,8 @@ TextInput = Text:extend({
 
 	update = function (self, elapsed)
 		if self.listening then
+			-- listen to normal keys
+
 			if the.keys.typed ~= '' then
 				if (self.onType and self:onType(the.keys.typed)) or not self.onType then
 					self.text = string.sub(self.text, 1, self.caret) .. the.keys.typed
@@ -48,29 +56,61 @@ TextInput = Text:extend({
 				end
 			end
 
-			if the.keys:justPressed('backspace') and self.caret > 0 then
-				self.text = string.sub(self.text, 1, self.caret - 1) .. string.sub(self.text, self.caret + 1)
-				self.caret = self.caret - 1
-			end
-
-			if the.keys:justPressed('delete') and self.caret < string.len(self.text) then
-				self.text = string.sub(self.text, 1, self.caret) .. string.sub(self.text, self.caret + 2)
-			end
-
-			if the.keys:justPressed('left') and self.caret > 0 then
-				self.caret = self.caret - 1
-			end
-
-			if the.keys:justPressed('right') and self.caret < string.len(self.text) then
-				self.caret = self.caret + 1
-			end
-
 			if the.keys:justPressed('home') then
 				self.caret = 0
 			end
 
 			if the.keys:justPressed('end') then
 				self.caret = string.len(self.text)
+			end
+
+			-- handle movement keys that repeat
+			-- we have to simulate repeat rates manually :(
+
+			local delay, rate = love.keyboard.getKeyRepeat()
+			local frameAction
+
+			for _, key in pairs({'backspace', 'delete', 'left', 'right'}) do
+				if the.keys:pressed(key) then
+					if self._repeatKey == key then
+						self._repeatTimer = self._repeatTimer + elapsed
+						
+						-- if we've made it past the maximum delay, then
+						-- we reset the timer and take action
+
+						if self._repeatTimer > delay + rate then
+							self._repeatTimer = delay
+							frameAction = key
+						end
+					else
+						-- we've just started holding down the key
+
+						self._repeatKey = key
+						self._repeatTimer = 0
+						frameAction = key
+					end
+				else
+					if self._repeatKey == key then
+						self._repeatKey = nil
+					end
+				end
+			end
+
+			if frameAction == 'backspace' and self.caret > 0 then
+				self.text = string.sub(self.text, 1, self.caret - 1) .. string.sub(self.text, self.caret + 1)
+				self.caret = self.caret - 1
+			end
+
+			if frameAction == 'delete' and self.caret < string.len(self.text) then
+				self.text = string.sub(self.text, 1, self.caret) .. string.sub(self.text, self.caret + 2)
+			end
+
+			if frameAction == 'left' and self.caret > 0 then
+				self.caret = self.caret - 1
+			end
+
+			if frameAction == 'right' and self.caret < string.len(self.text) then
+				self.caret = self.caret + 1
 			end
 		end
 
