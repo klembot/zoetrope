@@ -64,7 +64,12 @@ DebugConsole = Group:extend({
 		obj:add(obj.prompt)
 
 		local inputIndent = obj.log._fontObj:getWidth('>') + 4
-		obj.input = TextInput:new({ x = inputIndent, y = 0, width = the.app.width })
+		obj.input = TextInput:new({
+			x = inputIndent, y = 0, width = the.app.width,
+			onType = function (self, char)
+				return char ~= the.console.toggleKey
+			end
+		})
 		obj:add(obj.input)
 		
 		if obj.initWithFPS then
