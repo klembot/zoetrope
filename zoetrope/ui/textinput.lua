@@ -146,7 +146,8 @@ TextInput = Text:extend({
 
 			-- draw caret
 			
-			if self._blinkTimer < self.blinkRate and self._caretX and self._caretHeight then
+			if (self._repeatKey or self._blinkTimer < self.blinkRate) and
+			   (self._caretX and self._caretHeight) then
 				love.graphics.setLineWidth(1)
 				love.graphics.line(x + self._caretX, y, x + self._caretX, y + self._caretHeight)
 			end
