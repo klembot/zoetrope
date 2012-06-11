@@ -2,6 +2,11 @@
 -- A debug console displays the value of an expression each frame.
 -- It can be used to keep track of fps, the position of a sprite,
 -- and so on. It only updates when visible.
+--
+-- This also allows debugging hotkeys -- e.g. you could set it so that
+-- pressing Control-Alt-I toggles invincibility of the player sprite.
+-- Out of the box, Control-Alt-R reloads all app code from on disk,
+-- Control-Alt-Q quits the app, and Control-Alt-F toggles fullscreen.
 
 DebugConsole = Group:extend({
 	-- Property: toggleKey
@@ -14,7 +19,7 @@ DebugConsole = Group:extend({
 	-- a debugging hotkey (set via <bind()>). If you want hotkeys to
 	-- activate without having to hold any keys down, set this to nil.
 
-	hotKeyModifiers = {'ctrl', 'alt'},
+	hotkeyModifiers = {'ctrl', 'alt'},
 
 	-- Property: initWithFPS
 	-- If true, the watch will automatically start watching the frames
@@ -91,6 +96,8 @@ DebugConsole = Group:extend({
 		-- some default behavior
 
 		obj:addHotkey('r', debug.reload)
+		obj:addHotkey('f', function() the.app:toggleFullscreen() end)
+		obj:addHotkey('q', love.event.quit)
 		
 		if obj.initWithFPS then
 			obj:watch('FPS', 'love.timer.getFPS()')
@@ -180,7 +187,20 @@ DebugConsole = Group:extend({
 
 		-- listen for hotkeys
 
-		if not self.hotkeyModifiers or the.keys:pressed(unpack(self.hotkeyModifiers)) then
+		local modifiers = (self.hotkeyModifiers == nil)
+
+		if not modifiers then
+			modifiers = true
+
+			for _, key in pairs(self.hotkeyModifiers) do
+				if not the.keys:pressed(key) then
+					modifiers = false
+					break
+				end
+			end
+		end
+
+		if modifiers then
 			for _, hotkey in pairs(self._hotkeys) do
 				if the.keys:justPressed(hotkey.key) then
 					hotkey.func(hotkey.key)
