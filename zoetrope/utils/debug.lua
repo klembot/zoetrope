@@ -133,7 +133,9 @@ DebugConsole = Group:extend({
 	--
 	-- Arguments:
 	--		key - key to trigger the hotkey
-	--		func - function to run
+	--		func - function to run. This will receive the key that
+	--			   was pressed, so you can re-use functions (i.e. 
+	--			   the 1 key loads level 1, the 2 key loads level 2).
 	--
 	-- Returns:
 	--		nothing
@@ -181,7 +183,7 @@ DebugConsole = Group:extend({
 		if not self.hotkeyModifiers or the.keys:pressed(unpack(self.hotkeyModifiers)) then
 			for _, hotkey in pairs(self._hotkeys) do
 				if the.keys:justPressed(hotkey.key) then
-					hotkey.func()
+					hotkey.func(hotkey.key)
 				end
 			end
 		end
