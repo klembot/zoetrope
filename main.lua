@@ -57,7 +57,6 @@ Menu = App:extend({
 			end
 		end
 
-		self.meta:add(DebugConsole:new())
 		print('Welcome to the Zoetrope test suite.')
 	end,
 

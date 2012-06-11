@@ -9,6 +9,13 @@ DebugConsole = Group:extend({
 
 	toggleKey = '`',
 
+	-- Property: hotkeyModifiers
+	-- A table of modifier keys that must be held in order to activate
+	-- a debugging hotkey (set via <bind()>). If you want hotkeys to
+	-- activate without having to hold any keys down, set this to nil.
+
+	hotKeyModifiers = {'ctrl', 'alt'},
+
 	-- Property: initWithFPS
 	-- If true, the watch will automatically start watching the frames
 	-- per second. Changing this value after the DebugWatch object has
@@ -46,6 +53,9 @@ DebugConsole = Group:extend({
 	-- Property: prompt
 	-- The <Text> sprite that shows a > in front of commands.
 
+	-- internal property: _bindings
+	-- Keeps track of debugging hotkeys.
+
 	new = function (self, obj)
 		local width = the.app.width
 		local height = the.app.height
@@ -54,6 +64,7 @@ DebugConsole = Group:extend({
 		
 		obj.visible = false
 		obj._watches = {}
+		obj._hotkeys = {}
 
 		obj.fill = Fill:new({ x = 0, y = 0, width = width, height = height, fill = {0, 0, 0, 200} })
 		obj:add(obj.fill)
@@ -76,6 +87,10 @@ DebugConsole = Group:extend({
 			end
 		})
 		obj:add(obj.input)
+
+		-- some default behavior
+
+		obj:addHotkey('r', debug.reload)
 		
 		if obj.initWithFPS then
 			obj:watch('FPS', 'love.timer.getFPS()')
@@ -112,6 +127,21 @@ DebugConsole = Group:extend({
 									  func = loadstring('return ' .. expression) })
 	end,
 
+	-- Method: addHotkey
+	-- Adds a hotkey to execute a function. This hotkey will require
+	-- holding down whatever modifiers are set in <hotkeyModifiers>.
+	--
+	-- Arguments:
+	--		key - key to trigger the hotkey
+	--		func - function to run
+	--
+	-- Returns:
+	--		nothing
+
+	addHotkey = function (self, key, func)
+		table.insert(self._hotkeys, { key = key, func = func })
+	end,
+
 	-- Method: execute
 	-- Safely executes a string of code and prints the result.
 	--
@@ -144,6 +174,16 @@ DebugConsole = Group:extend({
 
 		if the.keys:justPressed(self.toggleKey) then
 			self.visible = not self.visible
+		end
+
+		-- listen for hotkeys
+
+		if not self.hotkeyModifiers or the.keys:pressed(unpack(self.hotkeyModifiers)) then
+			for _, hotkey in pairs(self._hotkeys) do
+				if the.keys:justPressed(hotkey.key) then
+					hotkey.func()
+				end
+			end
 		end
 
 		if self.visible then

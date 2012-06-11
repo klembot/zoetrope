@@ -133,6 +133,13 @@ App = Class:extend({
 	run = function (self)
 		math.randomseed(os.time())
 
+		-- attach debug console
+
+		if DEBUG then
+			self.console = DebugConsole:new()
+			self.meta:add(self.console)
+		end
+
 		-- set up callbacks
 		
 		love.graphics.setCaption(self.name)
