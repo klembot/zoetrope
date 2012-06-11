@@ -94,7 +94,7 @@ View = Group:extend({
 				end
 
 				if STRICT and self[layer.name] then
-					io.stderr:write('a property named ' .. layer.name .. ' already exists in the current view\n')
+					print('a property named ' .. layer.name .. ' already exists in the current view\n')
 				end
 
 				if layer.type == 'tilelayer' then

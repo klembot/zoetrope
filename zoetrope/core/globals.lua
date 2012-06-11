@@ -7,6 +7,18 @@
 -- things here will have no effect.
 the = {}
 
+-- Constant: STRICT
+-- If set to true, then Zoetrope will do some extra checking for obvious
+-- errors at the expense of some performance. Some of these checks will
+-- throw errors, while others will simply print a warning to the console.
+-- If you are going to use this, make sure to do so before your project's
+-- require 'zoetrope' statement.
+
+-- Constant: DEBUG
+-- If set to true, Zoetrope's debug console will be enabled. If you are
+-- going to use this, make sure to do so before your project's require
+-- 'zoetrope' statement.
+
 -- Constant: NEARLY_ZERO
 -- Any number less than this is considered 0 by Zoetrope.
 NEARLY_ZERO = 0.0001

@@ -106,8 +106,8 @@ Tween = Sprite:extend({
 					table.remove(self.tweens, i)
 				else
 					if STRICT then
-						io.stderr.write('Warning: asked to tween a value that\'s already being tweened, ' ..
-										'giving up (use force = true to override this)')
+						print('Warning: asked to tween a value that\'s already being tweened, ' ..
+							  'giving up (use force = true to override this)')
 					end
 
 					return
@@ -125,7 +125,7 @@ Tween = Sprite:extend({
 			tween.change = tween.to - tween.from
 			if math.abs(tween.change) < NEARLY_ZERO then
 				if STRICT then
-					io.stderr.write('Warning: asked to tween a value to its current state, giving up')
+					print('Warning: asked to tween a value to its current state, giving up')
 				end
 
 				return
@@ -145,7 +145,7 @@ Tween = Sprite:extend({
 			
 			if skip then
 				if STRICT then
-					io.stderr.write('Warning: asked to tween a value to its current state, giving up')
+					print('Warning: asked to tween a value to its current state, giving up')
 				end
 
 				return
@@ -180,7 +180,7 @@ Tween = Sprite:extend({
 		end
 
 		if STRICT and not found then
-			io.stderr.write('Warning: asked to stop a tween, but no active tweens match it')
+			print('Warning: asked to stop a tween, but no active tweens match it')
 		end
 	end,
 

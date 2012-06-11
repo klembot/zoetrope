@@ -64,7 +64,7 @@ Group = Class:extend({
 		assert(sprite ~= self, "can't add a group to itself")
 	
 		if STRICT and self:contains(sprite) then
-			io.stderr:write('Warning: adding a sprite to a group it already belongs to')
+			print('Warning: adding a sprite to a group it already belongs to')
 		end
 
 		table.insert(self.sprites, sprite)
@@ -88,7 +88,7 @@ Group = Class:extend({
 			end
 		end
 
-		if STRICT then io.stderr:write('asked to remove a sprite from a group it was not a member of') end
+		if STRICT then print('Warning: asked to remove a sprite from a group it was not a member of') end
 	end,
 
 	-- Method: collide

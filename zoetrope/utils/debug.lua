@@ -122,13 +122,13 @@ DebugConsole = Group:extend({
 		if func then
 			local ok, result = pcall(func)
 
-			if ok then
-				print(tostring(result) .. '\n')
-			else
+			if not ok then
 				print('Error, ' .. tostring(result) .. '\n')
+			else
+				print('')
 			end
 		else
-			print('Syntax error, ' .. tostring(err) .. '\n')
+			print('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
 		end
 
 		return tostring(result)
@@ -187,7 +187,7 @@ DebugConsole = Group:extend({
 
 			if the.keys:justPressed('return') then
 				print('>' .. self.input.text)
-				self:execute('return ' .. self.input.text)
+				self:execute(self.input.text)
 				table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
 
 				while #self.inputHistory > self.inputHistoryIndex do

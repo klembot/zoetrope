@@ -61,7 +61,7 @@ Timer = Sprite:extend({
 		end
 
 		if STRICT and not found then
-			io.stderr:write('Warning: asked to stop a timer on a function that was not queued')
+			print('Warning: asked to stop a timer on a function that was not queued')
 		end
 	end,
 
