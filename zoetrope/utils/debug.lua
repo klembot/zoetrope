@@ -6,40 +6,45 @@
 DebugConsole = Group:extend({
 	-- Property: toggleKey
 	-- What key toggles visibility. By default, this is the tilde key.
+
 	toggleKey = '`',
 
 	-- Property: initWithFPS
 	-- If true, the watch will automatically start watching the frames
 	-- per second. Changing this value after the DebugWatch object has
 	-- been created has no effect.
+	
 	initWithFPS = true,
 
 	-- Property: watchWidth
 	-- How wide the sidebar, where watch values are displaed, should be.
+	
 	watchWidth = 150,
 
 	-- Property: inputHistory
 	-- A table of previously-entered commands.
+	
 	inputHistory = {},
 
 	-- Property: inputHistoryIndex
 	-- Which history entry, if any, we are displaying.
+	
 	inputHistoryIndex = 1,
 
 	-- Property: bg
-	-- The background used to darken the view.
+	-- The background <Fill> used to darken the view.
 
 	-- Property: log
-	-- Text showing recent lines in the log.
+	-- The <Text> sprite showing recent lines in the log.
 
 	-- Property: watchList
-	-- Text showing the state of all watched variables.
+	-- The <Text> sprite showing the state of all watched variables.
 
 	-- Property: input
-	-- What the user types into to enter commands.
+	-- The <TextInput> that the user types into to enter commands.
 
 	-- Property: prompt
-	-- The > in front of commands.
+	-- The <Text> sprite that shows a > in front of commands.
 
 	new = function (self, obj)
 		local width = the.app.width
@@ -203,3 +208,31 @@ DebugConsole = Group:extend({
 		Group.update(self, elapsed)
 	end
 })
+
+-- Function: debug.reload
+-- Resets the entire app and forces all code to be reloaded from 
+-- on disk. via https://love2d.org/forums/viewtopic.php?f=3&t=7965
+-- 
+-- Arguments:
+--		none
+--
+-- Returns:
+--		nothing
+
+debug.reload = function()
+	if DEBUG then
+		-- reset global scope
+
+		local initialGlobals = debug._initialGlobals
+		_G = {}
+
+		for key, value in pairs(initialGlobals) do
+			_G[key] = value
+		end
+
+		-- reload main file and restart
+		package.loaded.main = nil
+		require 'main'
+		love.load()
+	end
+end

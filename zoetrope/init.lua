@@ -1,3 +1,16 @@
+-- copy references to existing globals so that
+-- debug.reload() will have a correct initial starting point.
+
+if DEBUG then
+	local _initialGlobals = {}
+
+	for key, value in pairs(_G) do
+		_initialGlobals[key] = value
+	end
+
+	debug = { _initialGlobals = _initialGlobals }
+end
+
 require 'zoetrope.core.class'
 
 require 'zoetrope.core.app'

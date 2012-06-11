@@ -1,6 +1,7 @@
-require 'tests'
-
 STRICT = true
+DEBUG = true
+
+require 'tests'
 
 MenuButton = Button:extend({
 	onNew = function (self)
