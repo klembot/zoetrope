@@ -226,6 +226,7 @@ View = Group:extend({
 			if onComplete then onComplete(t) end
 		end
 
+		assert(type(color) == 'table', 'color to flash is ' .. type(color) .. ', not a table')
 		color[4] = color[4] or 255
 		self._fx = color
 		self.tween:start({ target = self._fx, prop = 4, to = 0, duration = duration or 1,
