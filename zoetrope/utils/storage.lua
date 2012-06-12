@@ -78,7 +78,16 @@ Storage = Class:extend({
 		local ok, data = pcall(love.filesystem.read, self.filename)
 
 		if ok then
-			self.data = loadstring('return ' .. data)()
+			print(data)
+			ok, self.data = pcall(loadstring('return ' .. data))
+			
+			if not ok then
+				if ignoreError then
+					self.data = {}
+				else
+					error("could not deserialize storage data: " .. self.data)
+				end
+			end
 		else
 			if not ignoreError then
 				error("could not load storage from disk: " .. data)
