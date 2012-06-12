@@ -20,7 +20,7 @@ FactoryParticle = Fill:extend({
 
 FactoryApp = App:extend({
 	onNew = function (self)
-		self.label = Text:new({ x = 4, y = 4, width = 200 })
+		self.label = Text:new({ x = 4, y = 4, width = 200, text = '0 sprites' })
 		self:add(self.label)
 	end,
 

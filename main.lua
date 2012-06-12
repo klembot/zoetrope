@@ -35,7 +35,6 @@ Menu = App:extend({
 		'Scrolling', Scrolling,
 		'Sounds', Sounds,
 		'Sprite Types', SpriteTypes,
-		'Storage', StorageApp,
 		'Timers', Timers,
 		'Tweens', Tweens,
 		'UI', UI,
@@ -58,16 +57,9 @@ Menu = App:extend({
 		end
 
 		print('Welcome to the Zoetrope test suite.')
-	end,
-
-	onUpdate = function (self, elapsed)
-		if the.keys:justPressed('escape') then self:quit() end
-
-		if the.keys:justPressed('f12') then
-			self:saveScreenshot('screenshot.png')
-		end
 	end
 })
+
 
 function love.load()
 	testApp = Menu:new()
