@@ -8,7 +8,19 @@ if DEBUG then
 		_initialGlobals[key] = value
 	end
 
-	debug = { _initialGlobals = _initialGlobals }
+	debugger = { _initialGlobals = _initialGlobals }
+end
+
+-- Warn about accessing undefined globals in strict mode
+
+if STRICT then
+	setmetatable(_G, {
+		__index = function (table, key)
+			local info = debug.getinfo(2, 'Sl')
+			print('Warning: accessing undefined global ' .. key .. ', ' ..
+				  info.short_src .. ' line ' .. info.currentline)
+		end
+	})
 end
 
 require 'zoetrope.core.class'

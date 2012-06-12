@@ -6,7 +6,9 @@
 -- This also allows debugging hotkeys -- e.g. you could set it so that
 -- pressing Control-Alt-I toggles invincibility of the player sprite.
 -- Out of the box, Control-Alt-R reloads all app code from on disk,
--- Control-Alt-Q quits the app, and Control-Alt-F toggles fullscreen.
+-- Control-Alt-Q quits the app, Control-Alt-F toggles fullscreen, and
+-- Control-Alt-S saves a screenshot to the app's directory (see
+-- https://love2d.org/wiki/love.filesystem for where this is).
 
 DebugConsole = Group:extend({
 	-- Property: toggleKey
@@ -87,6 +89,7 @@ DebugConsole = Group:extend({
 		local inputIndent = obj.log._fontObj:getWidth('>') + 4
 		obj.input = TextInput:new({
 			x = inputIndent, y = 0, width = the.app.width,
+			active = false,
 			onType = function (self, char)
 				return char ~= the.console.toggleKey
 			end
@@ -95,9 +98,10 @@ DebugConsole = Group:extend({
 
 		-- some default behavior
 
-		obj:addHotkey('r', debug.reload)
+		obj:addHotkey('r', debugger.reload)
 		obj:addHotkey('f', function() the.app:toggleFullscreen() end)
 		obj:addHotkey('q', love.event.quit)
+		obj:addHotkey('s', function() the.app:saveScreenshot('screenshot.png') end)
 		
 		if obj.initWithFPS then
 			obj:watch('FPS', 'love.timer.getFPS()')
@@ -116,7 +120,7 @@ DebugConsole = Group:extend({
 			obj._updateLog = true
 			obj._oldPrint(...)
 		end
-		
+
 		the.console = obj
 		if obj.onNew then obj.onNew() end
 		return obj
@@ -171,11 +175,11 @@ DebugConsole = Group:extend({
 			else
 				print('')
 			end
+
+			return tostring(result)
 		else
 			print('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
 		end
-
-		return tostring(result)
 	end,
 
 	update = function (self, elapsed)
@@ -183,6 +187,7 @@ DebugConsole = Group:extend({
 
 		if the.keys:justPressed(self.toggleKey) then
 			self.visible = not self.visible
+			self.input.active = self.visible
 		end
 
 		-- listen for hotkeys
@@ -271,7 +276,7 @@ DebugConsole = Group:extend({
 	end
 })
 
--- Function: debug.reload
+-- Function: debugger.reload
 -- Resets the entire app and forces all code to be reloaded from 
 -- on disk. via https://love2d.org/forums/viewtopic.php?f=3&t=7965
 -- 
@@ -281,11 +286,11 @@ DebugConsole = Group:extend({
 -- Returns:
 --		nothing
 
-debug.reload = function()
+debugger.reload = function()
 	if DEBUG then
 		-- reset global scope
 
-		local initialGlobals = debug._initialGlobals
+		local initialGlobals = debugger._initialGlobals
 		_G = {}
 
 		for key, value in pairs(initialGlobals) do
