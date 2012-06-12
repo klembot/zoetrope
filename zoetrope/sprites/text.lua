@@ -14,6 +14,7 @@
 Text = Sprite:extend({
 	-- Property: text
 	-- Text string to draw.
+	text = '',
 
 	-- Property: font
 	-- Font to use to draw. See <Cached.font> for possible values here; if
