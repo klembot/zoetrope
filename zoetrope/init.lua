@@ -3,12 +3,21 @@
 
 if DEBUG then
 	local _initialGlobals = {}
+	local _initialPackages = {}
 
 	for key, value in pairs(_G) do
 		_initialGlobals[key] = value
 	end
 
-	debugger = { _initialGlobals = _initialGlobals }
+	for key, value in pairs(package.loaded) do
+		_initialPackages[key] = value
+	end
+
+	debugger =
+	{
+		_initialGlobals = _initialGlobals,
+		_initialPackages = _initialPackages
+	}
 end
 
 -- Warn about accessing undefined globals in strict mode

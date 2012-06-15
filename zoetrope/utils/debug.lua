@@ -5,10 +5,13 @@
 --
 -- This also allows debugging hotkeys -- e.g. you could set it so that
 -- pressing Control-Alt-I toggles invincibility of the player sprite.
--- Out of the box, Control-Alt-R reloads all app code from on disk,
--- Control-Alt-Q quits the app, Control-Alt-F toggles fullscreen, and
--- Control-Alt-S saves a screenshot to the app's directory (see
--- https://love2d.org/wiki/love.filesystem for where this is).
+-- Out of the box:
+--		- Control-Alt-F toggles fullscreen
+--		- Control-Alt-Q quits the app.
+--		- Control-Alt-P deactivates the view.
+-- 		- Control-Alt-R reloads all app code from on disk.
+--		- Control-Alt-S saves a screenshot to the app's directory (see
+-- 		  https://love2d.org/wiki/love.filesystem for where this is).
 
 DebugConsole = Group:extend({
 	-- Property: toggleKey
@@ -98,9 +101,17 @@ DebugConsole = Group:extend({
 
 		-- some default behavior
 
-		obj:addHotkey('r', debugger.reload)
 		obj:addHotkey('f', function() the.app:toggleFullscreen() end)
+		obj:addHotkey('p', function()
+			the.view.active = not the.view.active
+			if the.view.active then
+				the.view:tint()
+			else
+				the.view:tint(0, 0, 0, 200)
+			end
+		end)
 		obj:addHotkey('q', love.event.quit)
+		obj:addHotkey('r', debugger.reload)
 		obj:addHotkey('s', function() the.app:saveScreenshot('screenshot.png') end)
 		
 		if obj.initWithFPS then
@@ -291,15 +302,21 @@ debugger.reload = function()
 		-- reset global scope
 
 		local initialGlobals = debugger._initialGlobals
-		_G = {}
+		local initialPackages = debugger._initialPackages
 
-		for key, value in pairs(initialGlobals) do
-			_G[key] = value
-		end
+		setfenv(0, initialGlobals)
 
 		-- reload main file and restart
+
+		for key, _ in pairs(package.loaded) do
+			if not initialPackages[key] then
+				package.loaded[key] = nil
+			end
+		end
+
 		package.loaded.main = nil
-		require 'main'
+		package.loaded.zoetrope = nil
+		require('main')
 		love.load()
 	end
 end
