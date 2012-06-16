@@ -1,5 +1,3 @@
--- Class: DebugConsole
--- A debug console displays the value of an expression each frame.
 -- It can be used to keep track of fps, the position of a sprite,
 -- and so on. It only updates when visible.
 --
@@ -299,12 +297,17 @@ DebugConsole = Group:extend({
 
 debugger.reload = function()
 	if DEBUG then
-		-- reset global scope
+		-- create local references to needed variables
+		-- because we're about to blow the global scope away
 
 		local initialGlobals = debugger._initialGlobals
 		local initialPackages = debugger._initialPackages
+		
+		-- reset global scope
 
-		setfenv(0, initialGlobals)
+		for key, _ in pairs(_G) do
+			_G[key] = initialGlobals[key]
+		end
 
 		-- reload main file and restart
 
