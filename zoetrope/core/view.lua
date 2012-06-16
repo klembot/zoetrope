@@ -86,6 +86,7 @@ View = Group:extend({
 	loadFromLua = function (self, file)
 		local ok, data = pcall(loadstring(Cached:text(file)))
 		local _, _, directory = string.find(file, '^(.*[/\\])')
+		directory = directory or ''
 
 		if ok then
 			for _, layer in pairs(data.layers) do
