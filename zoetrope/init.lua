@@ -10,7 +10,13 @@ if DEBUG then
 	end
 
 	for key, value in pairs(package.loaded) do
-		_initialPackages[key] = value
+		-- it looks as though the type of a module
+		-- that is currently being loaded, but hasn't
+		-- completed is userdata
+
+		if type(value) ~= 'userdata' then
+			_initialPackages[key] = value
+		end
 	end
 
 	debugger =

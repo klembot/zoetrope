@@ -317,8 +317,6 @@ debugger.reload = function()
 			end
 		end
 
-		package.loaded.main = nil
-		package.loaded.zoetrope = nil
 		require('main')
 		love.load()
 	end
