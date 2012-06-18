@@ -95,7 +95,7 @@ View = Group:extend({
 
 			for _, tileset in pairs(data.tilesets) do
 				for _, tile in pairs(tileset.tiles) do
-					local id = tileset.firstgid + tile.id - 1
+					local id = tileset.firstgid + tile.id
 					tiles[id] = tile
 					tiles[id].width = tileset.tilewidth
 					tiles[id].height = tileset.tileheight
