@@ -89,6 +89,19 @@ View = Group:extend({
 		directory = directory or ''
 
 		if ok then
+			-- store tile properties by gid
+			
+			local tiles = {}
+
+			for _, tileset in pairs(data.tilesets) do
+				for _, tile in pairs(tileset.tiles) do
+					local id = tileset.firstgid + tile.id - 1
+					tiles[id] = tile
+					tiles[id].width = tileset.tilewidth
+					tiles[id].height = tileset.tileheight
+				end
+			end
+
 			for _, layer in pairs(data.layers) do
 				if View[layer.name] then
 					error('the View class reserves the ' .. layer.name .. ' property for its own use; you cannot load a layer with that name')
@@ -129,6 +142,20 @@ View = Group:extend({
 					local group = Group:new()
 
 					for _, obj in pairs(layer.objects) do
+						-- roll in tile properties if based on a tile
+
+						if obj.gid and tiles[obj.gid] then
+							local tile = tiles[obj.gid]
+
+							obj.name = tile.properties.name
+							obj.width = tile.width
+							obj.height = tile.height
+
+							for key, value in pairs(tile.properties) do
+								obj.properties[key] = value
+							end
+						end
+
 						-- create a new object if the class does exist
 
 						local spr
