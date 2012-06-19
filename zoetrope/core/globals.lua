@@ -81,6 +81,24 @@ function split (source, pattern)
 	return result
 end
 
+-- Function: tovalue
+-- Coerces, if possible, a string to a boolean or number value.
+-- If the string cannot be coerced to either of these types, this
+-- returns the same string passed.
+--
+-- Arguments:
+--		source - string to coerce
+--
+-- Returns:
+--		number, boolean, or string
+
+function tovalue (source)
+	if source == 'true' then return true end
+	if source == 'false' then return false end
+
+	return tonumber(source) or source
+end
+
 -- Function: sound
 -- Loads a sound but does not play it. It's important to use the hint property
 -- appropriately; if set incorrectly, it can cause sound playback to stutter or lag.

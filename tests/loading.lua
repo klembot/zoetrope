@@ -16,11 +16,10 @@ Player = Fill:extend({
 
 Loading = App:extend({
 	onRun = function (self)
-		self.view:loadFromLua('tests/assets/map.lua')
-		self.view.map.sprites[1].solid = false
-		self.view.map.sprites[2].solid = false
+		self.view:loadLayers('tests/assets/map.lua')
 		self.view:clampTo(self.view.map)
 		self.view.focus = the.player
+		print(self.view.map.sprites[1].solid)
 	end,
 
 	onUpdate = function (self)
