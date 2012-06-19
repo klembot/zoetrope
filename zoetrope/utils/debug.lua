@@ -1,3 +1,4 @@
+-- Class: DebugConsole
 -- It can be used to keep track of fps, the position of a sprite,
 -- and so on. It only updates when visible.
 --
@@ -8,8 +9,8 @@
 --		- Control-Alt-Q quits the app.
 --		- Control-Alt-P deactivates the view.
 -- 		- Control-Alt-R reloads all app code from on disk.
---		- Control-Alt-S saves a screenshot to the app's directory (see
--- 		  https://love2d.org/wiki/love.filesystem for where this is).
+--		- Control-Alt-S saves a screenshot to the app's directory --
+--		  see https://love2d.org/wiki/love.filesystem for where this is.
 
 DebugConsole = Group:extend({
 	-- Property: toggleKey
@@ -19,7 +20,7 @@ DebugConsole = Group:extend({
 
 	-- Property: hotkeyModifiers
 	-- A table of modifier keys that must be held in order to activate
-	-- a debugging hotkey (set via <bind()>). If you want hotkeys to
+	-- a debugging hotkey (set via <addHotkey()>). If you want hotkeys to
 	-- activate without having to hold any keys down, set this to nil.
 
 	hotkeyModifiers = {'ctrl', 'alt'},

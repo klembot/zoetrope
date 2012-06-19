@@ -11,7 +11,7 @@ Tile = Sprite:extend(
 	-- Property: image
 	-- The image to tile across the sprite.
 
-	-- Propety: imageOffset
+	-- Property: imageOffset
 	-- Setting this moves the top-left corner of the tile inside
 	-- the sprite's rectangle. To draw as normal, set both x and y
 	-- to 0.
