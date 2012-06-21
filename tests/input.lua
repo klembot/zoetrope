@@ -1,23 +1,24 @@
 require 'zoetrope'
 
-Input = App:extend({
+Input = App:extend
+{
 	onNew = function (self)
-		self.released = Fill:new({ width = 200, height = 400, fill = { 255, 0, 0 } })
+		self.released = Fill:new{ width = 200, height = 400, fill = { 255, 0, 0 } }
 		self:add(self.released)
 		
-		self.justPressed = Fill:new({ x = 200, width = 200, height = 400, fill = { 0, 255, 0 } })
+		self.justPressed = Fill:new{ x = 200, width = 200, height = 400, fill = { 0, 255, 0 } }
 		self:add(self.justPressed)
 		
-		self.pressed = Fill:new({ x = 400, width = 200, height = 400, fill = { 0, 0, 255 } })
+		self.pressed = Fill:new{ x = 400, width = 200, height = 400, fill = { 0, 0, 255 } }
 		self:add(self.pressed)
 		
-		self.justReleased = Fill:new({ x = 600, width = 200, height = 400, fill = { 255, 255, 0 } })
+		self.justReleased = Fill:new{ x = 600, width = 200, height = 400, fill = { 255, 255, 0 } }
 		self:add(self.justReleased)
 		
-		self.leftMouse = Fill:new({ y = 400, width = 400, height = 200 })
+		self.leftMouse = Fill:new{ y = 400, width = 400, height = 200 }
 		self:add(self.leftMouse)
 		
-		self.rightMouse = Fill:new({ x = 400, y = 400, width = 400, height = 200 })
+		self.rightMouse = Fill:new{ x = 400, y = 400, width = 400, height = 200 }
 		self:add(self.rightMouse)
 	end,
 
@@ -40,4 +41,4 @@ Input = App:extend({
 			print(#keys .. ' keys pressed simultaneously')
 		end
 	end
-})
+}

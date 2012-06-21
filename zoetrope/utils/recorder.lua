@@ -6,7 +6,7 @@
 -- Extends:
 --		<Sprite>
 
-Recorder = Sprite:extend({
+Recorder = Sprite:extend{
 	-- private property: elapsed
 	-- either time elapsed while recording or playing back, in seconds
 	_elapsed = 0,
@@ -155,7 +155,7 @@ Recorder = Sprite:extend({
 	end,
 	
 	recordKeyPress = function (self, key, unicode)
-		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keypress', key, unicode })
+		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keypress', key, unicode }
 		self._mousePosTimer = 0
 
 		if self.origKeyPressed then
@@ -164,7 +164,7 @@ Recorder = Sprite:extend({
 	end,
 
 	recordKeyRelease = function (self, key, unicode)
-		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keyrelease', key, unicode })
+		table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y, 'keyrelease', key, unicode }
 		self._mousePosTimer = 0
 
 		if self.origKeyReleased then
@@ -173,7 +173,7 @@ Recorder = Sprite:extend({
 	end,
 
 	recordMousePress = function (self, x, y, button)
-		table.insert(self.record, { self._elapsed, x, y, 'mousepress', button })
+		table.insert(self.record, { self._elapsed, x, y, 'mousepress', button }
 		self._mousePosTimer = 0
 
 		if self.origMousePressed then
@@ -182,7 +182,7 @@ Recorder = Sprite:extend({
 	end,
 
 	recordMouseRelease = function (self, x, y, button)
-		table.insert(self.record, { self._elapsed, x, y, 'mouserelease', button })
+		table.insert(self.record, { self._elapsed, x, y, 'mouserelease', button }
 		self._mousePosTimer = 0
 
 		if self.origMouseReleased then
@@ -203,7 +203,7 @@ Recorder = Sprite:extend({
 			self._mousePosTimer = self._mousePosTimer + elapsed
 
 			if self._mousePosTimer > self.mousePosInterval then
-				table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y })
+				table.insert(self.record, { self._elapsed, the.mouse.x, the.mouse.y }
 
 				self._mousePosTimer = 0
 			end
@@ -233,4 +233,4 @@ Recorder = Sprite:extend({
 			end
 		end
 	end
-})
+}

@@ -19,7 +19,7 @@
 -- Extends:
 --		<Class>
 
-Storage = Class:extend({
+Storage = Class:extend{
 	-- Property: data
 	-- Use this property to store whatever data you like. You can
 	-- nest tables inside this.
@@ -96,4 +96,4 @@ Storage = Class:extend({
 
 		return ok
 	end
-})
+}

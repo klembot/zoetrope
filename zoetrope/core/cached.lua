@@ -14,7 +14,7 @@
 -- Extends:
 --		<Class>
 
-Cached = Class:extend({
+Cached = Class:extend{
 	-- Property: defaultGlyphs
 	-- The default character order of a bitmap font, if none is specified
 	-- in a <font> call.
@@ -152,4 +152,4 @@ Cached = Class:extend({
 
 		return self._library.font[libKey]
 	end
-})
+}

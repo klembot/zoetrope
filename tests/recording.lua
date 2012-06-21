@@ -1,20 +1,21 @@
 require 'zoetrope'
 
-Recording = App:extend({
+Recording = App:extend
+{
 	onNew = function (self)
-		self.recorder = Recorder:new()--{ mousePosInterval = 0.01 })
+		self.recorder = Recorder:new()--{ mousePosInterval = 0.01 }
 		self.meta:add(self.recorder)
 
 		local cursor = Cursor:new()
-		cursor:add(Fill:new({ width = 8, height = 8, fill = { 255, 0, 0 } }))
+		cursor:add(Fill:new{ width = 8, height = 8, fill = { 255, 0, 0 } }
 		self:useSysCursor(false)
 
-		self.player = Fill:new({ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } })
+		self.player = Fill:new{ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } }
 
 		self:add(self.player)
 
 		self:add(cursor)
-		self:add(Text:new({ x = 4, y = 4, width = the.app.width, text = 'Arrow keys move, clicks create new sprites. R key starts/stops recording. P key plays back recorded input.' }))
+		self:add(Text:new{ x = 4, y = 4, width = the.app.width, text = 'Arrow keys move, clicks create new sprites. R key starts/stops recording. P key plays back recorded input.' }
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -55,8 +56,8 @@ Recording = App:extend({
 		-- mouse events
 
 		if the.mouse:justPressed() then
-			self:add(Fill:new({ x = the.mouse.x - 8, y = the.mouse.y - 8, width = 16, height = 16,
-								velocity = { x = 0, y = 200, rotation = math.pi } }))
+			self:add(Fill:new{ x = the.mouse.x - 8, y = the.mouse.y - 8, width = 16, height = 16,
+								velocity = { x = 0, y = 200, rotation = math.pi } }
 		end
 	end
-})
+}

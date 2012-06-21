@@ -12,7 +12,7 @@
 --		- Control-Alt-S saves a screenshot to the app's directory --
 --		  see https://love2d.org/wiki/love.filesystem for where this is.
 
-DebugConsole = Group:extend({
+DebugConsole = Group:extend{
 	-- Property: toggleKey
 	-- What key toggles visibility. By default, this is the tilde key.
 
@@ -75,27 +75,27 @@ DebugConsole = Group:extend({
 		obj._watches = {}
 		obj._hotkeys = {}
 
-		obj.fill = Fill:new({ x = 0, y = 0, width = width, height = height, fill = {0, 0, 0, 200} })
+		obj.fill = Fill:new{ x = 0, y = 0, width = width, height = height, fill = {0, 0, 0, 200} }
 		obj:add(obj.fill)
 
-		obj.log = Text:new({ x = 4, y = 4, width = width - self.watchWidth - 8, height = height - 8, text = '' })
+		obj.log = Text:new{ x = 4, y = 4, width = width - self.watchWidth - 8, height = height - 8, text = '' }
 		obj:add(obj.log)
 
-		obj.watchList = Text:new({ x = width - self.watchWidth - 4, y = 4,
-								   width = self.watchWidth - 8, height = height - 8, text = '', wordWrap = false })
+		obj.watchList = Text:new{ x = width - self.watchWidth - 4, y = 4,
+								   width = self.watchWidth - 8, height = height - 8, text = '', wordWrap = false }
 		obj:add(obj.watchList)
 
-		obj.prompt = Text:new({ x = 4, y = 0, width = '100', text = '>' })
+		obj.prompt = Text:new{ x = 4, y = 0, width = '100', text = '>' }
 		obj:add(obj.prompt)
 
 		local inputIndent = obj.log._fontObj:getWidth('>') + 4
-		obj.input = TextInput:new({
+		obj.input = TextInput:new{
 			x = inputIndent, y = 0, width = the.app.width,
 			active = false,
 			onType = function (self, char)
 				return char ~= the.console.toggleKey
 			end
-		})
+		}
 		obj:add(obj.input)
 
 		-- some default behavior
@@ -122,7 +122,7 @@ DebugConsole = Group:extend({
 
 		obj._oldPrint = print
 		print = function (...)
-			for _, value in pairs({...}) do
+			for _, value in pairs{...} do
 				obj.log.text = obj.log.text .. tostring(value) .. ' '
 			end
 
@@ -145,7 +145,7 @@ DebugConsole = Group:extend({
 
 	watch = function (self, label, expression)
 		table.insert(self._watches, { label = label,
-									  func = loadstring('return ' .. expression) })
+									  func = loadstring('return ' .. expression) }
 	end,
 
 	-- Method: addHotkey
@@ -162,7 +162,7 @@ DebugConsole = Group:extend({
 	--		nothing
 
 	addHotkey = function (self, key, func)
-		table.insert(self._hotkeys, { key = key, func = func })
+		table.insert(self._hotkeys, { key = key, func = func }
 	end,
 
 	-- Method: execute
@@ -284,7 +284,7 @@ DebugConsole = Group:extend({
 
 		Group.update(self, elapsed)
 	end
-})
+}
 
 -- Function: debugger.reload
 -- Resets the entire app and forces all code to be reloaded from 

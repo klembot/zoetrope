@@ -16,7 +16,7 @@
 -- Extends:
 --		<Sprite>
 
-Keys = Sprite:extend({
+Keys = Sprite:extend{
 	visible = false,
 
 	-- Property: typed
@@ -248,4 +248,4 @@ Keys = Sprite:extend({
 	end,
 
 	update = function() end
-})
+}

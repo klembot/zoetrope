@@ -1,4 +1,5 @@
-GamepadApp = App:extend({
+GamepadApp = App:extend
+{
 	numGamepads = 1,
 	colors = { {0, 255, 0}, {255, 0, 0}, {0, 0, 255}, {255, 255, 0} },
 	analog = false,
@@ -6,7 +7,7 @@ GamepadApp = App:extend({
 	onRun = function (self)
 		local gp = the.gamepads[1]
 
-		self.gamepadLabel = Text:new({ x = 4, y = 4, width = 800, height = 200 })
+		self.gamepadLabel = Text:new{ x = 4, y = 4, width = 800, height = 200 }
 		self.gamepadLabel.text = 'Name: ' .. gp.name .. '\n' ..
 								 gp.numAxes .. ' axes, ' .. gp.numBalls .. ' balls, ' ..
 								 gp.numButtons .. ' buttons, ' .. gp.numHats .. ' hats\n' ..
@@ -14,11 +15,11 @@ GamepadApp = App:extend({
 		
 		self:add(self.gamepadLabel)
 
-		self.controlLabel = Text:new({ x = 4, y = 200, width = 400, height = 400 })
+		self.controlLabel = Text:new{ x = 4, y = 200, width = 400, height = 400 }
 		self:add(self.controlLabel)
 
 
-		self.square = Fill:new({ x = 300, y = 300, width = 50, height = 50, fill = {255, 255, 255} })
+		self.square = Fill:new{ x = 300, y = 300, width = 50, height = 50, fill = {255, 255, 255} }
 		self:add(self.square)
 	end,
 
@@ -51,4 +52,4 @@ GamepadApp = App:extend({
 			if gp:pressed(i) then self.square.fill = self.colors[i] end
 		end
 	end
-})
+}

@@ -5,7 +5,7 @@
 -- Extends:
 --		<Sprite>
 
-Fill = Sprite:extend({
+Fill = Sprite:extend{
 	-- Property: fill
 	-- A table of color values in RGBA order. Each value should fall
 	-- between 0 and 255. The fill sprite fills this color in its bounds
@@ -70,4 +70,4 @@ Fill = Sprite:extend({
 		
 		Sprite.draw(self, x, y)
 	end
-})
+}

@@ -11,7 +11,7 @@
 -- Extends:
 --		<Sprite>
 
-Animation = Sprite:extend({
+Animation = Sprite:extend{
 	-- Property: paused
 	-- Set this to true to freeze the animation on the current frame.
 	paused = false,
@@ -222,4 +222,4 @@ Animation = Sprite:extend({
 		
 		Sprite.draw(self, x, y)
 	end
-})
+}

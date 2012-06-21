@@ -83,4 +83,4 @@ Tile = Sprite:extend(
 			
 		Sprite.draw(self, x, y)
 	end
-})
+}

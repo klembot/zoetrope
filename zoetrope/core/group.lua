@@ -17,7 +17,7 @@
 -- Event: onEndFrame
 -- Called once each frame like onUpdate, but guaranteed to fire after all others' onUpdate handlers.
 
-Group = Class:extend({
+Group = Class:extend{
 	-- Property: active
 	-- If false, none of its member sprites will receive update-related events.
 	active = true,
@@ -257,4 +257,4 @@ Group = Class:extend({
 			
 		if self.onDraw then self:onDraw() end
 	end
-})
+}

@@ -13,7 +13,7 @@
 --				 If the handler returns false, *not* nil or any other value,
 --				 then the key is ignored.
 
-TextInput = Text:extend({
+TextInput = Text:extend{
 	text = '',
 
 	-- Property: listening
@@ -70,7 +70,7 @@ TextInput = Text:extend({
 			local delay, rate = love.keyboard.getKeyRepeat()
 			local frameAction
 
-			for _, key in pairs({'backspace', 'delete', 'left', 'right'}) do
+			for _, key in pairs{'backspace', 'delete', 'left', 'right'} do
 				if the.keys:pressed(key) then
 					if self._repeatKey == key then
 						self._repeatTimer = self._repeatTimer + elapsed
@@ -153,4 +153,4 @@ TextInput = Text:extend({
 			end
 		end
 	end
-})
+}

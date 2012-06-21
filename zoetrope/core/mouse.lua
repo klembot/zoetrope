@@ -7,7 +7,7 @@
 -- Extends:
 --		<Sprite>
 
-Mouse = Sprite:extend({
+Mouse = Sprite:extend{
 	visible = false,
 
 	-- private property: _thisFrame
@@ -215,4 +215,4 @@ Mouse = Sprite:extend({
 	end,
 
 	update = function() end
-})
+}

@@ -32,7 +32,7 @@
 -- this event occurs for both sprites. The sprite is passed two arguments: the horizontal and vertical
 -- overlap between the other sprite, in pixels.
 
-Sprite = Class:extend({
+Sprite = Class:extend{
 	-- Property: active
 	-- If false, the sprite will not receive an update-related events.
 	active = true,
@@ -406,4 +406,4 @@ Sprite = Class:extend({
 	draw = function (self, x, y)
 		if self.onDraw then self:onDraw(x, y) end
 	end
-})
+}

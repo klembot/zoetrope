@@ -34,7 +34,7 @@
 -- when it is emitted. If multiple particles are emitted at once, the
 -- emitter will receive multiple onEmit events.
 
-Emitter = Group:extend({
+Emitter = Group:extend{
 	-- Property: x
 	-- The x coordinate of the upper-left corner of the rectangle where particles may appear.
 	x = 0,
@@ -205,4 +205,4 @@ Emitter = Group:extend({
 		sprite:die()
 		Group.add(self, sprite)
 	end
-})
+}

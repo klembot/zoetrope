@@ -22,7 +22,7 @@
 -- Extends:
 --		<Class>
 
-Factory = Class:extend({
+Factory = Class:extend{
 	-- private property: objects ready to be recycled, stored by prototype
 	_recycled = {},
 
@@ -129,4 +129,4 @@ Factory = Class:extend({
 	unfreeze = function (self, prototype)
 		self._frozen[prototype] = false
 	end
-})
+}

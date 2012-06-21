@@ -35,7 +35,7 @@ if STRICT then
 			print('Warning: accessing undefined global ' .. key .. ', ' ..
 				  info.short_src .. ' line ' .. info.currentline)
 		end
-	})
+	}
 end
 
 require 'zoetrope.core.class'

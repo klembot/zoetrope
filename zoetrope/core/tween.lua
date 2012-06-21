@@ -6,7 +6,7 @@
 -- be added somewhere in the current view or app. If you are using
 -- the <View> class, this is already done for you.
 
-Tween = Sprite:extend({
+Tween = Sprite:extend{
 	tweens = {},
 	visible = false,
 	active = false,
@@ -237,4 +237,4 @@ Tween = Sprite:extend({
 			tween.target[tween.prop] = value
 		end
 	end
-})
+}

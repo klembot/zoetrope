@@ -1,6 +1,7 @@
 require 'zoetrope'
 
-Sounds = App:extend({
+Sounds = App:extend
+{
 	onNew = function (self)
 		self.timer = Timer:new()
 		self:add(self.timer)
@@ -8,10 +9,10 @@ Sounds = App:extend({
 		self.testSound:play(1)
 		self.testSound:setVolume(0.25)
 		
-		self.signal = Fill:new({ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } })
+		self.signal = Fill:new{ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } }
 		self:add(self.signal)
 
-		self.timer:start({ func = self.testSound.play, delay = 1, bind = self.testSound })
+		self.timer:start{ func = self.testSound.play, delay = 1, bind = self.testSound }
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -21,4 +22,4 @@ Sounds = App:extend({
 
 		self.signal.visible = not self.testSound:isStopped()
 	end
-})
+}

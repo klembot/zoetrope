@@ -1,6 +1,6 @@
 require 'zoetrope'
 
-HelloWorld = App:extend({ name = 'Hello World' })
+HelloWorld = App:extend{ name = 'Hello World' }
 
 function HelloWorld:onRun()
 	print('This just tests the Zoetrope app framework.')

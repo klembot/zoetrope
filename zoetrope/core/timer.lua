@@ -5,7 +5,7 @@
 -- view or app. If you are using the <View> class, then this is already
 -- done for you; one is created as the View's timer property.
 
-Timer = Sprite:extend({
+Timer = Sprite:extend{
 	timers = {},
 	visible = false,
 	active = false,
@@ -97,4 +97,4 @@ Timer = Sprite:extend({
 		
 		self.active = (#self.timers > 0)
 	end
-})
+}

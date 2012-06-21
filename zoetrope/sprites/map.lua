@@ -12,7 +12,7 @@
 -- Extends:
 --		<Sprite>
 
-Map = Sprite:extend({
+Map = Sprite:extend{
 	-- Constant: NO_SPRITE
 	-- Represents a map entry with no sprite.
 	NO_SPRITE = -1,
@@ -127,9 +127,9 @@ Map = Sprite:extend({
 		
 		for y = 0, imageHeight - self.spriteHeight, self.spriteHeight do
 			for x = 0, imageWidth - self.spriteWidth, self.spriteWidth do
-				self.sprites[i] = class:new({ image = image, width = self.spriteWidth,
+				self.sprites[i] = class:new{ image = image, width = self.spriteWidth,
 											  height = self.spriteHeight,
-											  imageOffset = { x = x, y = y }})
+											  imageOffset = { x = x, y = y }}
 				i = i + 1
 			end
 		end
@@ -282,7 +282,7 @@ Map = Sprite:extend({
 					end
 					
 					table.insert(toDraw[sprite], { x + (drawX - 1) * self.spriteWidth,
-												   y + (drawY - 1) * self.spriteHeight })
+												   y + (drawY - 1) * self.spriteHeight }
 				end
 			end
 		end
@@ -358,4 +358,4 @@ Map = Sprite:extend({
 
 		Sprite.endFrame(self, elapsed)
 	end
-})
+}

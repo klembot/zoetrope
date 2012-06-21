@@ -1,8 +1,9 @@
 require 'zoetrope'
 
-Collisions = App:extend({
+Collisions = App:extend
+{
 	onRun = function (self)
-		self.player = Fill:new({ x = 16, y = 16, width = 16, height = 16 })
+		self.player = Fill:new{ x = 16, y = 16, width = 16, height = 16 }
 		
 		self.player.onCollide = function (self, other, vertOverlap, horizOverlap)
 			if vertOverlap > 8 and horizOverlap > 8 then
@@ -10,14 +11,14 @@ Collisions = App:extend({
 			end
 		end
 		
-		self.obstacle = Fill:new({ x = 200, y = 200, width = 96, height = 96,
-								   fill = {255, 0, 0} })
+		self.obstacle = Fill:new{ x = 200, y = 200, width = 96, height = 96,
+								  fill = {255, 0, 0} }
 								   
-		self.pushable = Fill:new({ x = 100, y = 100, width = 48, height = 48,
-								   fill = {0, 0, 255} })
+		self.pushable = Fill:new{ x = 100, y = 100, width = 48, height = 48,
+								  fill = {0, 0, 255} }
 							
-		self.collidable = Fill:new({ x = 20, y = 20, width = 32, height = 32,
-									 fill = {0, 255, 0} })
+		self.collidable = Fill:new{ x = 20, y = 20, width = 32, height = 32,
+									fill = {0, 255, 0} }
 		
 		self:add(self.collidable)		
 		self:add(self.obstacle)
@@ -51,4 +52,4 @@ Collisions = App:extend({
 		self.obstacle:displace(self.pushable)
 		self.player:displace(self.pushable)
 	end
-})
+}

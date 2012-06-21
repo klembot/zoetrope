@@ -7,8 +7,8 @@
 -- e.g. Code like this:
 --
 -- (begin code)
--- MyClass = Class:extend({ color = 'red', name = 'robin' })
--- myObject = MyClass:new({ color = 'blue' })
+-- MyClass = Class:extend{ color = 'red', name = 'robin' }
+-- myObject = MyClass:new{ color = 'blue' }
 -- (end code)
 --
 -- Would set myObject to have a color of 'blue' and a name of 'robin'. There is a

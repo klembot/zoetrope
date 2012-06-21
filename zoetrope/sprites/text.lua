@@ -11,7 +11,7 @@
 -- Extends:
 --		<Sprite>
 
-Text = Sprite:extend({
+Text = Sprite:extend{
 	-- Property: text
 	-- Text string to draw.
 	text = '',
@@ -192,4 +192,4 @@ Text = Sprite:extend({
 		
 		Sprite.draw(self, x, y)
 	end
-})
+}

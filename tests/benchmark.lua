@@ -2,7 +2,8 @@ require 'zoetrope'
 
 -- A block bounces around the screen
 
-Block = Tile:extend({
+Block = Tile:extend
+{
 	width = 16,
 	height = 16,
 
@@ -34,12 +35,13 @@ Block = Tile:extend({
 		   self.velocity.x = self.velocity.x * -1
 		end
 	end
-})
+}
 
 -- The app adds a block every frame so long as
 -- the FPS doesn't drop below a certain number
 
-Benchmark = App:extend({
+Benchmark = App:extend
+{
 	name = 'Sprite Benchmark',
 	count = 0,
 	fps = 999,
@@ -55,7 +57,7 @@ Benchmark = App:extend({
 		self.currentFPS = math.floor(1 / elapsed)
 	
 		if self.currentFPS >= self.minFPS then
-			self:add(Block:new({ x = math.random(0, 800), y = math.random(0, 600) }))
+			self:add(Block:new{ x = math.random(0, 800), y = math.random(0, 600) })
 			self.count = self.count + 1
 		end
 
@@ -69,4 +71,4 @@ Benchmark = App:extend({
 		love.graphics.print(self.currentFPS .. ' fps', 0, 0)
 		love.graphics.print(self.count .. ' sprites', 0, 16)
 	end
-})
+}

@@ -26,7 +26,7 @@
 -- Event: onMouseUp
 -- Called when the user releases the mouse over the button.
 
-Button = Sprite:extend({
+Button = Sprite:extend{
 	-- Property: mouseOver
 	-- Tracks whether the user's mouse is over the button this frame.
 	mouseOver = false,
@@ -111,4 +111,4 @@ Button = Sprite:extend({
 		if bg[name] then bg[name](bg) end
 		if self[name] then self[name](self) end
 	end
-})
+}

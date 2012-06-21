@@ -1,8 +1,9 @@
 require 'zoetrope'
 
-Focus = App:extend({
+Focus = App:extend
+{
 	onRun = function (self)
-		self.player = Fill:new({ x = 64, y = 64, width = 16, height = 16 })
+		self.player = Fill:new{ x = 64, y = 64, width = 16, height = 16 }
 		self:add(self.player)
 		self.view.focus = self.player
 		self.view.focusOffset.y = 128
@@ -12,12 +13,12 @@ Focus = App:extend({
 		self.view.minVisible.y = 0
 		self.view.maxVisible.y = 1280
 		
-		self:add(Fill:new({ x = 0, y = 0, width = 32, height = 32 }))
-		self:add(Fill:new({ x = 768, y = 0, width = 32, height = 32 }))
-		self:add(Fill:new({ x = 0, y = 568, width = 32, height = 32 }))
-		self:add(Fill:new({ x = 768, y = 568, width = 32, height = 32 }))
-		self:add(Fill:new({ x = 0, y = 1248, width = 32, height = 32 }))
-		self:add(Fill:new({ x = 768, y = 1248, width = 32, height = 32 }))
+		self:add(Fill:new{ x = 0, y = 0, width = 32, height = 32 }
+		self:add(Fill:new{ x = 768, y = 0, width = 32, height = 32 }
+		self:add(Fill:new{ x = 0, y = 568, width = 32, height = 32 }
+		self:add(Fill:new{ x = 768, y = 568, width = 32, height = 32 }
+		self:add(Fill:new{ x = 0, y = 1248, width = 32, height = 32 }
+		self:add(Fill:new{ x = 768, y = 1248, width = 32, height = 32 }
 		
 		if DEBUG then
 			the.console:watch('sprite x', 'the.app.player.x')
@@ -47,4 +48,4 @@ Focus = App:extend({
 			self.player.velocity.y = 150
 		end
 	end
-})
+}

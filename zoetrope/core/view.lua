@@ -8,7 +8,7 @@
 -- Extends:
 --		<Group>
 
-View = Group:extend({
+View = Group:extend{
 	-- Property: timer
 	-- A built-in <Timer> object for use as needed.
 
@@ -117,7 +117,7 @@ View = Group:extend({
 				end
 
 				if layer.type == 'tilelayer' then
-					local map = Map:new({ spriteWidth = data.tilewidth, spriteHeight = data.tileheight })
+					local map = Map:new{ spriteWidth = data.tilewidth, spriteHeight = data.tileheight }
 					map:empty(layer.width, layer.height)
 
 					-- load tiles
@@ -181,7 +181,7 @@ View = Group:extend({
 
 							spr = _G[obj.name]:new(obj.properties)
 						else
-							spr = Fill:new({ x = obj.x, y = obj.y, width = obj.width, height = obj.height, fill = { 128, 128, 128 } })
+							spr = Fill:new{ x = obj.x, y = obj.y, width = obj.width, height = obj.height, fill = { 128, 128, 128 } }
 						end
 
 						if obj.properties._the then
@@ -245,8 +245,8 @@ View = Group:extend({
 		local alpha = color[4] or 255
 		self._fx = color
 		self._fx[4] = 0
-		self.tween:start({ target = self._fx, prop = 4, to = alpha, duration = duration or 1,
-						   ease = 'quadOut', force = true, onComplete = onComplete })
+		self.tween:start{ target = self._fx, prop = 4, to = alpha, duration = duration or 1,
+						   ease = 'quadOut', force = true, onComplete = onComplete }
 	end,
 
 	-- Method: flash
@@ -270,8 +270,8 @@ View = Group:extend({
 		assert(type(color) == 'table', 'color to flash is ' .. type(color) .. ', not a table')
 		color[4] = color[4] or 255
 		self._fx = color
-		self.tween:start({ target = self._fx, prop = 4, to = 0, duration = duration or 1,
-						   ease = 'quadOut', force = true, onComplete = done })
+		self.tween:start{ target = self._fx, prop = 4, to = 0, duration = duration or 1,
+						   ease = 'quadOut', force = true, onComplete = done }
 	end,
 
 	-- Method: tint
@@ -349,4 +349,4 @@ View = Group:extend({
 			love.graphics.setColor(255, 255, 255, 255)
 		end
 	end
-})
+}

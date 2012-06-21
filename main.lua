@@ -3,21 +3,23 @@ DEBUG = true
 
 require 'tests'
 
-MenuButton = Button:extend({
+MenuButton = Button:extend
+{
 	onNew = function (self)
-		self.background = Fill:new({ width = 100, height = 24,
-									 fill = { 64, 64, 64 }, border = { 255, 255, 255 } })
-		self.label = Text:new({ x = 4, y = 6, align = 'center',
-							    width = 92, height = 16, text = self.label })
+		self.background = Fill:new{ width = 100, height = 24,
+									 fill = { 64, 64, 64 }, border = { 255, 255, 255 } }
+		self.label = Text:new{ x = 4, y = 6, align = 'center',
+							    width = 92, height = 16, text = self.label }
 	end,
 
 	onMouseUp = function (self)
 		the.app = self.app:new()
 		the.app:run()
 	end
-})
+}
 
-Menu = App:extend({
+Menu = App:extend
+{
 	apps =
 	{
 		'Benchmark', Benchmark,
@@ -46,7 +48,7 @@ Menu = App:extend({
 		local y = 16
 
 		for i = 1, #self.apps, 2 do
-			self:add(MenuButton:new({ x = x, y = y, label = self.apps[i], app = self.apps[i + 1] }))
+			self:add(MenuButton:new{ x = x, y = y, label = self.apps[i], app = self.apps[i + 1] })
 
 			x = x + 136
 
@@ -58,7 +60,7 @@ Menu = App:extend({
 
 		print('Welcome to the Zoetrope test suite.')
 	end
-})
+}
 
 
 function love.load()

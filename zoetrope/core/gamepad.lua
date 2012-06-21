@@ -17,7 +17,7 @@
 -- Extends:
 --		<Sprite>
 
-Gamepad = Sprite:extend({
+Gamepad = Sprite:extend{
 
 	-- Property: number
 	-- The index of the gamepad, starting at 1.
@@ -341,4 +341,4 @@ Gamepad = Sprite:extend({
 			the.gamepads[number]:buttonReleased(button)
 		end
 	end
-})
+}

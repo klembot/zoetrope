@@ -1,7 +1,7 @@
 -- Class: Cursor
 -- A cursor is a group that follows the user's cursor.
 
-Cursor = Group:extend({
+Cursor = Group:extend{
 	hotspot = { x = 0, y = 0 },
 
 	new = function (self, obj)
@@ -19,4 +19,4 @@ Cursor = Group:extend({
 		
 		Group.update(self, elapsed)
 	end
-})
+}

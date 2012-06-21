@@ -17,7 +17,7 @@
 -- Event: onRun
 -- 		Called once, when the app begins running.
 
-App = Class:extend({
+App = Class:extend{
 	-- Property: name
 	-- This is shown in the window title bar.
 	name = 'Zoetrope',
@@ -105,7 +105,7 @@ App = Class:extend({
 
 		if obj.numGamepads and obj.numGamepads > 0 then
 			for i = 1, obj.numGamepads do
-				obj.gamepads[i] = Gamepad:new({ number = i })
+				obj.gamepads[i] = Gamepad:new{ number = i }
 				obj.meta:add(obj.gamepads[i])
 			end
 		end
@@ -381,4 +381,4 @@ App = Class:extend({
 			end
 		end
 	end	
-})
+}

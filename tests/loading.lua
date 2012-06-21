@@ -1,6 +1,7 @@
 require 'zoetrope'
 
-Player = Fill:extend({
+Player = Fill:extend
+{
 	width = 16, height = 16, fill = { 0, 0, 255 },
 
 	onUpdate = function (self)
@@ -12,9 +13,10 @@ Player = Fill:extend({
 		if the.keys:pressed(LEFT) then self.velocity.x = -200 end
 		if the.keys:pressed(RIGHT) then self.velocity.x = 200 end
 	end
-})
+}
 
-Loading = App:extend({
+Loading = App:extend
+{
 	onRun = function (self)
 		self.view:loadLayers('tests/assets/map.lua')
 		self.view:clampTo(self.view.map)
@@ -25,4 +27,4 @@ Loading = App:extend({
 	onUpdate = function (self)
 		self.view.map:subdisplace(the.player)
 	end
-})
+}
