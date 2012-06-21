@@ -46,7 +46,7 @@ Factory = Class:extend{
 		
 		if self._recycled[prototype] and #self._recycled[prototype] > 0 then
 			newObj = table.remove(self._recycled[prototype])
-			newObj:mixin(props)
+			if props then newObj:mixin(props) end
 		else
 			-- create a new instance if we're allowed to
 
