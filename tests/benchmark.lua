@@ -1,7 +1,5 @@
 require 'zoetrope'
 
--- A block bounces around the screen
-
 Block = Tile:extend
 {
 	width = 16,
@@ -25,7 +23,7 @@ Block = Tile:extend
 		self.alpha = math.random()
 	end,
 	
-	onUpdate = function (self, elapsed)
+	onUpdate = function (self)
 		if self.y > the.app.height and self.velocity.y > 0 then
 			self.velocity.y = self.velocity.y * -1
 		end

@@ -6,10 +6,18 @@ require 'tests'
 MenuButton = Button:extend
 {
 	onNew = function (self)
-		self.background = Fill:new{ width = 100, height = 24,
+		self.background = Fill:new{ width = 200, height = 24,
 									 fill = { 64, 64, 64 }, border = { 255, 255, 255 } }
 		self.label = Text:new{ x = 4, y = 6, align = 'center',
-							    width = 92, height = 16, text = self.label }
+							    width = 192, height = 16, text = self.label }
+	end,
+
+	onMouseEnter = function (self)
+		self.background.fill = {128, 128, 128}
+	end,
+
+	onMouseExit = function (self)
+		self.background.fill = {64, 64, 64}
 	end,
 
 	onMouseUp = function (self)
@@ -22,43 +30,46 @@ Menu = App:extend
 {
 	apps =
 	{
-		'Benchmark', Benchmark,
-		'Collisions', Collisions,
-		'Emitters', Emitters,
-		'Files', Files,
-		'Factory', FactoryApp,
-		'Focus', Focus,
-		'Gamepad', GamepadApp,
-		'Hello World', HelloWorld,
-		'Input', Input,
-		'Loading', Loading,
+		'Performance Benchmark', Benchmark,
+		'Sprites', SpriteTypes,
+		'Collision Checking', Collisions,
+		'Object Reuse', Reuse,
+		'Keyboard and Mouse Input', Input,
+		'Gamepad Input', GamepadSupport,
 		'Maps', Maps,
-		'Recording', Recording,
-		'Scrolling', Scrolling,
+		'Emitters', Emitters,
 		'Sounds', Sounds,
-		'Sprite Types', SpriteTypes,
+		'Files', Files,
+		'Tinting and Fading', ViewFx,
+		'UI', UI,
+		'Tiled Map Support', Loading,
+		'Parallax Scrolling', Scrolling,
 		'Timers', Timers,
 		'Tweens', Tweens,
-		'UI', UI,
-		'ViewFx', ViewFx
+		'Input Recording', Recording
 	},
 
 	onNew = function (self)
-		local x = 16
-		local y = 16
+		local x = 10
+		local y = 50
 
 		for i = 1, #self.apps, 2 do
 			self:add(MenuButton:new{ x = x, y = y, label = self.apps[i], app = self.apps[i + 1] })
 
-			x = x + 136
+			x = x + 250
 
-			if x > the.app.width - 100 then
-				x = 16
-				y = y + 30
+			if x > 400 then
+				x = 10
+				y = y + 40
 			end
 		end
 
 		print('Welcome to the Zoetrope test suite.')
+
+		self:add(Text:new{ x = 10, y = 470, font = 100, width = 780, tint = {0.5, 0.5, 0.5}, text = 'Zoetrope' })
+		self:add(Text:new{ x = 10, y = 440, font = 14, width = 500, text =
+						   'Click a heading above to see a demo. Press Control-Alt-M (Control-Option-M on a Mac) at '..
+						   'any time to return to this menu.' })
 	end
 }
 
