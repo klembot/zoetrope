@@ -193,7 +193,7 @@ App = Class:extend
 	--			   will try to infer based on the aspect ratio of your app.
 	--
 	-- Returns:
-	--		nothing
+	--		boolean whether this succeeded
 
 	enterFullscreen = function (self, hint)
 		if STRICT then
@@ -227,15 +227,18 @@ App = Class:extend
 
 		-- if we found a match, switch to it
 
-		assert(bestMode.width, 'this app\'s width and height are not supported in fullscreen on this screen')
-		love.graphics.setMode(bestMode.width, bestMode.height, true)
-		self.fullscreen = true
+		if bestMode.width then
+			love.graphics.setMode(bestMode.width, bestMode.height, true)
+			self.fullscreen = true
 
-		-- and adjust inset and scissor
+			-- and adjust inset and scissor
 
-		self.inset.x = math.floor((bestMode.width - self.width) / 2)
-		self.inset.y = math.floor((bestMode.height - self.height) / 2)
-		love.graphics.setScissor(self.inset.x, self.inset.y, self.width, self.height)
+			self.inset.x = math.floor((bestMode.width - self.width) / 2)
+			self.inset.y = math.floor((bestMode.height - self.height) / 2)
+			love.graphics.setScissor(self.inset.x, self.inset.y, self.width, self.height)
+		end
+
+		return self.fullscreen
 	end,
 
 	-- Method: exitFullscreen
