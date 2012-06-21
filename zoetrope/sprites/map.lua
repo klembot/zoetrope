@@ -282,7 +282,7 @@ Map = Sprite:extend{
 					end
 					
 					table.insert(toDraw[sprite], { x + (drawX - 1) * self.spriteWidth,
-												   y + (drawY - 1) * self.spriteHeight }
+												   y + (drawY - 1) * self.spriteHeight })
 				end
 			end
 		end

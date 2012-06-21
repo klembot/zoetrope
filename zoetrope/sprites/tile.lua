@@ -6,7 +6,7 @@
 -- Extends:
 --		<Sprite>
 
-Tile = Sprite:extend(
+Tile = Sprite:extend
 {
 	-- Property: image
 	-- The image to tile across the sprite.

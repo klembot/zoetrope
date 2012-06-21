@@ -145,7 +145,7 @@ DebugConsole = Group:extend{
 
 	watch = function (self, label, expression)
 		table.insert(self._watches, { label = label,
-									  func = loadstring('return ' .. expression) }
+									  func = loadstring('return ' .. expression) })
 	end,
 
 	-- Method: addHotkey
@@ -162,7 +162,7 @@ DebugConsole = Group:extend{
 	--		nothing
 
 	addHotkey = function (self, key, func)
-		table.insert(self._hotkeys, { key = key, func = func }
+		table.insert(self._hotkeys, { key = key, func = func })
 	end,
 
 	-- Method: execute

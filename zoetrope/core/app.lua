@@ -17,7 +17,8 @@
 -- Event: onRun
 -- 		Called once, when the app begins running.
 
-App = Class:extend{
+App = Class:extend
+{
 	-- Property: name
 	-- This is shown in the window title bar.
 	name = 'Zoetrope',

@@ -17,11 +17,11 @@ Emitters = App:extend{
 		self.emitter.period = 0.05
 
 		for i = 1, 400 do
-			self.emitter:add(Fill:new{ width = 16, height = 16, fill = { 0, 0, 255, 128 }}
+			self.emitter:add(Fill:new{ width = 16, height = 16, fill = {0, 0, 255, 128} })
 		end
 
 		self.emitter:loadParticles(RedParticle, 400)
-		self.emitter:loadParticles(RedParticle:extend{ fill = { 0, 255, 0, 128 } }, 400)
+		self.emitter:loadParticles(RedParticle:extend{ fill = {0, 255, 0, 128} }, 400)
 
 		self:add(self.emitter)
 	end,

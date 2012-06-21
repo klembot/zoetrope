@@ -12,7 +12,7 @@ ViewFx = App:extend
 		end
 
 		if the.keys:justPressed('f') then
-			self.view:fade{0, 0, 0}, 1, function() self.view:flash{0, 0, 0}, 1) end) 
+			self.view:fade({0, 0, 0}, 1, function() self.view:flash({0, 0, 0}, 1) end) 
 		end
 	end
 }

@@ -2,6 +2,8 @@
 -- debug.reload() will have a correct initial starting point.
 
 if DEBUG then
+	-- remember initial state
+
 	local _initialGlobals = {}
 	local _initialPackages = {}
 
@@ -35,7 +37,7 @@ if STRICT then
 			print('Warning: accessing undefined global ' .. key .. ', ' ..
 				  info.short_src .. ' line ' .. info.currentline)
 		end
-	}
+	})
 end
 
 require 'zoetrope.core.class'

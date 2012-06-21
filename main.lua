@@ -62,7 +62,6 @@ Menu = App:extend
 	end
 }
 
-
 function love.load()
 	testApp = Menu:new()
 	testApp:run()
