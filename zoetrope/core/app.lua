@@ -80,6 +80,10 @@ App = Class:extend
 	-- be other uses for it.
 	inset = { x = 0, y = 0},
 
+	-- internal property: _sleepTime
+	-- The amount of time the app intentionally slept for, and should not
+	-- be counted against elapsed time.
+
 	new = function (self, obj)
 		obj = self:extend(obj)
 
@@ -326,6 +330,7 @@ App = Class:extend
 
 	update = function (self, elapsed)
 		local view = self.view
+		elapsed = elapsed - (self._sleepTime or 0)
 		local realElapsed = elapsed
 		elapsed = elapsed * self.timeScale
 
@@ -333,8 +338,11 @@ App = Class:extend
 
 		if not self.active then
 			love.timer.sleep(0.5)
+			self._sleepTime = 0.5
 			return
 		end
+
+		self._sleepTime = 0
 		
 		-- sync the.view with our current view
 		
