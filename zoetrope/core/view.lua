@@ -305,10 +305,10 @@ View = Group:extend{
 		
 		if self.focus and self.focus.width < screenWidth
 		   and self.focus.height < screenHeight then
-			self.translate.x = - (self.focus.x + self.focusOffset.x) +
-							   (screenWidth - self.focus.width) / 2
-			self.translate.y = - (self.focus.y + self.focusOffset.y) +
-							   (screenHeight - self.focus.height) / 2
+			self.translate.x = math.floor(- (self.focus.x + self.focusOffset.x) +
+							   (screenWidth - self.focus.width) / 2)
+			self.translate.y = math.floor(- (self.focus.y + self.focusOffset.y) +
+							   (screenHeight - self.focus.height) / 2)
 		end
 		
 		-- clamp translation to min and max visible
