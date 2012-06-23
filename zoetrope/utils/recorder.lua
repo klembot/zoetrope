@@ -71,7 +71,6 @@ Recorder = Sprite:extend{
 
 		-- insert ourselves into event handlers
 		self:stealInputs()
-
 	end,
 
 	-- Method: stopRecording
@@ -98,7 +97,7 @@ Recorder = Sprite:extend{
 	-- a recording, this restarts it.
 	--
 	-- Arguments:
-	--		record - Record to play back. If ommitted, this uses
+	--		record - Record to play back. If omitted, this uses
 	--				 the recorder's record property.
 	--
 	-- Returns:
@@ -106,6 +105,10 @@ Recorder = Sprite:extend{
 
 	startPlaying = function (self, record)
 		record = record or self.record
+
+		-- if we are currently recording, ignore the request
+
+		if self.state == Recorder.RECORDING then return end
 
 		-- restart if needed
 
@@ -130,6 +133,7 @@ Recorder = Sprite:extend{
 	--		nothing
 
 	stopPlaying = function (self)
+		if not self.state == Recorder.PLAYING then return end
 		self.state = Recorder.IDLE
 		self:restoreInputs()
 	end,
