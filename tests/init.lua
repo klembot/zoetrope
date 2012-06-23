@@ -8,7 +8,6 @@ TestApp = App:extend
 	end
 }
 
-require 'tests.helloworld'
 require 'tests.benchmark'
 require 'tests.collisions'
 require 'tests.emitters'

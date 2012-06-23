@@ -1,6 +1,6 @@
 require 'zoetrope'
 
-SpriteTypes = App:extend
+SpriteTypes = TestApp:extend
 {
 	title = 'Sprite Types',
 	blueGem = 'tests/assets/bluegem.png',
@@ -11,51 +11,125 @@ SpriteTypes = App:extend
 	end,
 	
 	onRun = function (self)
-		self:add(Fill:new{
-			x = 16, y = 16, width = 32, height = 32,
+		self:add(Fill:new
+		{
+			x = 100, y = 40,
+			width = 32, height = 32,
 			fill = { 0, 0, 255 }, border = { 0, 255, 0 }
 		})	
 	
-		self:add(Fill:new{
-			x = 64, y = 16, width = 32, height = 32,
+		self:add(Fill:new
+		{
+			x = 150, y = 36, width = 32, height = 32,
 			fill = { 0, 0, 255 }, border = { 0, 255, 0 },
-			tint = { 0, 0, 1 }, alpha = 0.5, rotation = math.rad(45), scale = 2 
+			tint = { 0, 0, 1 }, velocity = { x = 0, y = 0, rotation = math.pi },
+			alpha = 0.5, scale = 2 
+		})
+
+		self:add(Text:new
+		{
+			x = 50, y = 100, width = 200, align = 'center',
+			text = 'A Fill fills a rectangular area with a solid color, and has an optional border.'
 		})
 		
-		self:add(Tile:new{ x = 16, y = 144, width = 32, height = 32, image = self.blueGem })
-		
-		self:add(Tile:new{
-			x = 72, y = 144, image = self.blueGem,
-			tint = { 0.5, 1, 0.5 }, alpha = 0.5, rotation = math.rad(45), scale = 3
+		self:add(Tile:new
+		{
+			x = 360, y = 40,
+			width = 32, height = 32,
+			image = self.blueGem
 		})
 		
-		local anim = Animation:new{ x = 150, y = 25, width = 16, height = 24, image = self.chestAnim }
-		anim.sequences.open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 }
+		self:add(Tile:new
+		{
+			x = 420, y = 45,
+			image = self.blueGem,
+			tint = { 0.5, 1, 0.5 }, velocity = { x = 0, y = 0, rotation = math.pi },
+			scale = 3, alpha = 0.5
+		})
+
+		self:add(Text:new
+		{
+			x = 300, y = 100, width = 200, align = 'center',
+			text = 'A Tile stamps an image or repeats it across a rectangular area.'
+		})
+		
+		local anim = Animation:new
+		{
+			x = 600, y = 45,
+			width = 16, height = 24,
+			image = self.chestAnim,
+			sequences = { open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 } }
+		}
+
 		anim:play('open')
 		self:add(anim)
 
-		local anim2 = Animation:new{ x = 200, y = 25, width = 16, height = 24, image = self.chestAnim,
-									  fill = { 0, 0, 255 }, border = { 0, 255, 0 },
-									  tint = { 0.5, 1, 0.5 }, alpha = 0.5, rotation = math.rad(45),
-									  scale = 2
+		local anim2 = Animation:new
+		{
+			x = 640, y = 45,
+			width = 16, height = 24,
+			image = self.chestAnim,
+			sequences = { open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 } },
+		  	tint = { 0.5, 1, 0.5 }, alpha = 0.5,
+			velocity = { x = 0, y = 0, rotation = math.pi }, scale = 3
 		}
-		anim2.sequences.open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 }
 		anim2:play('open')
 		self:add(anim2)
-		
-		self:add(Text:new{ x = 16, y = 250, text = 'This is an outline (TrueType) font, left aligned.',
-								   width = 150, tint = { 1, 0, 0 } })
-		self:add(Text:new{ x = 316, y = 250, text = 'This is an outline (TrueType) font, center aligned.',
-								   width = 150, tint = { 0, 1, 0 }, align = 'center' })
-		self:add(Text:new{ x = 516, y = 250, text = 'This is an outline (TrueType) font, right aligned.',
-							width = 150, tint = { 0, 0, 1 }, align = 'right' })
 
-		self:add(Text:new{ x = 316, y = 300, text = 'This is an outline (TrueType) font, left aligned.',
-								   width = 150, tint = {0, 0, 1}, scale = 2, alpha = 0.5, rotation = math.rad(45) })
+		self:add(Text:new
+		{
+			x = 550, y = 100, width = 200,
+			text = 'An Animation plays a sequence of frames from an image.'
+		})
 
-		self:add(Text:new{ x = 16, y = 400, text = 'This is a bitmap font.', font = 'tests/assets/press-start.png' })
+		self:add(Text:new
+		{
+			x = 50, y = 250, width = 200,
+			text = 'Text sprites display text using outline (or TrueType) fonts.',
+			tint = { 1, 0, 0 }
+		})
 
-		self:add(Text:new{ x = 316, y = 400, text = 'This is a bitmap font.',
-							font = 'tests/assets/press-start.png', scale = 2, alpha = 0.5, rotation = math.rad(45) })
+		self:add(Text:new
+		{
+			x = 300, y = 250, width = 200,
+			text = 'Font color can be set...',
+			align = 'center',
+			tint = { 0, 1, 0 }
+		})
+
+		self:add(Text:new
+		{
+			x = 550, y = 250, width = 200,
+			text = '... as well as alignment of text when it wraps to multiple lines.',
+			align = 'right',
+			tint = { 0, 0, 1 }
+		})
+
+		self:add(Text:new
+		{
+			x = 0, y = 350, width = 800,
+			align = 'center',
+			text = 'Text sprites can also use bitmap fonts.',
+			font = 'tests/assets/press_start.png'
+		})
+
+		self:add(Text:new
+		{
+			x = 0, y = 375, width = 800,
+			align = 'center',
+			text = 'Text sprites can also use bitmap fonts.',
+			font = 'tests/assets/press_start.png',
+			scale = 1.5,
+			alpha = 0.25,
+			tint = { 0, 0, 1 },
+			velocity = { x = 0, y = 0, rotation = math.pi / 2 }
+		})
+
+		self:add(Text:new
+		{
+			x = 10, y = 560, width = 560, font = 14,
+			text = 'All sprites can be scaled, rotated, tinted, and alpha faded. They also have ' ..
+				   'velocity, acceleration, and drag (for both their x and y motion as well as rotation).'
+		})
 	end
 }

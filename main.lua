@@ -32,10 +32,10 @@ Menu = App:extend
 	{
 		'Performance Benchmark', Benchmark,
 		'Sprites', SpriteTypes,
-		'Collision Checking', Collisions,
-		'Object Reuse', Reuse,
 		'Keyboard and Mouse Input', Input,
 		'Gamepad Input', GamepadSupport,
+		'Collision Checking', Collisions,
+		'Object Reuse', Reuse,
 		'Maps', Maps,
 		'Emitters', Emitters,
 		'Sounds', Sounds,
