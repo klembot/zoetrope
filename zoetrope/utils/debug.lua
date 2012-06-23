@@ -192,6 +192,34 @@ DebugConsole = Group:extend{
 		end
 	end,
 
+	-- Method: show
+	-- Shows the debug console.
+	-- 
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	show = function (self)
+		self.visible = true
+		self.input.active = true
+	end,
+
+	-- Method: hide
+	-- Hides the debug console.
+	-- 
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	hide = function (self)
+		self.visible = false
+		self.input.active = false
+	end,
+
 	update = function (self, elapsed)
 		-- listen for visibility key
 
