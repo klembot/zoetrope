@@ -3,7 +3,7 @@ FactoryParticle = Fill:extend{
 	height = 16,
 
 	onNew = function (self)
-		the.app:add(self)
+		the.app.particles:add(self)
 	end,
 
 	onReset = function (self)
@@ -18,11 +18,17 @@ FactoryParticle = Fill:extend{
 	end
 }
 
-FactoryApp = App:extend
+Reuse = TestApp:extend
 {
 	onNew = function (self)
-		self.label = Text:new{ x = 4, y = 4, width = 200, text = '0 sprites' }
+		self.particles = Group:new()
+		self:add(self.particles)
+		self.label = Text:new{ x = 10, y = 500, font = 48, width = 800, text = '0 sprites created' }
 		self:add(self.label)
+
+		self:add(Text:new{ x = 10, y = 560, width = 600, font = 14,
+						   text = 'Press the R, G, and B keys to create sprites of different hues. ' ..
+						   'When a sprite goes offscreen, it is automatically reused by the factory class.' })
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -40,6 +46,6 @@ FactoryApp = App:extend
 									  velocity = { x = 200, y = 0, rotation = 0 } })
 		end
 
-		self.label.text = #self.view.sprites .. ' sprites'
+		self.label.text = self.particles:count() .. ' sprites created'
 	end
 }

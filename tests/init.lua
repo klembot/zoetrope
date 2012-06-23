@@ -1,3 +1,13 @@
+require 'zoetrope'
+
+TestApp = App:extend
+{
+	run = function (self)
+		App.run(self)
+		the.console:addHotkey('m', debugger.reload)
+	end
+}
+
 require 'tests.helloworld'
 require 'tests.benchmark'
 require 'tests.collisions'

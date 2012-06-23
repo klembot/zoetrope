@@ -35,38 +35,34 @@ Block = Tile:extend
 	end
 }
 
--- The app adds a block every frame so long as
--- the FPS doesn't drop below a certain number
-
-Benchmark = App:extend
+Benchmark = TestApp:extend
 {
 	name = 'Sprite Benchmark',
 	count = 0,
 	fps = 999,
 	minFPS = 55,
 	currentFPS = 0,
-	
-	onRun = function (self)
-		print('This benchmarks how many sprites can be displayed onscreen ' ..
-			  'without significant loss of FPS.')	
+
+	onNew = function (self)
+		self.blocks = Group:new()
+		self:add(self.blocks)
+		self.countText = Text:new{ x = 10, y = 440, font = 144, width = 200 }
+		self:add(self.countText)
+		self:add(Text:new{ x = 10, y = 580, font = 14, width = 600,
+				 text = 'sprites onscreen while maintaining roughly 60 frames per second.' })
 	end,
 	
 	onUpdate = function (self, elapsed)
 		self.currentFPS = math.floor(1 / elapsed)
 	
 		if self.currentFPS >= self.minFPS then
-			self:add(Block:new{ x = math.random(0, 800), y = math.random(0, 600) })
+			self.blocks:add(Block:new{ x = math.random(0, 800), y = math.random(0, 600) })
 			self.count = self.count + 1
+			self.countText.text = self.count
 		end
 
 		if the.keys:justPressed('f') then
 			self:toggleFullscreen()
 		end
-	end,
-	
-	onDraw = function (self)
-		love.graphics.setColor(255, 255, 255)
-		love.graphics.print(self.currentFPS .. ' fps', 0, 0)
-		love.graphics.print(self.count .. ' sprites', 0, 16)
 	end
 }

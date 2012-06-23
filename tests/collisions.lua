@@ -1,6 +1,6 @@
 require 'zoetrope'
 
-Collisions = App:extend
+Collisions = TestApp:extend
 {
 	onRun = function (self)
 		self.player = Fill:new{ x = 16, y = 16, width = 16, height = 16 }
@@ -24,6 +24,10 @@ Collisions = App:extend
 		self:add(self.obstacle)
 		self:add(self.pushable)
 		self:add(self.player)
+
+		self:add(Text:new{ x = 10, y = 560, width = 600, font = 14,
+						   text = 'Use the arrow keys to move. Zoetrope can do basic collision ' ..
+						   'detection based on bounding rectangles, and also have sprites displace each other.' })
 	end,
 	
 	onUpdate = function (self, elapsed)
