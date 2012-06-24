@@ -1,1 +1,1 @@
-NaturalDocs -i zoetrope\ -o html doc\ -p doc\nd\
+NaturalDocs -i zoetrope\ -o html doc\ -p doc\nd\ -s Bitbucket
