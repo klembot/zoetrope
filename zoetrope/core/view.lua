@@ -260,7 +260,7 @@ View = Group:extend{
 	-- Returns:
 	--		nothing
 
-	flash = function (self, color, duration)
+	flash = function (self, color, duration, onComplete)
 		local s = self
 		local done = function (t)
 			t.target = nil
