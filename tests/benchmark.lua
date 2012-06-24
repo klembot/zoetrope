@@ -44,6 +44,9 @@ Benchmark = TestApp:extend
 	currentFPS = 0,
 
 	onNew = function (self)
+		DEBUG = false
+		STRICT = false
+
 		self.blocks = Group:new()
 		self:add(self.blocks)
 		self.countText = Text:new{ x = 10, y = 440, font = 144, width = 200 }

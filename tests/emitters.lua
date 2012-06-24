@@ -2,13 +2,8 @@ require 'zoetrope'
 
 RedParticle = Fill:extend{ width = 16, height = 16, fill = { 255, 0, 0, 128 } }
 
-Emitters = App:extend{
+Emitters = TestApp:extend{
 	title = 'Particle Emitter',
-
-	onRun = function (self)
-		print("This demonstrates Zoetrope's particle emitter class. Press the space bar " ..
-			  "to launch all 1200 particles at once.")
-	end,
 
 	onNew = function (self)
 		self.emitter = Emitter:new{ x = 350, y = 250, width = 100, height = 100 }
@@ -24,6 +19,13 @@ Emitters = App:extend{
 		self.emitter:loadParticles(RedParticle:extend{ fill = {0, 255, 0, 128} }, 400)
 
 		self:add(self.emitter)
+
+		self:add(Text:new
+		{
+			x = 10, y = 550, width = 550, font = 14,
+			text = 'Zoetrope\'s particle emitters are similar to LOVE\'s, but each particle can be ' ..
+				   'a sprite with custom code. Press the space bar to explode all particles at once.'
+		})
 	end,
 
 	onUpdate = function (self, elapsed)

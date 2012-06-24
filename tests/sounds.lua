@@ -1,6 +1,6 @@
 require 'zoetrope'
 
-Sounds = App:extend
+Sounds = TestApp:extend
 {
 	onNew = function (self)
 		self.timer = Timer:new()
@@ -13,6 +13,13 @@ Sounds = App:extend
 		self:add(self.signal)
 
 		self.timer:start{ func = self.testSound.play, delay = 1, bind = self.testSound }
+
+		self:add(Text:new
+		{
+			x = 10, y = 550, width = 550, font = 14,
+			text = 'Zoetrope has simple functions to play sound that re-use sound assets to avoid ' ..
+				   'wasting memory. Press the space bar to play a beep.'
+		})
 	end,
 
 	onUpdate = function (self, elapsed)

@@ -37,19 +37,22 @@ Menu = App:extend
 		'Collision Checking', Collisions,
 		'Object Reuse', Reuse,
 		'Maps', Maps,
+		'Tiled Map Support', Tiled,
 		'Emitters', Emitters,
 		'Sounds', Sounds,
 		'Files', Files,
-		'Tinting and Fading', ViewFx,
 		'UI', UI,
-		'Tiled Map Support', Loading,
 		'Parallax Scrolling', Scrolling,
 		'Timers', Timers,
 		'Tweens', Tweens,
-		'Input Recording', Recording
+		'Input Recording', Recording,
+		'Debugging', Debugging
 	},
 
 	onNew = function (self)
+		DEBUG = true
+		STRICT = true
+
 		local x = 10
 		local y = 50
 
@@ -67,9 +70,10 @@ Menu = App:extend
 		print('Welcome to the Zoetrope test suite.')
 
 		self:add(Text:new{ x = 10, y = 470, font = 100, width = 780, tint = {0.5, 0.5, 0.5}, text = 'Zoetrope' })
-		self:add(Text:new{ x = 10, y = 440, font = 14, width = 500, text =
-						   'Click a heading above to see a demo. Press Control-Alt-M (Control-Option-M on a Mac) at '..
-						   'any time to return to this menu.' })
+		self:add(Text:new{ x = 10, y = 580, font = 11, tint = { 0.75, 0.75, 0.75}, text = 'http://tinyurl.com/libzoetrope' })
+		self:add(Text:new{ x = 10, y = 440, font = 14, width = 400, text =
+						   'Click a heading above to see a demo.\nPress the Escape key at any time to return to this menu.' })
+		self:useSysCursor(true)
 	end
 }
 

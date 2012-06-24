@@ -1,6 +1,6 @@
 require 'zoetrope'
 
-Files = App:extend
+Files = TestApp:extend
 {
 	onNew = function (self)
 		self.storage = Storage:new()
@@ -21,7 +21,12 @@ Files = App:extend
 		self.countStorage.data.count = self.countStorage.data.count + 1
 		self.countStorage:save()
 
-		self.label.text = self.label.text .. '\n\nYou have run this test ' ..
-						  self.countStorage.data.count .. ' times.'
+		self:add(Text:new
+		{
+			x = 10, y = 520, width = 550, font = 14,
+			text = 'Zoetrope can serialize structured data into text files, to save high scores ' ..
+				   ' and player preferences.\n\n... By the way, you\'ve  run this test ' ..
+				   self.countStorage.data.count .. ' times.'
+		})
 	end
 }

@@ -1,9 +1,9 @@
 require 'zoetrope'
 
-Recording = App:extend
+Recording = TestApp:extend
 {
 	onNew = function (self)
-		self.recorder = Recorder:new()--{ mousePosInterval = 0.01 }
+		self.recorder = Recorder:new()
 		self.meta:add(self.recorder)
 
 		local cursor = Cursor:new()
@@ -12,10 +12,23 @@ Recording = App:extend
 
 		self.player = Fill:new{ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } }
 
-		self:add(self.player)
+		self.recLabel = Text:new { x = 750, y = 10, tint = { 1, 0, 0 }, text = 'REC', visible = false } 
+		self.view.tween:start{ target = self.recLabel, prop = 'alpha', to = 0,
+							   duration = 0.25, onComplete = Tween.reverse }
 
+		self:add(self.player)
 		self:add(cursor)
-		self:add(Text:new{ x = 4, y = 4, width = the.app.width, text = 'Arrow keys move, clicks create new sprites. R key starts/stops recording. P key plays back recorded input.' })
+		self:add(self.recLabel)
+
+		self:add(Text:new
+		{
+			x = 10, y = 510, width = 600, font = 14,
+			text = 'Zoetrope can record and play back user input, for testing purposes or ' ..
+				   'so that users can share replays. The R key begins recording and stops it. ' ..
+				   'Try turning on recording, then moving the square with the arrow keys or ' ..
+				   'adding more sprites by clicking the mouse. Hit R again when you\'re done, ' ..
+				   'then P to play it back.'
+		})
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -25,9 +38,11 @@ Recording = App:extend
 			if self.recorder.state == Recorder.IDLE then
 				print('Recording started')
 				self.recorder:startRecording()
+				self.recLabel.visible = true
 			elseif self.recorder.state == Recorder.RECORDING then
 				self.recorder:stopRecording()
 				print('Recording stopped, ' .. #self.recorder.record .. ' events recorded')
+				self.recLabel.visible = false
 			end
 		end
 
