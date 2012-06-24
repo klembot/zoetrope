@@ -36,10 +36,10 @@ if DEBUG then
 
 	love.errhand = function (message)
 		if the.console and the.keys then
-			print(string.rep('*', 80))
+			print(string.rep('=', 40))
 			print('\nCrash, ' .. message .. '\n')
 			print(debug.traceback())
-			print('\n' .. string.rep('*', 80) .. '\n')
+			print('\n' .. string.rep('=', 40) .. '\n')
 			the.console:show()
 			love.audio.stop()
 
