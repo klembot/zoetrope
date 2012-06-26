@@ -61,7 +61,7 @@ Recorder = Sprite:extend{
 	--		nothing
 
 	startRecording = function (self, record)
-		if self.state == Recorder.RECORDING then return end
+		if self.state ~= Recorder.IDLE then return end
 
 		-- set up properties
 		self.record = record or self.record or {}
