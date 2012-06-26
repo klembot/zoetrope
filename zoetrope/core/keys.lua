@@ -207,7 +207,7 @@ Keys = Sprite:extend{
 
 	keyPressed = function (self, key, unicode)
 		self._thisFrame[key] = true
-		if unicode and unicode >= 32 then
+		if unicode and unicode >= 0x20 and unicode < 0x3000 then
 			self.typed = self.typed .. string.char(unicode)
 		end
 
