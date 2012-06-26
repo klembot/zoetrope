@@ -28,7 +28,6 @@ Timer = Sprite:extend{
 		assert(type(timer.func) == 'function', 'func property of timer must be a function')
 		assert(type(timer.delay) == 'number', 'delay property of timer must be a number')
 		assert(not timer.arg or type(timer.arg) == 'table', 'arg property of timer, if specified, must be a table')
-		assert(not timer.bind or type(timer.bind) == 'table', 'bind property of timer, if specified, should be a table')
 
 		if STRICT and timer.delay <= 0 then
 			io.stderr:write('Warning: timer delay is ' .. timer.delay .. ', will be triggered immediately')
