@@ -130,7 +130,7 @@ Emitter = Group:extend{
 					-- simple case, single value
 					
 					if type(self.min[key]) == 'number' then
-						emitted[key] = math.random() * (self.min[key] + self.max[key]) - self.min[key]
+						emitted[key] = self.min[key] + math.random() * (self.max[key] - self.min[key])
 					end
 
 					-- complicated case, table
@@ -138,7 +138,8 @@ Emitter = Group:extend{
 					if type(self.min[key]) == 'table' then
 						for subkey, _ in pairs(self.min[key]) do
 							if type(self.min[key][subkey]) == 'number' then
-								emitted[key][subkey] = math.random(self.min[key][subkey], self.max[key][subkey])
+								emitted[key][subkey] = self.min[key][subkey] + math.random() *
+													   (self.max[key][subkey] - self.min[key][subkey])
 							end
 						end
 					end
