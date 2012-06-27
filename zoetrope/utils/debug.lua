@@ -14,9 +14,9 @@
 
 DebugConsole = Group:extend{
 	-- Property: toggleKey
-	-- What key toggles visibility. By default, this is the tilde key.
+	-- What key toggles visibility. By default, this is the tab key.
 
-	toggleKey = '`',
+	toggleKey = 'tab',
 
 	-- Property: hotkeyModifiers
 	-- A table of modifier keys that must be held in order to activate

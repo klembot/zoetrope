@@ -11,7 +11,7 @@ Debugging = TestApp:extend
 		self:add(Text:new
 		{
 			x = 10, y = 500, width = 650, font = 14,
-			text = 'Press the tilde key to bring up the debug console, which displays recently printed ' ..
+			text = 'Press the tab key to bring up the debug console, which displays recently printed ' ..
 				   'text. You can enter any Lua statement -- the.block.width = 50, for example -- and ' ..
 				   'also watch values. Try entering the.console:watch("mouse x", "the.mouse.x"). ' ..
 				   'The console supports command history with the up and down arrow keys, and will ' ..
