@@ -129,6 +129,10 @@ Text = Sprite:extend{
 
 	draw = function (self, x, y)
 		if STRICT then
+			assert(type(x) == 'number', 'visible text sprite does not have a numeric x property')
+			assert(type(y) == 'number', 'visible text sprite does not have a numeric y property')
+			assert(type(self.width) == 'number', 'visible text sprite does not have a numeric width property')
+			assert(type(self.height) == 'number', 'visible text sprite does not have a numeric height property')
 			if not self.text then error('visible text sprite has no text property') end
 			if not self.font then error('visible text sprite has no font property') end
 		end

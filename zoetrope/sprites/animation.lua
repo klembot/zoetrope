@@ -192,6 +192,14 @@ Animation = Sprite:extend{
 	draw = function (self, x, y)
 		x = math.floor(x or self.x)
 		y = math.floor(y or self.y)
+
+		if STRICT then
+			assert(type(x) == 'number', 'visible animation does not have a numeric x property')
+			assert(type(y) == 'number', 'visible animation does not have a numeric y property')
+			assert(type(self.width) == 'number', 'visible animation does not have a numeric width property')
+			assert(type(self.height) == 'number', 'visible animation does not have a numeric height property')
+		end
+
 		if not self.visible and self.image then return end
 		
 		-- if our image changed, update the quad

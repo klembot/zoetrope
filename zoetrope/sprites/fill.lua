@@ -23,6 +23,14 @@ Fill = Sprite:extend{
 		y = math.floor(y or self.y)
 		if not self.visible then return end
 		
+		if STRICT then
+			assert(type(x) == 'number', 'visible fill does not have a numeric x property')
+			assert(type(y) == 'number', 'visible fill does not have a numeric y property')
+			assert(type(self.width) == 'number', 'visible fill does not have a numeric width property')
+			assert(type(self.height) == 'number', 'visible fill does not have a numeric height property')
+			assert(self.fill or self.border, 'visible fill does not have a fill or border property')
+		end
+
 		-- rotate and scale
 
 		local scaleX = self.scale * self.distort.x
