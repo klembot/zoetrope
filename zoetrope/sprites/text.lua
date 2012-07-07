@@ -128,6 +128,11 @@ Text = Sprite:extend{
 	end,
 
 	draw = function (self, x, y)
+		if not self.visible or not self.text or not self.font then return end
+
+		x = math.floor(x or self.x)
+		y = math.floor(y or self.y)
+
 		if STRICT then
 			assert(type(x) == 'number', 'visible text sprite does not have a numeric x property')
 			assert(type(y) == 'number', 'visible text sprite does not have a numeric y property')
@@ -136,11 +141,6 @@ Text = Sprite:extend{
 			if not self.text then error('visible text sprite has no text property') end
 			if not self.font then error('visible text sprite has no font property') end
 		end
-
-		if not self.visible or not self.text or not self.font then return end
-
-		x = math.floor(x or self.x)
-		y = math.floor(y or self.y)
 
 		-- did our font change on us?
 
