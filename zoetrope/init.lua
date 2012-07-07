@@ -25,7 +25,8 @@ if DEBUG then
 	{
 		_initialGlobals = _initialGlobals,
 		_initialPackages = _initialPackages,
-		_originalErrhand = love.errhand
+		_originalErrhand = love.errhand,
+		_crashed = false
 	}
 
 	-- replace crash handler
@@ -35,7 +36,13 @@ if DEBUG then
 	-- initial view, doesn't work
 
 	love.errhand = function (message)
+		if debugger._crashed then
+			debugger._originalErrhand(message)
+			return
+		end
+
 		if the.console and the.keys then
+			debugger._crashed = true
 			print(string.rep('=', 40))
 			print('\nCrash, ' .. message .. '\n')
 			print(debug.traceback())
