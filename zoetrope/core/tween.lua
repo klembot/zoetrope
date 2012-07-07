@@ -10,6 +10,7 @@ Tween = Sprite:extend{
 	tweens = {},
 	visible = false,
 	active = false,
+	solid = false,
 
 	-- Property: easers
 	-- These are different methods of easing a tween, and

@@ -9,6 +9,7 @@ Timer = Sprite:extend{
 	timers = {},
 	visible = false,
 	active = false,
+	solid = false,
 
 	-- Method: start
 	-- Adds a timer to be tracked. All arguments are passed as properties
