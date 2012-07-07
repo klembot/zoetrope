@@ -35,7 +35,7 @@ Block = Tile:extend
 	end
 }
 
-Benchmark = TestApp:extend
+SpriteBenchmark = TestApp:extend
 {
 	name = 'Sprite Benchmark',
 	count = 0,

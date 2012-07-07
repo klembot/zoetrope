@@ -122,7 +122,8 @@ Menu = App:extend
 {
 	apps =
 	{
-		'Performance Benchmark', Benchmark,
+		'Sprite Benchmark', SpriteBenchmark,
+		'Collision Benchmark', CollisionBenchmark,
 		'Sprites', SpriteTypes,
 		'Keyboard and Mouse Input', Input,
 		'Gamepad Input', GamepadSupport,

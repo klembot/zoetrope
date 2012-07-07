@@ -12,7 +12,7 @@ TestApp = App:extend
 	end
 }
 
-require 'tests.benchmark'
+require 'tests.collisionbenchmark'
 require 'tests.collisions'
 require 'tests.debugging'
 require 'tests.emitters'
@@ -24,6 +24,7 @@ require 'tests.maps'
 require 'tests.recording'
 require 'tests.scrolling'
 require 'tests.sounds'
+require 'tests.spritebenchmark'
 require 'tests.spritetypes'
 require 'tests.tiled'
 require 'tests.timers'
