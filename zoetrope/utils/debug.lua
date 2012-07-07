@@ -85,7 +85,7 @@ DebugConsole = Group:extend{
 								   width = self.watchWidth - 8, height = height - 8, text = '', wordWrap = false }
 		obj:add(obj.watchList)
 
-		obj.prompt = Text:new{ x = 4, y = 0, width = '100', text = '>' }
+		obj.prompt = Text:new{ x = 4, y = 0, width = 100, text = '>' }
 		obj:add(obj.prompt)
 
 		local inputIndent = obj.log._fontObj:getWidth('>') + 4
