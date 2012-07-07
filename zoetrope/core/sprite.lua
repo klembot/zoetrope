@@ -160,14 +160,12 @@ Sprite = Class:extend{
 
 	collide = function (self, other)
 		if not self.solid or self == other then return false end
-		
-		if other.instanceOf and other:instanceOf(Group) and not other.solid then
-			return false
-		end
+		if not other.solid then return false end
 
-		local hit = false	
-		local otherList = coerceToTable(other)
-				
+		local hit = false
+		--local otherList = coerceToTable(other)
+		local otherList = other.sprites
+
 		for _, spr in pairs(otherList) do
 			-- recurse into subgroups
 			-- order is important here to avoid short-circuiting inappopriately
@@ -359,8 +357,10 @@ Sprite = Class:extend{
 			if drag.x ~= 0 then
 				if vel.x > 0 then
 					vel.x = vel.x - drag.x * elapsed
+					if vel.x < 0 then vel.x = 0 end
 				elseif vel.x < 0 then
 					vel.x = vel.x + drag.x * elapsed
+					if vel.x > 0 then vel.x = 0 end
 				end
 			end
 		end
@@ -371,8 +371,10 @@ Sprite = Class:extend{
 			if drag.y ~= 0 then
 				if vel.y > 0 then
 					vel.y = vel.y - drag.y * elapsed
+					if vel.y < 0 then vel.y = 0 end
 				elseif vel.y < 0 then
 					vel.y = vel.y + drag.y * elapsed
+					if vel.y > 0 then vel.y = 0 end
 				end
 			end
 		end
@@ -383,8 +385,10 @@ Sprite = Class:extend{
 			if drag.rotation ~= 0 then
 				if vel.rotation > 0 then
 					vel.rotation = vel.rotation - drag.rotation * elapsed
+					if vel.rotation < 0 then vel.rotation = 0 end
 				elseif vel.rotation < 0 then
 					vel.rotation = vel.rotation + drag.rotation * elapsed
+					if vel.rotation > 0 then vel.rotation = 0 end
 				end
 			end
 		end
