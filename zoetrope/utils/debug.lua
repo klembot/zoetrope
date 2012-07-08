@@ -25,15 +25,15 @@ DebugConsole = Group:extend{
 
 	hotkeyModifiers = {'ctrl', 'alt'},
 
-	-- Property: initWithFPS
-	-- If true, the watch will automatically start watching the frames
-	-- per second. Changing this value after the DebugWatch object has
+	-- Property: watchBasics
+	-- If true, the console will automatically start watching the frames
+	-- per second and memory usage. Changing this value after the object has
 	-- been created has no effect.
 	
-	initWithFPS = true,
+	watchBasics = true,
 
 	-- Property: watchWidth
-	-- How wide the sidebar, where watch values are displaed, should be.
+	-- How wide the sidebar, where watch values are displayed, should be.
 	
 	watchWidth = 150,
 
@@ -113,8 +113,9 @@ DebugConsole = Group:extend{
 		obj:addHotkey('r', debugger.reload)
 		obj:addHotkey('s', function() the.app:saveScreenshot('screenshot.png') end)
 		
-		if obj.initWithFPS then
+		if obj.watchBasics then
 			obj:watch('FPS', 'love.timer.getFPS()')
+			obj:watch('Memory', 'math.floor(collectgarbage("count") / 1024) .. "M"')
 		end
 
 		-- hijack print function
