@@ -17,7 +17,8 @@
 -- Event: onEndFrame
 -- Called once each frame like onUpdate, but guaranteed to fire after all others' onUpdate handlers.
 
-Group = Class:extend{
+Group = Class:extend
+{
 	-- Property: active
 	-- If false, none of its member sprites will receive update-related events.
 	active = true,
@@ -49,6 +50,13 @@ Group = Class:extend{
 	-- positions, which you can use to simulate parallax scrolling. To draw
 	-- sprites at their normal position, set both x and y to 1.
 	translateScale = { x = 1, y = 1 },
+
+	-- Property: gridSize
+	-- The size, in pixels, of the grid used for collision detection.
+	-- This partitions off space so that collision checks only need to do real
+	-- checks against a few sprites at a time. If you notice collision detection
+	-- taking a long time, changing this number may help.
+	gridSize = 50,
 
 	-- Method: add
 	-- Adds a sprite to the group.
@@ -92,13 +100,15 @@ Group = Class:extend{
 	end,
 
 	-- Method: collide
-	-- Collides all solid sprites in the group with another
-	-- sprite, group, or table of sprites. This calls the <Sprite.onCollide>
-	-- event handlers on all sprites that collide with the same arguments
-	-- <Sprite.collide> does.
+	-- Collides all solid sprites in the group with another sprite or group.
+	-- This calls the <Sprite.onCollide> event handlers on all sprites that
+	-- collide with the same arguments <Sprite.collide> does.
+	--
+	-- It's often useful to collide a group with itself, e.g. myGroup:collide(myGroup).
+	-- This checks for collisions between the sprites that make up the group.
 	--
 	-- Arguments:
-	-- 		other - sprite, group, or table of sprites to collide with
+	-- 		other - <Sprite> or <Group> to collide with
 	-- 
 	-- Returns:
 	--		boolean, whether any collision was detected
@@ -112,17 +122,89 @@ Group = Class:extend{
 				   type(other))
 		end
 
+		if not self.solid or not other then return false end
 		local hit = false
 
-		if not self.solid or not other then return false end
+		if other.sprites then
+			local grid = self:grid()
+			local gridSize = self.gridSize
 
-		for _, spr in pairs(self.sprites) do
-			if spr.solid then
+			for _, othSpr in pairs(other.sprites) do
+				local startX = math.floor(othSpr.x / gridSize)
+				local endX = math.floor((othSpr.x + othSpr.width) / gridSize)
+				local startY = math.floor(othSpr.y / gridSize)
+				local endY = math.floor((othSpr.y + othSpr.height) / gridSize)
+
+				for x = startX, endX do
+					if grid[x] then
+						for y = startY, endY do
+							if grid[x][y] then
+								for _, spr in pairs(grid[x][y]) do
+									hit = spr:collide(othSpr) or hit
+								end
+							end
+						end
+					end
+				end
+			end
+		else
+			for _, spr in pairs(self.sprites) do
 				hit = spr:collide(other) or hit
 			end
 		end
-		
+
 		return hit
+	end,
+
+	-- Method: displace
+	-- Displaces a sprite or group by all solid sprites in this group.
+	--
+	-- Arguments:
+	-- 		other - <Sprite> or <Group> to collide with
+	-- 		xHint - force horizontal displacement in one direction, uses direction constants, optional
+	--		yHint - force vertical displacement in one direction, uses direction constants, optional
+	-- 
+	-- Returns:
+	--		nothing
+	--
+	-- See Also:
+	--		<Sprite.displace>
+
+	displace = function (self, other, xHint, yHint)
+		if STRICT then
+			assert(other:instanceOf(Group) or other:instanceOf(Sprite), 'asked to displace non-group/sprite ' ..
+				   type(other))
+		end
+
+		if not self.solid or not other then return false end
+
+		if other.sprites then
+			local grid = self:grid()
+			local gridSize = self.gridSize
+
+			for _, othSpr in pairs(other.sprites) do
+				local startX = math.floor(othSpr.x / gridSize)
+				local endX = math.floor((othSpr.x + othSpr.width) / gridSize)
+				local startY = math.floor(othSpr.y / gridSize)
+				local endY = math.floor((othSpr.y + othSpr.height) / gridSize)
+
+				for x = startX, endX do
+					if grid[x] then
+						for y = startY, endY do
+							if grid[x][y] then
+								for _, spr in pairs(grid[x][y]) do
+									spr:displace(othSpr)
+								end
+							end
+						end
+					end
+				end
+			end
+		else
+			for _, spr in pairs(self.sprites) do
+				spr:displace(other)
+			end
+		end
 	end,
 
 	-- Method: count
@@ -192,6 +274,54 @@ Group = Class:extend{
 		end
 
 		return false
+	end,
+
+	-- Method: grid
+	-- Creates a table indexed by x and y dimensions, with each
+	-- cell a table of sprites that touch this grid element. For
+	-- example, with a grid size of 50, a sprite at (10, 10) that 
+	-- is 50 pixels square would be in the grid at [0][0], [1][0],
+	-- [0][1], and [1][1].
+	--
+	-- This can be used to speed up work that involves checking
+	-- for sprites near each other, e.g. collision detection.
+	--
+	-- Arguments:
+	--		existing - existing grid table to add sprites into,
+	--				   optional. Anything you pass must have
+	--				   used the same size as the current call.
+	--
+	-- Returns:
+	--		table
+
+	grid = function (self, existing)
+		local result = existing or {}
+		local size = self.gridSize
+
+		for _, spr in pairs(self.sprites) do
+			if spr.sprites then
+				local oldSize = spr.gridSize
+				spr.gridSize = self.gridSize
+				result = spr:grid(result)
+				spr.gridSize = oldSize
+			else
+				local startX = math.floor(spr.x / size)
+				local endX = math.floor((spr.x + spr.width) / size)
+				local startY = math.floor(spr.y / size)
+				local endY = math.floor((spr.y + spr.height) / size)
+
+				for x = startX, endX do
+					if not result[x] then result[x] = {} end
+
+					for y = startY, endY do
+						if not result[x][y] then result[x][y] = {} end
+						table.insert(result[x][y], spr)
+					end
+				end
+			end
+		end
+
+		return result
 	end,
 
 	-- passes startFrame events to member sprites

@@ -145,68 +145,52 @@ Sprite = Class:extend{
 	end,
 
 	-- Method: collide
-	-- Checks whether sprites collide by checking rectangles.
-	-- There's leeway in the arguments below. If you collide a group, this will
-	-- collide the members of all subgroups. You may also pass a table of sprites.
-	-- If a collision is detected, onCollide() is called on both this sprite and
-	-- the one it collides with, passing the amount of horizontal and vertical
-	-- overlap between the sprites in pixels.
+	-- Checks whether sprites collide by checking rectangles. If a collision is detected,
+	-- onCollide() is called on both this sprite and the one it collides with, passing
+	-- the amount of horizontal and vertical overlap between the sprites in pixels.
 	--
 	-- Arguments:
-	--		other - another sprite, group or table of sprites
+	--		other - <Sprite> or <Group> to collide
 	--
 	-- Returns:
 	--		boolean, whether any collision was detected
 
 	collide = function (self, other)
-		if not self.solid or self == other then return false end
-		if not other.solid then return false end
+		if not self.solid or not other.solid or self == other then return false end
 
-		local hit = false
-		--local otherList = coerceToTable(other)
-		local otherList = other.sprites
+		if other.sprites then
+			return other:collide(self)
+		else
+			-- this is cribbed from
+			-- http://frey.co.nz/old/2007/11/area-of-two-rectangles-algorithm/
 
-		for _, spr in pairs(otherList) do
-			-- recurse into subgroups
-			-- order is important here to avoid short-circuiting inappopriately
-			
-			if type(spr.sprites) == 'table' and spr.solid then
-				hit = self:collide(spr.sprites) or hit
-			end
-			
-			if spr ~= self and spr.solid and
-			   spr.x and spr.y and spr.width and spr.height then
-				-- this is cribbed from
-				-- http://frey.co.nz/old/2007/11/area-of-two-rectangles-algorithm/
-
-				local right = self.x + self.width
-				local bottom = self.y + self.height
-				local sprRight = spr.x + spr.width
-				local sprBottom = spr.y + spr.height
-					
-				-- is there an overlap at all?
+			local right = self.x + self.width
+			local bottom = self.y + self.height
+			local othRight = other.x + other.width
+			local othBottom = other.y + other.height
 				
-				if self.x < sprRight and right > spr.x and
-				   self.y < sprBottom and bottom > spr.y then
-				   
-					-- calculate overlaps and call onCollide()
-					
-					hit = true
-					local horizOverlap = math.min(right, sprRight) - math.max(self.x, spr.x)
-					local vertOverlap = math.min(bottom, sprBottom)- math.max(self.y, spr.y)
-				
-					if self.onCollide then
-						self:onCollide(spr, horizOverlap, vertOverlap)
-					end
-					
-					if spr.onCollide then
-						spr:onCollide(self, horizOverlap, vertOverlap)
-					end
+			-- is there an overlap at all?
+			
+			if self.x < othRight and right > other.x and
+			   self.y < othBottom and bottom > other.y then
+			   
+				-- calculate overlaps and call onCollide()
+				local horizOverlap = math.min(right, othRight) - math.max(self.x, other.x)
+				local vertOverlap = math.min(bottom, othBottom)- math.max(self.y, other.y)
+			
+				if self.onCollide then
+					self:onCollide(other, horizOverlap, vertOverlap)
 				end
+				
+				if other.onCollide then
+					other:onCollide(self, horizOverlap, vertOverlap)
+				end
+
+				return true
 			end
 		end
-		
-		return hit
+
+		return false
 	end,
 
 	-- Method: displace
@@ -217,83 +201,79 @@ Sprite = Class:extend{
 	-- arguments. A single displace() call will *either* move the other sprite
 	-- horizontally or vertically, not along both axes.
 	--
-	-- Just as with collide(), you may call this with either a single sprite, a
-	-- single group, or a table of sprites.
-	--
 	-- Arguments:
-	--		other - sprite, group, or table of sprites to be moved
+	--		other - sprite to displace
 	-- 		xHint - force horizontal displacement in one direction, uses direction constants, optional
 	--		yHint - force vertical displacement in one direction, uses direction constants, optional
+	--
+	-- Returns:
+	--		nothing
 
 	displace = function (self, other, xHint, yHint)	
 		if not self.solid or self == other then return false end
+		if STRICT then assert(other:instanceOf(Sprite), 'asked to displace a non-sprite') end
 			
-		local hit = false
-		local otherList = coerceToTable(other)
+		local left = self.x
+		local right = self.x + self.width
+		local top = self.y
+		local bottom = self.y + self.height
+		local othLeft = other.x
+		local othRight = other.x + other.width
+		local othTop = other.y
+		local othBottom = other.y + other.height
+		local xChange = 0
+		local yChange = 0
 		
-		for _, spr in pairs(otherList) do
-			local left = self.x
-			local right = self.x + self.width
-			local top = self.y
-			local bottom = self.y + self.height
-			local sprLeft = spr.x
-			local sprRight = spr.x + other.width
-			local sprTop = spr.y
-			local sprBottom = spr.y + other.height
-			local xChange = 0
-			local yChange = 0
+		-- resolve horizontal overlap
+		
+		if (othLeft >= left and othLeft <= right) or
+		   (othRight >= left and othRight <= right) or
+		   (left >= othLeft and left <= othRight) or
+		   (right >= othLeft and right <= othRight) then
+			local leftMove = (othLeft - left) + other.width
+			local rightMove = right - othLeft
 			
-			-- resolve horizontal overlap
-			
-			if (sprLeft >= left and sprLeft <= right) or
-			   (sprRight >= left and sprRight <= right) or
-			   (left >= sprLeft and left <= sprRight) or
-			   (right >= sprLeft and right <= sprRight) then
-				local leftMove = (sprLeft - left) + spr.width
-				local rightMove = right - sprLeft
-				
-				if xHint == LEFT then
-					xChange = - leftMove
-				elseif xHint == RIGHT then
-					xChange = rightMove
-				else
-					if leftMove < rightMove then
-						xChange = - leftMove
-					else
-						xChange = rightMove
-					end
-				end
-			end
-			
-			-- resolve vertical overlap
-
-			if (sprTop >= top and sprTop <= bottom) or
-			   (sprBottom >= top and sprBottom <= bottom) or
-			   (top >= sprTop and top <= sprBottom) or
-			   (bottom >= sprTop and bottom <= sprBottom) then
-				local upMove = (sprTop - top) + spr.height
-				local downMove = bottom - sprTop
-				
-				if yHint == UP then
-					yChange = - upMove
-				elseif yHint == DOWN then
-					yChange = downMove
-				else
-					if upMove < downMove then
-						yChange = - upMove
-					else
-						yChange = downMove
-					end
-				end
-			end
-			
-			-- choose the option that moves the other sprite the least
-			
-			if math.abs(xChange) > math.abs(yChange) then
-				spr.y = spr.y + yChange
+			if xHint == LEFT then
+				xChange = - leftMove
+			elseif xHint == RIGHT then
+				xChange = rightMove
 			else
-				spr.x = spr.x + xChange
+				if leftMove < rightMove then
+					xChange = - leftMove
+				else
+					xChange = rightMove
+				end
 			end
+		end
+		
+		-- resolve vertical overlap
+
+		if (othTop >= top and othTop <= bottom) or
+		   (othBottom >= top and othBottom <= bottom) or
+		   (top >= othTop and top <= othBottom) or
+		   (bottom >= othTop and bottom <= othBottom) then
+			local upMove = (othTop - top) + other.height
+			local downMove = bottom - othTop
+			
+			if yHint == UP then
+				yChange = - upMove
+			elseif yHint == DOWN then
+				yChange = downMove
+			else
+				if upMove < downMove then
+					yChange = - upMove
+				else
+					yChange = downMove
+				end
+			end
+		end
+		
+		-- choose the option that moves the other sprite the least
+		
+		if math.abs(xChange) > math.abs(yChange) then
+			other.y = other.y + yChange
+		else
+			other.x = other.x + xChange
 		end
 	end,
 

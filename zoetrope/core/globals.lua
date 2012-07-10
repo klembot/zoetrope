@@ -135,30 +135,6 @@ function playSound (path, volume, hint)
 	return source
 end
 
--- Function: coerceToTable
--- Coerces any type of object possible to a table of sprites.
--- If a single sprite is passed, it is boxed into a new table.
--- If a group is passed, its sprites property is returned.
--- A table of sprites is left as-is.
---
--- Arguments:
---		other - sprite, group, or table of sprites
---
--- Returns:
---		table of sprites equivalent to passed argument
-
-function coerceToTable (other)
-	assert(other, "can't coerce a nil value to a table")
-
-	if type(other.sprites) == 'table' then
-		return other.sprites
-	elseif #other > 1 then
-		return other
-	else
-		return { other }
-	end
-end
-
 -- Function: searchTable
 -- Returns the index of a value in a table. If the value
 -- does not exist in the table, this returns nil.

@@ -137,82 +137,39 @@ Map = Sprite:extend{
 		return self
 	end,
 
-	-- Method: subdisplace
-	-- This acts as a wrapper to multiple displace() calls, as if
-	-- there really were all the sprites in their particular positions.
-	-- This is much more useful than Map:displace(), which pushes a sprite
-	-- so that it does not touch the map in its entirety. 
-	--
-	-- Arguments:
-	--		other - other graphic, group, or table of sprites to displace
-	--		xHint - force horizontal displacement in one direction, uses direction constants
-	--		yHint - force vertical displacement in one direction, uses direction constants
-
-	subdisplace = function (self, other, xHint, yHint)	
-		local otherList = coerceToTable(other)
-
-		for _, other in pairs(otherList) do
-			if other.solid then
-				if type(other.sprites) == 'table' then
-					-- recurse into subgroups
-					-- order is important here to avoid short-circuiting inappopriately
-		
-					hit = self:collide(other.sprites) or hit
-				else
-					-- a normal sprite
-
-					local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
-					local endX, endY = self:pixelToMap(other.x + other.width - self.x,
-													   other.y + other.height - self.y)
-					local x, y
-					
-					for x = startX, endX do
-						for y = startY, endY do
-							local spr = self.sprites[self.map[x][y]]
-							
-							if spr and spr.solid then
-								-- position our map sprite as if it were onscreen
-								
-								spr.x = self.x + (x - 1) * self.spriteWidth
-								spr.y = self.y + (y - 1) * self.spriteHeight
-								spr:displace(other, xHint, yHint)
-							end
-						end
-					end
-				end
-			end
-		end
-	end,
-
 	-- Method: subcollide
 	-- This acts as a wrapper to multiple collide() calls, as if
 	-- there really were all the sprites in their particular positions.
 	-- This is much more useful than Map:collide(), which simply checks
-	-- if a sprite is touching the map at all. 
+	-- if a sprite or group is touching the map at all. 
 	--
 	-- Arguments:
-	--		other - either other sprite, group, or table of sprites
+	--		other - other <Sprite> or <Group>
 	--
 	-- Returns:
 	--		boolean, whether any collision was detected
 
 	subcollide = function (self, other)
-		local otherList = coerceToTable(other)
 		local hit = false
-		
-		for _, other in pairs(otherList) do
-			if other.solid then
-				if type(other.sprites) == 'table' then
+		local others
+
+		if other.sprites then
+			others = other.sprites
+		else
+			others = { other }
+		end
+
+		for _, othSpr in pairs(others) do
+			if othSpr.solid then
+				if othSpr.sprites then
 					-- recurse into subgroups
 					-- order is important here to avoid short-circuiting inappopriately
-		
-					hit = self:collide(other.sprites) or hit
+				
+					hit = self:subcollide(othSpr.sprites) or hit
 				else
-					-- a normal sprite
-
-					local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
-					local endX, endY = self:pixelToMap(other.x + other.width - self.x,
-													   other.y + other.height - self.y)
+					local startX, startY = self:pixelToMap(othSpr.x - self.x, othSpr.y - self.y)
+					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
+													   othSpr.y + othSpr.height - self.y)
 					local x, y
 					
 					for x = startX, endX do
@@ -225,15 +182,67 @@ Map = Sprite:extend{
 								spr.x = self.x + (x - 1) * self.spriteWidth
 								spr.y = self.y + (y - 1) * self.spriteHeight
 								
-								hit = spr:collide(other) or hit
+								hit = spr:collide(othSpr) or hit
 							end
 						end
 					end
 				end
 			end
 		end
-		
+
 		return hit
+	end,
+
+	-- Method: subdisplace
+	-- This acts as a wrapper to multiple displace() calls, as if
+	-- there really were all the sprites in their particular positions.
+	-- This is much more useful than Map:displace(), which pushes a sprite or group
+	-- so that it does not touch the map in its entirety. 
+	--
+	-- Arguments:
+	--		other - other <Sprite> or <Group> to displace
+	--		xHint - force horizontal displacement in one direction, uses direction constants
+	--		yHint - force vertical displacement in one direction, uses direction constants
+
+	subdisplace = function (self, other, xHint, yHint)	
+		local others
+
+		if other.sprites then
+			others = other.sprites
+		else
+			others = { other }
+		end
+
+		for _, othSpr in pairs(others) do
+			if othSpr.solid then
+				if othSpr.sprites then
+					-- recurse into subgroups
+					-- order is important here to avoid short-circuiting inappopriately
+				
+					self:subdisplace(othSpr.sprites)
+				else
+					local startX, startY = self:pixelToMap(othSpr.x - self.x, othSpr.y - self.y)
+					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
+													   othSpr.y + othSpr.height - self.y)
+					local x, y
+					
+					for x = startX, endX do
+						for y = startY, endY do
+							local spr = self.sprites[self.map[x][y]]
+							
+							if spr and spr.solid then
+								-- position our map sprite as if it were onscreen
+								
+								spr.x = self.x + (x - 1) * self.spriteWidth
+								spr.y = self.y + (y - 1) * self.spriteHeight
+								
+								spr:displace(othSpr)
+							end
+						end
+					end
+				end
+			end
+		end
 	end,
 
 	-- Method: getMapSize
