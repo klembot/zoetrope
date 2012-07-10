@@ -22,7 +22,7 @@ SpriteTypes = TestApp:extend
 		{
 			x = 150, y = 36, width = 32, height = 32,
 			fill = { 0, 0, 255 }, border = { 0, 255, 0 },
-			tint = { 0, 0, 1 }, velocity = { x = 0, y = 0, rotation = math.pi },
+			tint = { 0, 0, 1 }, velocity = { rotation = math.pi },
 			alpha = 0.5, scale = 2 
 		})
 
@@ -43,7 +43,7 @@ SpriteTypes = TestApp:extend
 		{
 			x = 420, y = 45,
 			image = self.blueGem,
-			tint = { 0.5, 1, 0.5 }, velocity = { x = 0, y = 0, rotation = math.pi },
+			tint = { 0.5, 1, 0.5 }, velocity = { rotation = math.pi },
 			scale = 3, alpha = 0.5
 		})
 
@@ -71,7 +71,7 @@ SpriteTypes = TestApp:extend
 			image = self.chestAnim,
 			sequences = { open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 } },
 		  	tint = { 0.5, 1, 0.5 }, alpha = 0.5,
-			velocity = { x = 0, y = 0, rotation = math.pi }, scale = 3
+			velocity = { rotation = math.pi }, scale = 3
 		}
 		anim2:play('open')
 		self:add(anim2)
@@ -122,7 +122,7 @@ SpriteTypes = TestApp:extend
 			scale = 1.5,
 			alpha = 0.25,
 			tint = { 0, 0, 1 },
-			velocity = { x = 0, y = 0, rotation = math.pi / 2 }
+			velocity = { rotation = math.pi / 2 }
 		})
 
 		self:add(Text:new

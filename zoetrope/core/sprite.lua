@@ -304,26 +304,15 @@ Sprite = Class:extend{
 
 		if STRICT then
 			assert(vel, 'active sprite has no velocity property')
-			assert(vel.x, 'active sprite has no velocity.x property')
-			assert(vel.y, 'active sprite has no velocity.y property')
-			assert(vel.rotation, 'active sprite has no velocity.rotation property')
 			assert(acc, 'active sprite has no acceleration property')
-			assert(acc.x, 'active sprite has no acceleration.x property')
-			assert(acc.y, 'active sprite has no acceleration.y property')
-			assert(acc.rotation, 'active sprite has no acceleration.rotation property')
 			assert(drag, 'active sprite has no drag property')
-			assert(drag.x, 'active sprite has no drag.x property')
-			assert(drag.y, 'active sprite has no drag.y property')
-			assert(drag.rotation, 'active sprite has no drag.rotation property')
 			assert(minVel, 'active sprite has no minVelocity property')
-			assert(minVel.x, 'active sprite has no minVelocity.x property')
-			assert(minVel.y, 'active sprite has no minVelocity.y property')
-			assert(minVel.rotation, 'active sprite has no minVelocity.rotation property')
 			assert(maxVel, 'active sprite has no maxVelocity property')
-			assert(maxVel.x, 'active sprite has no maxVelocity.x property')
-			assert(maxVel.y, 'active sprite has no maxVelocity.y property')
-			assert(maxVel.rotation, 'active sprite has no maxVelocity.rotation property')
 		end
+
+		vel.x = vel.x or 0
+		vel.y = vel.y or 0
+		vel.rotation = vel.rotation or 0
 
 		-- physics
 			
@@ -334,7 +323,7 @@ Sprite = Class:extend{
 		if acc.x ~= 0 then
 			vel.x = vel.x + acc.x * elapsed
 		else
-			if drag.x ~= 0 then
+			if drag.x then
 				if vel.x > 0 then
 					vel.x = vel.x - drag.x * elapsed
 					if vel.x < 0 then vel.x = 0 end
@@ -348,7 +337,7 @@ Sprite = Class:extend{
 		if acc.y ~= 0 then
 			vel.y = vel.y + acc.y * elapsed
 		else
-			if drag.y ~= 0 then
+			if drag.y then
 				if vel.y > 0 then
 					vel.y = vel.y - drag.y * elapsed
 					if vel.y < 0 then vel.y = 0 end
@@ -362,7 +351,7 @@ Sprite = Class:extend{
 		if acc.rotation ~= 0 then
 			vel.rotation = vel.rotation + acc.rotation * elapsed
 		else
-			if drag.rotation ~= 0 then
+			if drag.rotation then
 				if vel.rotation > 0 then
 					vel.rotation = vel.rotation - drag.rotation * elapsed
 					if vel.rotation < 0 then vel.rotation = 0 end
