@@ -157,7 +157,7 @@ View = Group:extend{
 					for _, obj in pairs(layer.objects) do
 						-- roll in tile properties if based on a tile
 
-						if obj.gid and tiles[obj.gid] then
+						if obj.gid and tileProtos[obj.gid] then
 							local tile = tileProtos[obj.gid]
 
 							obj.name = tile.properties.name
