@@ -277,6 +277,28 @@ Sprite = Class:extend{
 		end
 	end,
 
+	-- Method: intersects
+	-- Returns whether a point or rectangle intersects with this sprite.
+	-- If you want to check whether a particular sprite intersects with this one,
+	-- use <collide>.
+	--
+	-- Arguments:
+	--		x - top left horizontal coordinate
+	--		y - top left vertical coordinate
+	--		width - width of the rectangle, omit for points
+	--		height - height of the rectangle, omit for points
+	--
+	-- Returns:
+	--		boolean
+
+	intersects = function (self, x, y, width, height)
+		local right = x + (width or 0)
+		local bottom = y + (height or 0)
+
+		return self.x < right and self.x + self.width > x and
+		       self.y < bottom and self.y + self.height > y
+	end,
+
 	-- Method: push
 	-- Moves another sprite as if it had the same motion properties as this one.
 	--
