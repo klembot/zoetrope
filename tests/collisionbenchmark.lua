@@ -35,7 +35,7 @@ CollisionBlock = Fill:extend
 	end
 }
 
-CollisionBenchmark = App:extend
+CollisionBenchmark = TestApp:extend
 {
 	name = 'Collision Benchmark',
 	minFPS = 55,
