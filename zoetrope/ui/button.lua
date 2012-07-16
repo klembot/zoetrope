@@ -51,8 +51,6 @@ Button = Sprite:extend{
 	update = function (self, elapsed)
 		local bg = self.background
 		local label = self.label
-		local mouseX = the.mouse.x
-		local mouseY = the.mouse.y
 
 		-- keep dimensions in sync with background
 
@@ -63,12 +61,7 @@ Button = Sprite:extend{
 
 		-- call hooks for mouse movement events
 
-		local mouseOver = true
-
-		if mouseX < self.x or mouseX > self.x + self.width or
-			mouseY < self.y or mouseY > self.y + self.height then
-			mouseOver = false
-		end
+		local mouseOver = self:intersects(the.mouse.x, the.mouse.y)
 
 		if mouseOver then self:callHook('onMouseOver') end
 		if mouseOver and not self.mouseOver then self:callHook('onMouseEnter') end
