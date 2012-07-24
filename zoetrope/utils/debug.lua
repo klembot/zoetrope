@@ -176,6 +176,10 @@ DebugConsole = Group:extend{
 	--		string result
 
 	execute = function (self, code)
+		if string.sub(code, 1, 1) == '=' then
+			code = 'print (' .. string.sub(code, 2) .. ')'
+		end
+
 		local func, err = loadstring(code)
 
 		if func then
