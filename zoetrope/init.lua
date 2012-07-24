@@ -80,6 +80,10 @@ if DEBUG then
 				the.keys:endFrame(elapsed)
 				the.console:endFrame(elapsed)
 
+				if the.keys:pressed('escape') then
+					if not love.quit or not love.quit() then return end
+				end
+
 				if love.graphics then
 					love.graphics.clear()
 					if love.draw then
