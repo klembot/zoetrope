@@ -242,6 +242,7 @@ View = Group:extend{
 	--		nothing
 
 	fade = function (self, color, duration, onComplete)
+		assert(type(color) == 'table', 'color to fade to is ' .. type(color) .. ', not a table')
 		local alpha = color[4] or 255
 		self._fx = color
 		self._fx[4] = 0
