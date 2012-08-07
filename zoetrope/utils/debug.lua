@@ -329,29 +329,31 @@ DebugConsole = Group:extend{
 -- Returns:
 --		nothing
 
-debugger.reload = function()
-	if DEBUG then
-		-- create local references to needed variables
-		-- because we're about to blow the global scope away
+if debugger then
+	debugger.reload = function()
+		if DEBUG then
+			-- create local references to needed variables
+			-- because we're about to blow the global scope away
 
-		local initialGlobals = debugger._initialGlobals
-		local initialPackages = debugger._initialPackages
-		
-		-- reset global scope
+			local initialGlobals = debugger._initialGlobals
+			local initialPackages = debugger._initialPackages
+			
+			-- reset global scope
 
-		for key, _ in pairs(_G) do
-			_G[key] = initialGlobals[key]
-		end
-
-		-- reload main file and restart
-
-		for key, _ in pairs(package.loaded) do
-			if not initialPackages[key] then
-				package.loaded[key] = nil
+			for key, _ in pairs(_G) do
+				_G[key] = initialGlobals[key]
 			end
-		end
 
-		require('main')
-		love.load()
+			-- reload main file and restart
+
+			for key, _ in pairs(package.loaded) do
+				if not initialPackages[key] then
+					package.loaded[key] = nil
+				end
+			end
+
+			require('main')
+			love.load()
+		end
 	end
 end
