@@ -366,9 +366,10 @@ App = Class:extend
 		if self.onEndFrame then self:onEndFrame(elapsed) end
 		
 		-- if we're going faster than our max fps, sleep it off
+		local frameSec = 1 / self.fps
 		
-		if realElapsed < 1 / self.fps then
-			love.timer.sleep(1 / self.fps - realElapsed)
+		if realElapsed < frameSec then
+			love.timer.sleep(frameSec - realElapsed)
 		end
 	end,
 	
