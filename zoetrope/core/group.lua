@@ -374,13 +374,23 @@ Group = Class:extend
 		
 		local scrollX = x * self.translateScale.x
 		local scrollY = y * self.translateScale.y
+		local appWidth = the.app.width
+		local appHeight = the.app.height
 		
 		for _, spr in pairs(self.sprites) do	
 			if spr.visible then
 				if spr.translate then
 					spr:draw(spr.translate.x + scrollX, spr.translate.y + scrollY)
-				elseif spr.x and spr.y then
-					spr:draw(spr.x + scrollX, spr.y + scrollY)
+				elseif spr.x and spr.y and spr.width and spr.height then
+					local sprX = spr.x + scrollX
+					local sprY = spr.y + scrollY
+
+					if sprX < appWidth and sprX + spr.width > 0 and
+					   sprY < appHeight and sprY + spr.height > 0 then
+						spr:draw(sprX, sprY)
+					end
+				else
+					spr:draw(scrollX, scrollY)
 				end
 			end
 		end
