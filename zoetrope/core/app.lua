@@ -122,6 +122,7 @@ App = Class:extend
 		-- housekeeping
 		
 		the.app = obj
+		the.view = obj.view
 		if obj.onNew then obj:onNew() end
 		return obj
 	end,
