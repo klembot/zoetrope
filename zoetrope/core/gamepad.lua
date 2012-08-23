@@ -81,6 +81,19 @@ Gamepad = Sprite:extend{
 			obj.numBalls = love.joystick.getNumBalls(obj.number)
 			obj.numButtons = love.joystick.getNumButtons(obj.number)
 			obj.numHats = love.joystick.getNumHats(obj.number)
+
+			-- set initial values for axes and balls
+			-- hat values are strings so nil comparisons are safe
+			-- axes are kind of tricky, it appears there is no set number of values
+			-- possible, but we'll just assume 3 at most
+
+			for i = 1, obj.numAxes do
+				obj.axes[i] = { 0, 0, 0 }
+			end
+
+			for i = 1, obj.numBalls do
+				obj.balls[i] = { x = 0, y = 0 }
+			end
 		else
 			obj.name = 'NO DEVICE CONNECTED'
 			obj.numAxes = 0
