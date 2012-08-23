@@ -100,13 +100,21 @@ App = Class:extend
 		
 		-- input
 
-		obj.keys = obj.keys or Keys:new()
-		love.keyboard.setKeyRepeat(0.4, 0.04)
-		obj.meta:add(obj.keys)
-		obj.mouse = obj.mouse or Mouse:new()
-		obj.meta:add(obj.mouse)
-		obj.gamepads = {}
-		the.gamepads = obj.gamepads
+		if love.keyboard then
+			obj.keys = obj.keys or Keys:new()
+			love.keyboard.setKeyRepeat(0.4, 0.04)
+			obj.meta:add(obj.keys)
+		end
+
+		if love.mouse then
+			obj.mouse = obj.mouse or Mouse:new()
+			obj.meta:add(obj.mouse)
+		end
+
+		if love.joystick then
+			obj.gamepads = {}
+			the.gamepads = obj.gamepads
+		end
 
 		if obj.numGamepads and obj.numGamepads > 0 then
 			for i = 1, obj.numGamepads do
@@ -122,7 +130,6 @@ App = Class:extend
 		-- housekeeping
 		
 		the.app = obj
-		the.view = obj.view
 		if obj.onNew then obj:onNew() end
 		return obj
 	end,
@@ -138,6 +145,10 @@ App = Class:extend
 
 	run = function (self)
 		math.randomseed(os.time())
+
+		-- sync the.view
+
+		the.view = self.view
 
 		-- attach debug console
 
@@ -335,6 +346,10 @@ App = Class:extend
 		local realElapsed = elapsed
 		elapsed = elapsed * self.timeScale
 
+		-- sync the.view with our current view
+		
+		if the.view ~= view then the.view = view end
+
 		-- if we are not active at all, sleep for a half-second
 
 		if not self.active then
@@ -344,12 +359,6 @@ App = Class:extend
 		end
 
 		self._sleepTime = 0
-		
-		-- sync the.view with our current view
-		
-		if the.view ~= view then
-			the.view = view
-		end
 
 		-- update everyone
 		-- app gets precedence, then meta view, then view
