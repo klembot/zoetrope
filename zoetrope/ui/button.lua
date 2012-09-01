@@ -27,6 +27,12 @@
 -- Called when the user releases the mouse over the button.
 
 Button = Sprite:extend{
+	-- Property: background
+	-- The background <Sprite> of the button.
+
+	-- Propetrty: label
+	-- The label <Sprite> of the button.
+
 	-- Property: mouseOver
 	-- Tracks whether the user's mouse is over the button this frame.
 	mouseOver = false,
