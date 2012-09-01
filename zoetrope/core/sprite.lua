@@ -305,10 +305,43 @@ Sprite = Class:extend{
 	-- Arguments:
 	--		other - other sprite to push
 	--		elapsed - elapsed time to simulate, in seconds
+	--
+	-- Returns:
+	--		nothing
 
 	push = function (self, other, elapsed)
 		other.x = other.x + self.velocity.x * elapsed
 		other.y = other.y + self.velocity.y * elapsed
+	end,
+
+	-- Method: distanceTo
+	-- Returns the distance from this sprite to either another sprite or 
+	-- an arbitrary point. This uses the center of sprites to calculate the distance.
+	--
+	-- Arguments:
+	--		Can be either one argument, a sprite (or any other table with x
+	--		and y properties), or two arguments, which correspond to a point.
+	--
+	-- Returns:
+	--		distance in pixels
+
+	distanceTo = function (self, ...)
+		local arg = {...}
+		local midX = self.x + self.width / 2
+		local midY = self.y + self.width / 2
+
+		if #arg == 1 then
+			if STRICT then
+				local spr = arg[1]
+				assert(type(spr.x) == 'number' and type(spr.y) == 'number', 'asked to calculate distance to an object without numeric x and y properties')
+				local sprX = spr.x + spr.width / 2
+				local sprY = spr.y + spr.height / 2
+
+				return math.sqrt((midX - sprX)^2 + (midY - sprY)^2)
+			end
+		else
+			return math.sqrt((midX - arg[1])^2 + (midY - arg[2])^2)
+		end
 	end,
 
 	startFrame = function (self, elapsed)
