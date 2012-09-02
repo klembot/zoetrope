@@ -231,6 +231,78 @@ View = Group:extend{
 		end
 	end,
 
+	-- Method: panTo
+	-- Pans the view so that the target sprite or position is centered
+	-- onscreen. This sets the view's focus to nil.
+	--
+	-- Arguments:
+	--		target - sprite or coordinate pair to pan to
+	--		duration - how long the pan will take, in seconds
+	--		onComplete - function to call when the pan is complete, optional
+	--		ease - what easing to apply, see <Tween> for details, defaults to 'quadInOut'
+	--
+	-- Returns:
+	--		nothing
+
+	panTo = function (self, target, duration, onComplete, ease)
+		ease = ease or 'quadInOut'
+		local targetX, targetY
+
+		if STRICT then
+			assert((target.x and target.y and target.width and target.height) or (#target == 2),
+				   'pan target does not appear to be a sprite or coordinate pair')
+			assert(type(duration) == 'number', 'pan duration is not a number')
+			assert(not onComplete or type(onComplete) == 'function', 'pan onComplete is not a function')
+			assert(self.tween.easers[ease], 'pan easing method is not defined')
+		end
+
+		if target.x and target.y and target.width and target.height then
+			targetX = target.x + target.width / 2
+			targetY = target.y + target.height / 2
+		else
+			targetX = target[1]
+			targetY = target[2]
+		end
+
+		-- calculate translation to center these coordinates
+
+		local tranX = math.floor(-targetX + the.app.width / 2)
+		local tranY = math.floor(-targetY + the.app.height / 2)
+		
+		-- clamp translation to min and max visible
+		
+		if tranX > - self.minVisible.x then tranX = - self.minVisible.x end
+		if tranY > - self.minVisible.y then tranY = - self.minVisible.y end
+		
+		if tranX < the.app.width - self.maxVisible.x then
+			tranX = the.app.width - self.maxVisible.x
+		end
+		
+		if tranY < the.app.height - self.maxVisible.y then
+			tranY = the.app.height - self.maxVisible.y
+		end
+
+		-- tween the appropriate properties
+		-- some care has to be taken to avoid calling onComplete twice
+
+		self.focus = nil
+
+		if tranX ~= self.translate.x then
+			self.tween:start{ target = self.translate, prop = 'x', to = tranX, ease = ease,
+							  duration = duration, force = true, onComplete = onComplete }
+
+			if tranY ~= self.translate.y then
+				self.tween:start{ target = self.translate, prop = 'y', to = tranY, ease = ease,
+								  duration = duration, force = true }
+			end
+		elseif tranY ~= self.translate.y then
+			self.tween:start{ target = self.translate, prop = 'y', to = tranY, ease = ease,
+							  duration = duration, force = true, onComplete = onComplete }
+		elseif onComplete then
+			onComplete()
+		end
+	end,
+
 	-- Method: fade
 	-- Fades out to a specified color over a period of time.
 	--
