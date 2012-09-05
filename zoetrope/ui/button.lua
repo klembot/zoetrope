@@ -106,8 +106,8 @@ Button = Sprite:extend{
 		local label = self.label
 		local bg = self.background
 
-		if label[name] then label[name](label) end
-		if bg[name] then bg[name](bg) end
+		if label and label[name] then label[name](label) end
+		if bg and bg[name] then bg[name](bg) end
 		if self[name] then self[name](self) end
 	end
 }
