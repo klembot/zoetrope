@@ -141,3 +141,16 @@ require 'zoetrope.utils.debug'
 require 'zoetrope.utils.factory'
 require 'zoetrope.utils.recorder'
 require 'zoetrope.utils.storage'
+
+-- simple load function to bootstrap the app if love.load() hasn't already been defined;
+-- defining it again after this works fine as well
+
+if not love.load then
+	love.load = function()
+		if the.app then
+			-- if we only extended an app, instantiate it
+			if not (the.app.view and the.app.meta) then the.app = the.app:new() end
+			the.app:run()
+		end
+	end
+end

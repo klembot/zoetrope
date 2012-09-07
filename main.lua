@@ -118,7 +118,7 @@ Fireworks = Emitter:extend
 	end
 }
 
-Menu = App:extend
+the.app = App:extend
 {
 	apps =
 	{
@@ -174,8 +174,3 @@ Menu = App:extend
 		self:useSysCursor(true)
 	end
 }
-
-function love.load()
-	testApp = Menu:new()
-	testApp:run()
-end
