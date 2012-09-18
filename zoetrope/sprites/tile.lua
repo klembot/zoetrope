@@ -43,9 +43,9 @@ Tile = Sprite:extend
 			if not self.width then self.width = self._imageObj:getWidth() end
 			if not self.height then self.height = self._imageObj:getHeight() end
 
-			self.quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
-											  self.width, self.height,
-											  self._imageObj:getWidth(), self._imageObj:getHeight())
+			self._quad = love.graphics.newQuad(self.imageOffset.x, self.imageOffset.y,
+											   self.width, self.height,
+											   self._imageObj:getWidth(), self._imageObj:getHeight())
 			self._imageObj:setWrap('repeat', 'repeat')
 			self._set.image = self.image
 		end
@@ -81,7 +81,7 @@ Tile = Sprite:extend
 		
 		-- draw the quad
 
-		love.graphics.drawq(self._imageObj, self.quad, x + self.width / 2, y + self.height / 2, self.rotation,
+		love.graphics.drawq(self._imageObj, self._quad, x + self.width / 2, y + self.height / 2, self.rotation,
 							self.scale * self.distort.x, self.scale * self.distort.y,
 							self.width / 2, self.height / 2)
 		
