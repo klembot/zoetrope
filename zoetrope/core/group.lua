@@ -207,17 +207,68 @@ Group = Class:extend
 		end
 	end,
 
+	-- Method: setEffect
+	-- Sets a pixel effect to use while drawing sprites in this group.
+	-- See https://love2d.org/wiki/PixelEffect for details on how pixel
+	-- effects work. After this call, the group's effect property will be
+	-- set up so you can send variables to it. Only one pixel effect can
+	-- be active on a group at a time.
+	--
+	-- Arguments:
+	--		filename - filename of effect source code; if nil, this
+	--				   clears any existing pixel effect.
+	--		effectType - either 'screen' (applies the effect to the entire
+	--					 group once, via an offscreen canvas), or 'sprite'
+	--					 (applies to the effect to each individual draw operation).
+	--					 Screen effects use more resources, but certain effects
+	--					 need to work on the entire screen to be effective.
+	--
+	-- Returns:
+	--		whether the effect was successfully created
+
+	setEffect = function (self, filename, effectType)
+		effectType = effectType or 'screen'
+
+		if love.graphics.isSupported('pixeleffect') and
+		   (effectType == 'sprite' or love.graphics.isSupported('canvas'))then
+			if filename then
+				self.effect = love.graphics.newPixelEffect(Cached:text(filename))
+				self.effectType = effectType
+			else
+				self.effect = nil
+			end
+
+			return true
+		else
+			return false
+		end
+	end,
+
 	-- Method: count
 	-- Counts how many sprites are in this group.
 	-- 
 	-- Arguments:
-	--		none
+	--		subgroups - include subgroups?
 	-- 
 	-- Returns:
 	--		integer count
 
-	count = function (self)
-		return #self.sprites
+	count = function (self, subgroups)
+		if subgroups then
+			local count = 0
+
+			for _, spr in pairs(self.sprites) do
+				if spr:instanceOf(Group) then
+					count = count + spr:count(true)
+				else
+					count = count + 1
+				end
+			end
+
+			return count
+		else
+			return #self.sprites
+		end
 	end,
 
 	-- Method: die
@@ -376,6 +427,16 @@ Group = Class:extend
 		local scrollY = y * self.translateScale.y
 		local appWidth = the.app.width
 		local appHeight = the.app.height
+
+		if self.effect then
+			if self.effectType == 'screen' then
+				if not self._canvas then self._canvas = love.graphics.newCanvas() end
+				self._canvas:clear()
+				love.graphics.setCanvas(self._canvas)
+			elseif self.effectType == 'sprite' then
+				love.graphics.setPixelEffect(self.effect)
+			end
+		end
 		
 		for _, spr in pairs(self.sprites) do	
 			if spr.visible then
@@ -396,5 +457,39 @@ Group = Class:extend
 		end
 			
 		if self.onDraw then self:onDraw() end
+
+		if self.effect then
+			if self.effectType == 'screen' then
+				love.graphics.setPixelEffect(self.effect)
+				love.graphics.setCanvas()
+				love.graphics.draw(self._canvas)
+			end
+
+			love.graphics.setPixelEffect()
+		end
+	end,
+
+	__tostring = function (self)
+		local result = 'Group ('
+
+		if self.active then
+			result = result .. 'active'
+		else
+			result = result .. 'inactive'
+		end
+
+		if self.visible then
+			result = result .. ', visible'
+		else
+			result = result .. ', invisible'
+		end
+
+		if self.solid then
+			result = result .. ', solid'
+		else
+			result = result .. ', not solid'
+		end
+
+		return result .. ', ' .. self:count(true) .. ' sprites)'
 	end
 }

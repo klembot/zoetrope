@@ -118,7 +118,7 @@ Fireworks = Emitter:extend
 	end
 }
 
-the.app = App:extend
+the.app = App:new
 {
 	apps =
 	{
@@ -136,6 +136,7 @@ the.app = App:extend
 		'Files', Files,
 		'UI', UI,
 		'Parallax Scrolling', Scrolling,
+		'Pixel Effects', Effects,
 		'Timers', Timers,
 		'Tweens', Tweens,
 		'Input Recording', Recording,
