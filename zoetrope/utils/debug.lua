@@ -284,6 +284,21 @@ DebugConsole = Group:extend{
 				self._updateLog = false
 			end
 
+			-- handle special keys at the console
+
+			if the.keys:pressed('ctrl') and the.keys:justPressed('a') then
+				self.input.caret = 0
+			end
+
+			if the.keys:pressed('ctrl') and the.keys:justPressed('e') then
+				self.input.caret = string.len(self.input.text)
+			end
+
+			if the.keys:pressed('ctrl') and the.keys:justPressed('k') then
+				self.input.caret = 0
+				self.input.text = ''
+			end
+
 			if the.keys:justPressed('up') and self.inputHistoryIndex > 1 then
 				-- save what the user was in the middle of typing
 
