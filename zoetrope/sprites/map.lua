@@ -366,5 +366,30 @@ Map = Sprite:extend{
 		end
 
 		Sprite.endFrame(self, elapsed)
+	end,
+
+	__tostring = function (self)
+		local result = 'Map (x: ' .. self.x .. ', y: ' .. self.y ..
+					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+
+		if self.active then
+			result = result .. 'active, '
+		else
+			result = result .. 'inactive, '
+		end
+
+		if self.visible then
+			result = result .. 'visible, '
+		else
+			result = result .. 'invisible, '
+		end
+
+		if self.solid then
+			result = result .. 'solid'
+		else
+			result = result .. 'not solid'
+		end
+
+		return result .. ')'
 	end
 }

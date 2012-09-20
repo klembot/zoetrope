@@ -96,5 +96,18 @@ Timer = Sprite:extend{
 		end
 		
 		self.active = (#self.timers > 0)
+	end,
+
+	__tostring = function (self)
+		local result = 'Timer ('
+
+		if self.active then
+			result = result .. 'active, '
+			result = result .. #self.timers .. ' timers running'
+		else
+			result = result .. 'inactive'
+		end
+
+		return result .. ')'
 	end
 }

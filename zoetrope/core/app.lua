@@ -403,5 +403,17 @@ App = Class:extend
 				love.audio.pause()
 			end
 		end
-	end	
+	end,
+
+	__tostring = function (self)
+		local result = 'App ('
+
+		if self.active then
+			result = result .. 'active'
+		else
+			result = result .. 'inactive'
+		end
+
+		return result .. ', ' .. self.fps .. ' fps, ' .. self.view:count(true) .. ' sprites)'
+	end
 }

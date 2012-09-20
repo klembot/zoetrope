@@ -229,5 +229,36 @@ Animation = Sprite:extend{
 		end
 		
 		Sprite.draw(self, x, y)
+	end,
+
+	__tostring = function (self)
+		local result = 'Animation (x: ' .. self.x .. ', y: ' .. self.y ..
+					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+
+		if self.currentName then
+			result = result .. 'playing ' .. self.currentName .. ', '
+		end
+
+		result = result .. ' frame ' .. self.currentFrame .. ', '
+
+		if self.active then
+			result = result .. 'active, '
+		else
+			result = result .. 'inactive, '
+		end
+
+		if self.visible then
+			result = result .. 'visible, '
+		else
+			result = result .. 'invisible, '
+		end
+
+		if self.solid then
+			result = result .. 'solid'
+		else
+			result = result .. 'not solid'
+		end
+
+		return result .. ')'
 	end
 }

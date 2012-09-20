@@ -237,5 +237,18 @@ Tween = Sprite:extend{
 		else
 			tween.target[tween.prop] = value
 		end
+	end,
+
+	__tostring = function (self)
+		local result = 'Tween ('
+
+		if self.active then
+			result = result .. 'active, '
+			result = result .. #self.tweens .. ' tweens running'
+		else
+			result = result .. 'inactive'
+		end
+
+		return result .. ')'
 	end
 }

@@ -205,5 +205,18 @@ Emitter = Group:extend{
 	add = function (self, sprite)
 		sprite:die()
 		Group.add(self, sprite)
+	end,
+
+	__tostring = function (self)
+		local result = 'Emitter (x: ' .. self.x .. ', y: ' .. self.y ..
+					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+
+		if self.emitting then
+			result = result .. 'emitting with period ' .. self.period .. ', '
+		else
+			result = result .. 'not emitting, '
+		end
+
+		return result
 	end
 }

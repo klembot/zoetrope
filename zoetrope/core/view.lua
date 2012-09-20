@@ -421,5 +421,29 @@ View = Group:extend{
 			love.graphics.rectangle('fill', 0, 0, the.app.width, the.app.height)
 			love.graphics.setColor(255, 255, 255, 255)
 		end
+	end,
+
+	__tostring = function (self)
+		local result = 'View ('
+
+		if self.active then
+			result = result .. 'active'
+		else
+			result = result .. 'inactive'
+		end
+
+		if self.visible then
+			result = result .. ', visible'
+		else
+			result = result .. ', invisible'
+		end
+
+		if self.solid then
+			result = result .. ', solid'
+		else
+			result = result .. ', not solid'
+		end
+
+		return result .. ', ' .. self:count(true) .. ' sprites)'
 	end
 }
