@@ -1,5 +1,3 @@
-require 'zoetrope'
-
 SpriteTypes = TestApp:extend
 {
 	title = 'Sprite Types',
