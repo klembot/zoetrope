@@ -141,6 +141,7 @@ require 'zoetrope.utils.debug'
 require 'zoetrope.utils.factory'
 require 'zoetrope.utils.recorder'
 require 'zoetrope.utils.storage'
+require 'zoetrope.utils.subview'
 
 -- simple load function to bootstrap the app if love.load() hasn't already been defined;
 -- defining it again after this works fine as well
