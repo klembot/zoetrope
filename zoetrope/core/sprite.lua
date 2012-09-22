@@ -29,8 +29,8 @@
 --
 -- Event: onCollide
 -- Called when the sprite intersects another during a collide() call. When a collision is detected,
--- this event occurs for both sprites. The sprite is passed two arguments: the horizontal and vertical
--- overlap between the other sprite, in pixels.
+-- this event occurs for both sprites. The sprite is passed three arguments: the other sprite, the
+-- horizontal overlap, and the vertical overlap between the other sprite, in pixels.
 
 Sprite = Class:extend{
 	-- Property: active

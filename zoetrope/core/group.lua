@@ -108,7 +108,7 @@ Group = Class:extend
 	-- This checks for collisions between the sprites that make up the group.
 	--
 	-- Arguments:
-	-- 		other - <Sprite> or <Group> to collide with
+	-- 		other - <Sprite> or <Group> to collide with, default self
 	-- 
 	-- Returns:
 	--		boolean, whether any collision was detected
@@ -117,6 +117,8 @@ Group = Class:extend
 	--		<Sprite.collide>
 
 	collide = function (self, other)
+		other = other or self
+
 		if STRICT then
 			assert(other:instanceOf(Group) or other:instanceOf(Sprite), 'asked to collide non-group/sprite ' ..
 				   type(other))

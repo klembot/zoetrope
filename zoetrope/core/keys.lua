@@ -3,7 +3,7 @@
 -- was just pressed or released this frame. You can look
 -- up a key either by its name or its Unicode number.
 -- Not all keys sensed have Unicode equivalents (e.g. modifiers
--- like control or alt).
+-- like Control or Alt).
 --
 -- Only one Keys object can be active at one time. The one currently
 -- listening to the keyboard can be accessed globally via <the>.keys.

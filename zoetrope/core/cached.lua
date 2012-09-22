@@ -3,13 +3,13 @@
 -- copies of them. It also hides Love-related calls so that your code is
 -- more portable.
 --
--- If you're using a built-in sprite class, you do not need to use
+-- If you're using a class built into Zoetrope, you do not need to use
 -- this class directly. They take care of setting things up for you
 -- appropriately. However, if you're rolling your own, you'll want to use
 -- this to save memory.
 --
 -- This class is not meant to be created directly. Instead, call
--- methods on Cached directly, e.g. Cached:sound, Cached:image, and so on.
+-- methods on Cached directly, e.g. Cached:sound(), Cached:image(), and so on.
 --
 -- Extends:
 --		<Class>
@@ -64,7 +64,7 @@ Cached = Class:extend{
 	end,
 
 	-- Method: sound
-	-- Returns a cached sound asset .
+	-- Returns a cached sound asset.
 	--
 	-- Arguments:
 	--		path - pathname to sound file

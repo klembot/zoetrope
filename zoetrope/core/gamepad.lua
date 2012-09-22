@@ -1,5 +1,5 @@
 -- Class: Gamepad
--- Represents a single gamepad connected to the user's computer. This offers the 
+-- This represents a single gamepad connected to the user's computer. This offers the 
 -- usual functions to check on the status of buttons; you can also inspect other
 -- controls, like analog joysticks, by checking properties like <axes> and <hats>.
 -- (Incidentally, a hat is used for things like a digital control pad.) 
