@@ -110,7 +110,7 @@ DebugConsole = Group:extend{
 			end
 		end)
 		obj:addHotkey('q', love.event.quit)
-		obj:addHotkey('r', debugger.reload)
+		if debugger then obj:addHotkey('r', debugger.reload) end
 		obj:addHotkey('s', function() the.app:saveScreenshot('screenshot.png') end)
 		
 		if obj.watchBasics then
