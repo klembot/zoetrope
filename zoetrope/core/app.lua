@@ -84,6 +84,11 @@ App = Class:extend
 	-- The amount of time the app intentionally slept for, and should not
 	-- be counted against elapsed time.
 
+	-- internal property: _nextFrameTime
+	-- Set at the start of a frame to be the next time a frame should be rendered,
+	-- in timestamp format. This is used to properly maintain FPS -- see the example
+	-- in https://love2d.org/wiki/love.timer.sleep for how this works.
+
 	new = function (self, obj)
 		obj = self:extend(obj)
 
@@ -165,6 +170,7 @@ App = Class:extend
 		love.focus = function (value) self:onFocus(value) end	
 
 		if self.onRun then self:onRun() end
+		self._nextFrameTime = love.timer.getMicroTime()
 	end,
 	
 	-- Method: quit
@@ -341,13 +347,17 @@ App = Class:extend
 	end,
 
 	update = function (self, elapsed)
-		local view = self.view
+		-- set the next frame time right at the start
+		self._nextFrameTime = self._nextFrameTime + 1 / self.fps
+
 		elapsed = elapsed - (self._sleepTime or 0)
+
 		local realElapsed = elapsed
 		elapsed = elapsed * self.timeScale
 
 		-- sync the.view with our current view
 		
+		local view = self.view
 		if the.view ~= view then the.view = view end
 
 		-- if we are not active at all, sleep for a half-second
@@ -374,13 +384,6 @@ App = Class:extend
 		view:endFrame(elapsed)
 		self.meta:endFrame(elapsed)
 		if self.onEndFrame then self:onEndFrame(elapsed) end
-		
-		-- if we're going faster than our max fps, sleep it off
-		local frameSec = 1 / self.fps
-		
-		if realElapsed < frameSec then
-			love.timer.sleep(frameSec - realElapsed)
-		end
 	end,
 	
 	draw = function (self)
@@ -391,6 +394,16 @@ App = Class:extend
 		self.meta:draw()
 		if self.onDraw then self:onDraw() end
 		if inset then love.graphics.translate(0, 0) end
+
+		-- sleep off any unneeded time to keep up at our FPS
+
+		local now = love.timer.getMicroTime()
+
+		if self._nextFrameTime < now then
+			self._nextFrameTime = now
+		else
+			love.timer.sleep(self._nextFrameTime - now)
+		end
 	end,
 
 	onFocus = function (self, value)
