@@ -1,5 +1,5 @@
-STRICT = true
 DEBUG = true
+STRICT = true
 
 require 'tests'
 
@@ -26,100 +26,109 @@ MenuButton = Button:extend
 	end
 }
 
-FireworkParticle = Fill:extend
+MenuBlock = Fill:extend
 {
-	width = 2, height = 2,
-	length = 3,
-	trail = {}, trailPointer = 1,
-	behavior = 'none',
-
-	onEmit = function (self)
-		self.alpha = 1
-	end,
-
-	onUpdate = function (self, elapsed)
-		self.trail[self.trailPointer] = { self.x, self.y }
-		self.trailPointer = (self.trailPointer + 1) % 10
-		self.alpha = self.alpha - elapsed / self.length
-
-		if self.alpha < 0 then self:die() end
-	end,
-
-	onDraw = function (self)
-		love.graphics.setColor(self.fill[1], self.fill[2], self.fill[3], 32 * self.alpha)
-
-		for _, pos in pairs(self.trail) do
-			love.graphics.rectangle('fill', pos[1], pos[2], self.width, self.height)
-		end
-	end
-}
-
-FireworkLaunch = FireworkParticle:extend
-{
-	length = 3,
-
-	onEmit = function (self)
-		the.view.timer:start{ func = self.explode, bind = self, delay = math.random() + 1 } 
-	end,
-
-	explode = function (self)
-		the.view.factory:create(FireworkBurst, { x = self.x, y = self.y })
-		self:die()
-	end
-}
-
-FireworkBurst = Emitter:extend
-{
-	width = 0, height = 0,
-	min = { velocity = { x = -300, y = -300 }, acceleration = { y = 300 } },
-	max = { velocity = { x = 300, y = 300 }, acceleration = { y = 300 } },
-	colors =
-	{
-		{16, 206, 255},
-		{255, 200, 4},
-		{5, 231, 3},
-		{98, 3, 231},
-		{255, 0, 96}
-	},
+	width = 28, height = 16,
+	fill = {255, 255, 255},
+	drag = { x = 25, y = 25 },
+	mass = 1,
+	hits = {},
+	alpha = 0,
+	colors = { {126, 57, 82},
+			   {82, 70, 138}, 
+			   {223, 78, 243}, 
+			   {30, 106, 82}, 
+			   {54, 106, 243}, 
+			   {201, 192, 249},
+			   {82, 94, 13},
+			   {223, 122, 25},
+			   {239, 181, 201},
+			   {54, 205, 25},
+			   {201, 211, 152},
+			   {162, 221, 201}
+			 },
 
 	onNew = function (self)
-		self:loadParticles(FireworkParticle, 100)
-		the.app.fireworks:add(self)
+		self.fill = self.colors[math.random(#self.colors)]
 	end,
 
-	onReset = function (self)
-		local color = self.colors[math.random(#self.colors)]
+	onStartFrame = function (self)
+		while #self.hits > 0 do table.remove(self.hits) end
+	end,
+
+	onCollide = function (self, other)
+		for _, spr in pairs(self.hits) do
+			if spr == other then return end
+		end
+
+		table.insert(self.hits, other)
+		table.insert(other.hits, self)
+		self:displace(other)
+
+		-- stop any acceleration applied by the view
+
+		self.acceleration.x, self.acceleration.y = 0, 0
+		other.acceleration.x, other.acceleration.y = 0, 0
+
+		-- the following algorithm is shamelessly stolen from
+		-- http://www.gamasutra.com/view/feature/131424/pool_hall_lessons_fast_accurate_.php?page=3
+
+		-- find vector between the two centers and normalize it
+
+		local centX = self.x - other.x
+		local centY = self.y - other.y
+		local centLength = math.sqrt(centX * centX + centY * centY)
+		centX = centX / centLength
+		centY = centY / centLength
+
+		-- find length of each's movement vector along the center vector
+
+		local dotSelf = self.velocity.x * centX + self.velocity.y * centY
+		local dotOther = other.velocity.x * centX + other.velocity.y * centY
 		
-		for _, spr in pairs(self.sprites) do
-			spr.fill = color
+		-- combined momentum of both blocks
+
+		local optMomentum = 2 * (dotSelf - dotOther) / (self.mass + other.mass)
+
+		-- then set our own new velocity
+
+		self.velocity.x = self.velocity.x - optMomentum * other.mass * centX
+		self.velocity.y = self.velocity.y - optMomentum * other.mass * centY
+		other.velocity.x = other.velocity.x + optMomentum * self.mass * centX
+		other.velocity.y = other.velocity.y + optMomentum * self.mass * centY
+
+		if self.alpha ~= 1 then
+			the.view.tween:start{ target = self, prop = 'alpha', to = 1, duration = 0.25, force = true }
 		end
 
-		self:explode()
-		color[4] = 64
-		the.view:flash(color, 0.25)
-	end
-}
-
-Fireworks = Emitter:extend
-{
-	x = 600, y = 600,
-	width = 50, height = 0,
-	period = 5,
-	min = { velocity = { x = -100, y = -600 }, acceleration = { y = 300 } },
-	max = { velocity = { x = 25, y = -500 }, acceleration = { y = 300 } },
-
-	onNew = function (self)
-		self:loadParticles(FireworkLaunch, 5)
-		self:emit()
+		if other.alpha ~= 1 then
+			the.view.tween:start{ target = other, prop = 'alpha', to = 1, duration = 0.25, force = true }
+		end
 	end,
 
-	onEmit = function (self)
-		if math.random() < 0.25 then self:emit() end
+	onUpdate = function (self)
+		if self.alpha == 1 and (self.velocity.x + self.velocity.y) < 100 then
+			the.view.tween:start{ target = self, prop = 'alpha', to = 0, force = true }
+		end
+
+		if (self.x < 480 and self.velocity.x < 0) or
+		   (self.x + self.width > the.app.width and self.velocity.x > 0) then
+			self.velocity.x = self.velocity.x * -1
+			self.acceleration.x, self.acceleration.y = 0, 0
+		end
+
+		if (self.y < 0 and self.velocity.y < 0) or
+		   (self.y + self.height > the.app.height and self.velocity.y > 0) then
+			self.velocity.y = self.velocity.y * -1
+			self.acceleration.x, self.acceleration.y = 0, 0
+		end
 	end
 }
 
 the.app = App:new
 {
+	fps = 30,
+
 	apps =
 	{
 		'Sprite Benchmark', SpriteBenchmark,
@@ -137,22 +146,34 @@ the.app = App:new
 		'UI', UI,
 		'Parallax Scrolling', Scrolling,
 		'Pixel Effects', Effects,
+		'Subviews', SubviewTest,
 		'Timers', Timers,
 		'Tweens', Tweens,
 		'Input Recording', Recording,
 		'Debugging', Debugging
 	},
 
-	onNew = function (self)
+	onRun = function (self)
 		DEBUG = true
-		STRICT = true
+		STRICT = false
+		
+		-- blocks
 
-		self.fireworks = Group:new()
-		self.fireworks:add(Fireworks:new())
-		self:add(self.fireworks)
+		self.blocks = Group:new()
+		self:add(self.blocks)
+
+		for x = 480, 750, 50 do
+			for y = 10, 600, 50 do
+				self.blocks:add(MenuBlock:new{ x = x, y = y })
+			end
+		end
+
+		self.view.timer:start{ func = self.pushBlock, bind = self, delay = 1, repeats = true }
+
+		-- menu buttons
 
 		local x = 10
-		local y = 50
+		local y = 25
 
 		for i = 1, #self.apps, 2 do
 			self:add(MenuButton:new{ x = x, y = y, label = self.apps[i], app = self.apps[i + 1] })
@@ -167,11 +188,24 @@ the.app = App:new
 
 		print('Welcome to the Zoetrope test suite.')
 
-
 		self:add(Text:new{ x = 10, y = 470, font = 100, width = 780, tint = {0.5, 0.5, 0.5}, text = 'Zoetrope' })
 		self:add(Text:new{ x = 10, y = 580, font = 11, tint = { 0.75, 0.75, 0.75}, text = 'http://tinyurl.com/libzoetrope' })
 		self:add(Text:new{ x = 10, y = 440, font = 14, width = 400, text =
 						   'Click a heading above to see a demo.\nPress the Escape key at any time to return to this menu.' })
 		self:useSysCursor(true)
+	end,
+
+	onUpdate = function(self)
+		self.blocks:collide()
+	end,
+
+	pushBlock = function (self)
+		local block = self.blocks.sprites[math.random(#self.blocks.sprites)]
+		block.acceleration.x = math.random(-400, 400)
+		block.acceleration.y = math.random(-400, 400)
+		
+		if block.alpha ~= 1 then
+			self.view.tween:start{ target = block, prop = 'alpha', to = 1, duration = 0.25, force = true }
+		end
 	end
 }
