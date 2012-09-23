@@ -268,7 +268,7 @@ Map = Sprite:extend{
 	
 		x = math.floor(x or self.x)
 		y = math.floor(y or self.y)
-		if not self.visible then return end
+		if not self.visible or self.alpha <= 0 then return end
 		if not self.spriteWidth or not self.spriteHeight then return end
 		
 		-- determine drawing bounds

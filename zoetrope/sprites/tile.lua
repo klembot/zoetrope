@@ -52,7 +52,7 @@ Tile = Sprite:extend
 	end,
 
 	draw = function (self, x, y)
-		if not self.visible then return end
+		if not self.visible or self.alpha <= 0 then return end
 
 		x = math.floor(x or self.x)
 		y = math.floor(y or self.y)

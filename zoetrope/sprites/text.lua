@@ -128,7 +128,7 @@ Text = Sprite:extend{
 	end,
 
 	draw = function (self, x, y)
-		if not self.visible or not self.text or not self.font then return end
+		if not self.visible or self.alpha <= 0 or not self.text or not self.font then return end
 
 		x = math.floor(x or self.x)
 		y = math.floor(y or self.y)

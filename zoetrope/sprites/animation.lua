@@ -200,7 +200,7 @@ Animation = Sprite:extend{
 			assert(type(self.height) == 'number', 'visible animation does not have a numeric height property')
 		end
 
-		if not self.visible and self.image then return end
+		if not self.visible or not self.image or self.alpha <= 0 then return end
 		
 		-- if our image changed, update the quad
 		
