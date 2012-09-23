@@ -39,7 +39,9 @@ Subview = View:extend
 	activate = function (self)
 		if the.view == self then
 			if STRICT then
-				print('Warning: tried to activate an already active subview')
+				local info = debug.getinfo(2, 'Sl')
+				print('Warning: treid to activate an already active subview (' ..
+					  info.short_src .. ', line ' .. info.currentline .. ')')
 			end
 
 			return

@@ -90,13 +90,15 @@ Tween = Sprite:extend{
 		tween.duration = tween.duration or 1
 		tween.ease = tween.ease or 'linear'
 		
-		assert(type(tween.target) == 'table' or type(tween.target) == 'userdata',
-			   'tween target must be a table or userdata')
-		assert(tween.prop or tween.getter, 'neither tween prop (property) nor getter are defined')
-		assert(not tween.prop or tween.target[tween.prop],
-			   'no such property ' .. tostring(tween.prop) .. ' on target') 
-		assert(type(tween.duration) == 'number', 'tween duration must be a number')
-		assert(self.easers[tween.ease], 'easer ' .. tween.ease .. ' is not defined')
+		if STRICT then
+			assert(type(tween.target) == 'table' or type(tween.target) == 'userdata',
+				   'tween target must be a table or userdata')
+			assert(tween.prop or tween.getter, 'neither tween prop (property) nor getter are defined')
+			assert(not tween.prop or tween.target[tween.prop],
+				   'no such property ' .. tostring(tween.prop) .. ' on target') 
+			assert(type(tween.duration) == 'number', 'tween duration must be a number')
+			assert(self.easers[tween.ease], 'easer ' .. tween.ease .. ' is not defined')
+		end
 			
 		-- check for an existing tween for this target and property
 		
@@ -107,8 +109,10 @@ Tween = Sprite:extend{
 					table.remove(self.tweens, i)
 				else
 					if STRICT then
+						local info = debug.getinfo(2, 'Sl')
 						print('Warning: asked to tween a value that\'s already being tweened, ' ..
-							  'giving up (use force = true to override this)')
+							  'ignoring request; use force = true to override this (' ..
+							  info.short_src .. ', line ' .. info.currentline .. ')')
 					end
 
 					return
@@ -126,7 +130,9 @@ Tween = Sprite:extend{
 			tween.change = tween.to - tween.from
 			if math.abs(tween.change) < NEARLY_ZERO then
 				if STRICT then
-					print('Warning: asked to tween a value to its current state, giving up')
+					local info = debug.getinfo(2, 'Sl')
+					print('Warning: asked to tween a value to its current state, ignoring request (' ..
+						  info.short_src .. ', line ' .. info.currentline .. ')')
 				end
 
 				return
@@ -146,7 +152,9 @@ Tween = Sprite:extend{
 			
 			if skip then
 				if STRICT then
-					print('Warning: asked to tween a value to its current state, giving up')
+					local info = debug.getinfo(2, 'Sl')
+					print('Warning: asked to tween a value to its current state, ignoring request (' ..
+						  info.short_src .. ', line ' .. info.currentline .. ')')
 				end
 
 				return
@@ -181,7 +189,9 @@ Tween = Sprite:extend{
 		end
 
 		if STRICT and not found then
-			print('Warning: asked to stop a tween, but no active tweens match it')
+			local info = debug.getinfo(2, 'Sl')
+			print('Warning: asked to stop a tween, but no active tweens match it (' ..
+				  info.short_src .. ', line ' .. info.currentline .. ')')
 		end
 	end,
 

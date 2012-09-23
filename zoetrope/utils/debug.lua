@@ -15,36 +15,30 @@
 DebugConsole = Group:extend{
 	-- Property: toggleKey
 	-- What key toggles visibility. By default, this is the tab key.
-
 	toggleKey = 'tab',
 
 	-- Property: hotkeyModifiers
 	-- A table of modifier keys that must be held in order to activate
 	-- a debugging hotkey (set via <addHotkey()>). If you want hotkeys to
 	-- activate without having to hold any keys down, set this to nil.
-
 	hotkeyModifiers = {'ctrl', 'alt'},
 
 	-- Property: watchBasics
 	-- If true, the console will automatically start watching the frames
 	-- per second and memory usage. Changing this value after the object has
 	-- been created has no effect.
-	
 	watchBasics = true,
 
 	-- Property: watchWidth
 	-- How wide the sidebar, where watch values are displayed, should be.
-	
 	watchWidth = 150,
 
 	-- Property: inputHistory
 	-- A table of previously-entered commands.
-	
 	inputHistory = {},
 
 	-- Property: inputHistoryIndex
 	-- Which history entry, if any, we are displaying.
-	
 	inputHistoryIndex = 1,
 
 	-- Property: bg

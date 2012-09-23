@@ -113,7 +113,9 @@ View = Group:extend{
 				end
 
 				if STRICT and self[layer.name] then
-					print('Warning: a property named ' .. layer.name .. ' already exists in the current view\n')
+					local info = debug.getinfo(2, 'Sl')
+					print('Warning: a property named ' .. layer.name .. ' already exists in the current view (' ..
+						  info.short_src .. ', line ' .. info.currentline .. ')')
 				end
 
 				if layer.type == 'tilelayer' then
