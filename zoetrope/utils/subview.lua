@@ -12,6 +12,10 @@
 -- something on top of a view while it still is visible and updating, use a <Group>
 -- instead.
 --
+-- Events:
+--		onActivate - Called when the subview activates.
+--		onDeactivate - Called when the subview deactivates.
+--
 -- Extends:
 --		<View>
 
