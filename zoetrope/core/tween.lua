@@ -76,8 +76,8 @@ Tween = Sprite:extend{
 	--		prop - name of property of the target object to tween;
 	--             can be either a number or a table of numbers (e.g. a color)
 	--		to - destination value, either number or color table
-	--		getter - getter function for the property; overrides property
-	--		setter - setter function for the property; overrides property
+	--		getter - getter function for the property; overrides prop
+	--		setter - setter function for the property; overrides prop
 	--		duration - how long the tween should last in seconds, default 1
 	--		force - override any pre-existing tweens on this object/property?
 	--		ease - function name (in Tweener.easers) to use to control how the value changes
@@ -166,6 +166,29 @@ Tween = Sprite:extend{
 		tween.elapsed = 0
 		table.insert(self.tweens, tween)
 		self.active = true
+	end,
+
+	-- Method: status
+	-- Returns how much time is left for a particular tween to run.
+	--
+	-- Arguments:
+	--		target - target object
+	--		prop - name of the property being tweened, or getter (as set in the orignal <start()> call)
+	--		to - value being tweened to, optional
+	--
+	-- Returns:
+	--		Either the time left in the tween, or nil if there is
+	--		no tween matching the arguments passed.
+
+	status = function (self, target, prop, to)
+		for _, t in pairs(self.tweens) do
+			if t.target == target and (t.prop == prop or t.getter == prop) and
+			   (not to or t.to == to) then
+				return t.duration - t.elapsed
+			end
+		end
+
+		return nil
 	end,
 
 	-- Method: stop

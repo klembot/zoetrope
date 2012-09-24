@@ -42,6 +42,30 @@ Timer = Sprite:extend{
 		timer.timeLeft = timer.delay
 		table.insert(self.timers, timer)
 	end,
+
+	-- Method: status
+	-- Returns how much time is left before a function call is scheduled.
+	--
+	-- Arguments:
+	--		func - the function that is queued
+	--		bind - the bind property used with <start()>, optional
+	--
+	-- Returns:
+	--		the time left until the soonest call matching these arguments,
+	--		or nil if there is no call scheduled
+
+	status = function (self, func, bind, arg)
+		local result
+
+		for _, t in pairs(self.timers) do
+			if t.func == func and (not bind or t.bind == bind) and
+			   (not result or result < t.timeLeft) then
+			   result = t.timeLeft
+			end
+		end
+
+		return result
+	end,
 	
 	-- Method: stop
 	-- Stops a timer from executing. If there is no function associated
