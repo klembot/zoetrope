@@ -97,17 +97,18 @@ MenuBlock = Fill:extend
 		other.velocity.x = other.velocity.x + optMomentum * self.mass * centX
 		other.velocity.y = other.velocity.y + optMomentum * self.mass * centY
 
-		if self.alpha ~= 1 then
+		if math.abs(1 - self.alpha) > NEARLY_ZERO and not the.view.tween:status(self, 'alpha', 1) then
 			the.view.tween:start{ target = self, prop = 'alpha', to = 1, duration = 0.25, force = true }
 		end
 
-		if other.alpha ~= 1 then
+		if math.abs(1 - other.alpha) > NEARLY_ZERO and not the.view.tween:status(other, 'alpha', 1) then
 			the.view.tween:start{ target = other, prop = 'alpha', to = 1, duration = 0.25, force = true }
 		end
 	end,
 
 	onUpdate = function (self)
-		if self.alpha == 1 and (self.velocity.x + self.velocity.y) < 100 then
+		if math.abs(self.velocity.x + self.velocity.y) < 5 and
+		   self.alpha ~= 0 and not the.view.tween:status(self, 'alpha', 0) then
 			the.view.tween:start{ target = self, prop = 'alpha', to = 0, force = true }
 		end
 
@@ -127,7 +128,7 @@ MenuBlock = Fill:extend
 
 the.app = App:new
 {
-	fps = 30,
+	fps = 40,
 
 	apps =
 	{
@@ -155,13 +156,13 @@ the.app = App:new
 
 	onRun = function (self)
 		DEBUG = true
-		STRICT = false
-		
+		STRICT = true
+
 		-- blocks
 
 		self.blocks = Group:new()
 		self:add(self.blocks)
-
+	
 		for x = 480, 750, 50 do
 			for y = 10, 600, 50 do
 				self.blocks:add(MenuBlock:new{ x = x, y = y })
@@ -203,8 +204,8 @@ the.app = App:new
 		local block = self.blocks.sprites[math.random(#self.blocks.sprites)]
 		block.acceleration.x = math.random(-400, 400)
 		block.acceleration.y = math.random(-400, 400)
-		
-		if block.alpha ~= 1 then
+	
+		if math.abs(1 - block.alpha) > NEARLY_ZERO and not self.view.tween:status(block, 'alpha', 1) then
 			self.view.tween:start{ target = block, prop = 'alpha', to = 1, duration = 0.25, force = true }
 		end
 	end
