@@ -80,10 +80,14 @@ Tile = Sprite:extend
 		if self.image and self.image ~= self._set.image then self:updateQuad() end
 		
 		-- draw the quad
+		local scaleX = self.scale * self.distort.x
+		local scaleY = self.scale * self.distort.y
+
+		if self.flipX then scaleX = scaleX * -1 end
+		if self.flipY then scaleY = scaleY * -1 end
 
 		love.graphics.drawq(self._imageObj, self._quad, x + self.width / 2, y + self.height / 2, self.rotation,
-							self.scale * self.distort.x, self.scale * self.distort.y,
-							self.width / 2, self.height / 2)
+							scaleX, scaleY, self.width / 2, self.height / 2)
 		
 		-- reset color
 		

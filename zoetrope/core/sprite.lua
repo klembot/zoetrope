@@ -101,6 +101,14 @@ Sprite = Class:extend{
 	-- between x and y scales.
 	distort = { x = 1, y = 1 },
 
+	-- Property: flipX
+	-- If set to true, then the sprite will draw flipped horizontally.
+	flipX = false,
+
+	-- Property: flipY
+	-- If set to true, then the sprite will draw flipped vertically.
+	flipY = false,
+
 	-- Property: alpha
 	-- This affects the transparency at which the sprite is drawn onscreen. 1 is fully
 	-- opaque; 0 is completely transparent.
