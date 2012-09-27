@@ -16,6 +16,12 @@
 --
 -- Event: onRun
 -- 		Called once, when the app begins running.
+--
+-- Event: onEnterFullscreen
+--		Called after entering fullscreen successfully.
+--
+-- Event: onExitFullscreen
+--		Called after exiting fullscreen successfully.
 
 App = Class:extend
 {
@@ -258,6 +264,8 @@ App = Class:extend
 			self.inset.x = math.floor((bestMode.width - self.width) / 2)
 			self.inset.y = math.floor((bestMode.height - self.height) / 2)
 			love.graphics.setScissor(self.inset.x, self.inset.y, self.width, self.height)
+
+			if self.onEnterFullscreen then self:onEnterFullscreen() end
 		end
 
 		return self.fullscreen
@@ -282,6 +290,7 @@ App = Class:extend
 		self.fullscreen = false
 		self.inset.x = 0
 		self.inset.y = 0
+		if self.onExitFullscreen then self:onExitFullscreen() end
 	end,
 
 	-- Method: toggleFullscreen
