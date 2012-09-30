@@ -383,7 +383,7 @@ Sprite = Class:extend{
 		if vel.y ~= 0 then self.y = self.y + vel.y * elapsed end
 		if vel.rotation ~= 0 then self.rotation = self.rotation + vel.rotation * elapsed end
 		
-		if acc.x ~= 0 then
+		if acc.x and acc.x ~= 0 then
 			vel.x = vel.x + acc.x * elapsed
 		else
 			if drag.x then
@@ -397,7 +397,7 @@ Sprite = Class:extend{
 			end
 		end
 		
-		if acc.y ~= 0 then
+		if acc.y and acc.y ~= 0 then
 			vel.y = vel.y + acc.y * elapsed
 		else
 			if drag.y then
@@ -411,7 +411,7 @@ Sprite = Class:extend{
 			end
 		end
 		
-		if acc.rotation ~= 0 then
+		if acc.rotation and acc.rotation ~= 0 then
 			vel.rotation = vel.rotation + acc.rotation * elapsed
 		else
 			if drag.rotation then
