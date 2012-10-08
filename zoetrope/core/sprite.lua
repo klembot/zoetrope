@@ -339,14 +339,16 @@ Sprite = Class:extend{
 		local midY = self.y + self.width / 2
 
 		if #arg == 1 then
-			if STRICT then
-				local spr = arg[1]
-				assert(type(spr.x) == 'number' and type(spr.y) == 'number', 'asked to calculate distance to an object without numeric x and y properties')
-				local sprX = spr.x + spr.width / 2
-				local sprY = spr.y + spr.height / 2
+			local spr = arg[1]
 
-				return math.sqrt((midX - sprX)^2 + (midY - sprY)^2)
+			if STRICT then
+				assert(type(spr.x) == 'number' and type(spr.y) == 'number', 'asked to calculate distance to an object without numeric x and y properties')
 			end
+
+			local sprX = spr.x + spr.width / 2
+			local sprY = spr.y + spr.height / 2
+
+			return math.sqrt((midX - sprX)^2 + (midY - sprY)^2)
 		else
 			return math.sqrt((midX - arg[1])^2 + (midY - arg[2])^2)
 		end
