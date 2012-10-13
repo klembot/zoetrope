@@ -412,7 +412,7 @@ Group = Class:extend
 	endFrame = function (self, elapsed)
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
-		if self.onEndFrame then self.onEndFrame(elapsed) end
+		if self.onEndFrame then self:onEndFrame(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
 			if spr.active then spr:endFrame(elapsed) end
