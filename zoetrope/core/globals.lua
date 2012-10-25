@@ -234,7 +234,9 @@ function dump (source, ignore)
 					result = result .. '["' .. key .. '"] = ' .. dumpValue .. ', '
 				end
 
-				ignore[value] = true
+				if type(value) == 'table' then
+					ignore[value] = true
+				end
 			end
 		end
 
