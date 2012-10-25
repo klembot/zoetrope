@@ -22,7 +22,7 @@ Tile = Sprite:extend
 	-- image must be a nonsense value, not nil,
 	-- for the tile to see that an image has been set if it
 	-- was initially nil
-	_set = { image = -1 },
+	_set = { image = -1, imageOffset = { x = 0, y = 0 } },
 
 	-- private property imageObj: actual Image instance used to draw
 	-- this is normally set via the image property, but you may set it directly
@@ -48,6 +48,8 @@ Tile = Sprite:extend
 											   self._imageObj:getWidth(), self._imageObj:getHeight())
 			self._imageObj:setWrap('repeat', 'repeat')
 			self._set.image = self.image
+			self._set.imageOffset.x = self.imageOffset.x
+			self._set.imageOffset.y = self.imageOffset.y
 		end
 	end,
 
@@ -74,10 +76,13 @@ Tile = Sprite:extend
 			love.graphics.setColor(self.tint[1] * 255, self.tint[2] * 255, self.tint[3] * 255, self.alpha * 255)
 		end
 
-		-- if the source image has changed,
-		-- we need to recreate our quad
+		-- if the source image or offset has changed, we need to recreate our quad
 		
-		if self.image and self.image ~= self._set.image then self:updateQuad() end
+		if self.image and (self.image ~= self._set.image or
+		   self.imageOffset.x ~= self._set.imageOffset.x or
+		   self.imageOffset.y ~= self._set.imageOffset.y) then
+			self:updateQuad()
+		end
 		
 		-- draw the quad
 		local scaleX = self.scale * self.distort.x
