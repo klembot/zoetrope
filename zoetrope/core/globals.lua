@@ -253,3 +253,25 @@ function dump (source, ignore)
 		return ''
 	end
 end
+
+-- Function: bind
+-- Binds a function call to an object so it can be later called with
+-- the correct context.
+--
+-- Arguments:
+--		obj - object to use as function owner
+--		func - either a string name of a property of obj, or a free-standing
+--			   function.
+--		... - any number of extra arguments 
+
+function bind (obj, func, ...)
+	local arg = {...}
+
+	return function()
+		if type(func) == 'string' then
+			return obj[func](obj, unpack(arg))
+		else
+			return func(obj, unpack(arg))
+		end
+	end
+end
