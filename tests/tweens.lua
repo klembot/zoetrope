@@ -5,12 +5,10 @@ Tweens = TestApp:extend
 	onRun = function (self)
 		local y = 250
 		
-		for name, _ in pairs(Tween.easers) do
+		for easer, _ in pairs(Tween.easers) do
 			local block = Fill:new{ x = 200, y = y, width = 25, height = 25 }
 			self:add(block)
-			self.view.tween:start{ target = block, prop = 'x', to = 275, ease = name,
-									onComplete = Tween.reverse }
-									 
+			self.view.tween:start(block, 'x', 275, 1, easer):andThen(Tween.reverseForever)
 			y = y + 25
 		end
 		
@@ -20,8 +18,7 @@ Tweens = TestApp:extend
 		local colorBlock = Fill:new{ x = 500, y = 250, width = 100, height = 100,
 									  fill = { 255, 0, 0 } }
 		self:add(colorBlock)
-		self.view.tween:start{ target = colorBlock, prop = 'fill',
-								to = { 0, 0, 255 }, onComplete = Tween.reverse }
+		self.view.tween:start(colorBlock, 'fill', { 0, 0, 255 }):andThen(Tween.reverseForever)
 
 		self:add(Text:new
 		{

@@ -240,13 +240,12 @@ View = Group:extend{
 	-- Arguments:
 	--		target - sprite or coordinate pair to pan to
 	--		duration - how long the pan will take, in seconds
-	--		onComplete - function to call when the pan is complete, optional
 	--		ease - what easing to apply, see <Tween> for details, defaults to 'quadInOut'
 	--
 	-- Returns:
-	--		nothing
+	--		A <Promise> that is fulfilled when the pan completes.
 
-	panTo = function (self, target, duration, onComplete, ease)
+	panTo = function (self, target, duration, ease)
 		ease = ease or 'quadInOut'
 		local targetX, targetY
 
@@ -254,7 +253,6 @@ View = Group:extend{
 			assert((target.x and target.y and target.width and target.height) or (#target == 2),
 				   'pan target does not appear to be a sprite or coordinate pair')
 			assert(type(duration) == 'number', 'pan duration is not a number')
-			assert(not onComplete or type(onComplete) == 'function', 'pan onComplete is not a function')
 			assert(self.tween.easers[ease], 'pan easing method is not defined')
 		end
 
@@ -285,24 +283,26 @@ View = Group:extend{
 		end
 
 		-- tween the appropriate properties
-		-- some care has to be taken to avoid calling onComplete twice
+		-- some care has to be taken to avoid fulfilling the promise twice
 
 		self.focus = nil
+		local promise = Promise:new()
 
 		if tranX ~= self.translate.x then
-			self.tween:start{ target = self.translate, prop = 'x', to = tranX, ease = ease,
-							  duration = duration, force = true, onComplete = onComplete }
+			self.tween:start(self.translate, 'x', tranX, duration, ease)
+				:andThen(function() promise:fulfill() end)
 
 			if tranY ~= self.translate.y then
-				self.tween:start{ target = self.translate, prop = 'y', to = tranY, ease = ease,
-								  duration = duration, force = true }
+				self.tween:start(self.translate, 'y', tranY, duration, ease)
 			end
 		elseif tranY ~= self.translate.y then
-			self.tween:start{ target = self.translate, prop = 'y', to = tranY, ease = ease,
-							  duration = duration, force = true, onComplete = onComplete }
-		elseif onComplete then
-			onComplete()
+			self.tween:start(self.translate, 'y', tranY, duration, ease)
+				:andThen(function() promise:fulfill() end)
+		else
+			promise:fulfill()
 		end
+
+		return promise
 	end,
 
 	-- Method: fade
@@ -311,17 +311,16 @@ View = Group:extend{
 	-- Arguments:
 	--		color - color table to fade to, e.g. { 0, 0, 0 }
 	--		duration - how long to fade out in seconds, default 1
-	--		onComplete - function to call when done, passed the tween related to this
+	--
 	-- Returns:
-	--		nothing
+	--		A <Promise> that is fulfilled when the effect completes.
 
-	fade = function (self, color, duration, onComplete)
+	fade = function (self, color, duration)
 		assert(type(color) == 'table', 'color to fade to is ' .. type(color) .. ', not a table')
 		local alpha = color[4] or 255
 		self._fx = color
 		self._fx[4] = 0
-		self.tween:start{ target = self._fx, prop = 4, to = alpha, duration = duration or 1,
-						   ease = 'quadOut', force = true, onComplete = onComplete }
+		return self.tween:start(self._fx, 4, alpha, duration or 1, 'quadOut')
 	end,
 
 	-- Method: flash
@@ -330,23 +329,15 @@ View = Group:extend{
 	-- Arguments:
 	--		color - color table to flash, e.g. { 0, 0, 0 }
 	--		duration - how long to restore normal view in seconds, default 1
-	--		onComplete - function to call when done, passed the tween related to this
 	--
 	-- Returns:
-	--		nothing
+	--		A <Promise> that is fulfilled when the effect completes.
 
-	flash = function (self, color, duration, onComplete)
-		local s = self
-		local done = function (t)
-			t.target = nil
-			if onComplete then onComplete(t) end
-		end
-
+	flash = function (self, color, duration)
 		assert(type(color) == 'table', 'color to flash is ' .. type(color) .. ', not a table')
 		color[4] = color[4] or 255
 		self._fx = color
-		self.tween:start{ target = self._fx, prop = 4, to = 0, duration = duration or 1,
-						   ease = 'quadOut', force = true, onComplete = done }
+		return self.tween:start(self._fx, 4, 0, duration or 1, 'quadOut')
 	end,
 
 	-- Method: tint

@@ -97,19 +97,14 @@ MenuBlock = Fill:extend
 		other.velocity.x = other.velocity.x + optMomentum * self.mass * centX
 		other.velocity.y = other.velocity.y + optMomentum * self.mass * centY
 
-		if math.abs(1 - self.alpha) > NEARLY_ZERO and not the.view.tween:status(self, 'alpha', 1) then
-			the.view.tween:start{ target = self, prop = 'alpha', to = 1, duration = 0.25, force = true }
-		end
-
-		if math.abs(1 - other.alpha) > NEARLY_ZERO and not the.view.tween:status(other, 'alpha', 1) then
-			the.view.tween:start{ target = other, prop = 'alpha', to = 1, duration = 0.25, force = true }
-		end
+		the.view.tween:start(self, 'alpha', 1, 0.25) 
+		the.view.tween:start(other, 'alpha', 1, 0.25)
 	end,
 
 	onUpdate = function (self)
 		if math.abs(self.velocity.x + self.velocity.y) < 5 and
 		   self.alpha ~= 0 and not the.view.tween:status(self, 'alpha', 0) then
-			the.view.tween:start{ target = self, prop = 'alpha', to = 0, force = true }
+			the.view.tween:start(self, 'alpha', 0)
 		end
 
 		if (self.x < 480 and self.velocity.x < 0) or
@@ -169,7 +164,7 @@ the.app = App:new
 			end
 		end
 
-		self.view.timer:start{ func = self.pushBlock, bind = self, delay = 1, repeats = true }
+		self.view.timer:every(1, function() self:pushBlock() end)
 
 		-- menu buttons
 
@@ -206,7 +201,7 @@ the.app = App:new
 		block.acceleration.y = math.random(-400, 400)
 	
 		if math.abs(1 - block.alpha) > NEARLY_ZERO and not self.view.tween:status(block, 'alpha', 1) then
-			self.view.tween:start{ target = block, prop = 'alpha', to = 1, duration = 0.25, force = true }
+			self.view.tween:start(block, 'alpha', 1, 0.25)
 		end
 	end
 }

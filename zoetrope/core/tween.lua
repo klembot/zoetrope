@@ -47,80 +47,76 @@ Tween = Sprite:extend{
 		end
 	},
 	
-	-- Method: reverse
-	-- A utility function; if set as an onComplete handler for an individual
+	-- Method: reverseForever
+	-- A utility function; if set via <Promise.andAfter()> for an individual
 	-- tween, it reverses the tween that just happened. Use this to get a tween
 	-- to repeat back and forth indefinitely (e.g. to have something glow).
 	
-	reverse = function (tween, tweener)
+	reverseForever = function (tween, tweener)
 		tween.to = tween.from
-		tweener:start(tween)
+		tweener:start(tween.target, tween.property, tween.to, tween.duration, tween.ease):andThen(Tween.reverseForever)
 	end,
 
 	-- Method: reverseOnce
-	-- A utility function; if set as as an onComplete handler for an individual
+	-- A utility function; if set via <Promise.andAfter()> for an individual
 	-- tween, it reverses the tween that just happened-- then stops the tween after that.
 	
 	reverseOnce = function (tween, tweener)
 		tween.to = tween.from
-		tween.onComplete = nil
-		tweener:start(tween)	
+		tweener:start(tween.target, tween.property, tween.to, tween.duration, tween.ease)
 	end,
 
 	-- Method: start
-	-- Begins a tweened transition. *All* arguments are passed via
-	-- properties of a single object as follows:
+	-- Begins a tweened transition, overriding any existing tween.
 	--
 	-- Arguments:
 	--		target - target object
-	--		prop - name of property of the target object to tween;
-	--             can be either a number or a table of numbers (e.g. a color)
+	--		property - Usually, this is a string name of a property of the target object.
+	--				   You may also specify a table of getter and setter methods instead,
+	--				   i.e. { myGetter, mySetter }. In either case, the property or functions
+	--				   must work with either number values, or tables of numbers.
 	--		to - destination value, either number or color table
-	--		getter - getter function for the property; overrides prop
-	--		setter - setter function for the property; overrides prop
 	--		duration - how long the tween should last in seconds, default 1
-	--		force - override any pre-existing tweens on this object/property?
-	--		ease - function name (in Tweener.easers) to use to control how the value changes
-	--		onComplete - function to call when the tween finishes; is passed the individual tween object 
+	--		ease - function name (in Tween.easers) to use to control how the value changes, default 'linear'
 	--
 	-- Returns:
-	--		nothing
+	--		A <Promise> that is fulfilled when the tween completes. If the object is already
+	--		in the state requested, the promise resolves immediately. The tween object returns two
+	--		things to the promise: a table of properties about the tween that match the arguments initially
+	--		passed, and a reference to the Tween that completing the tween.
 
-	start = function (self, tween)
-		tween.duration = tween.duration or 1
-		tween.ease = tween.ease or 'linear'
+	start = function (self, target, property, to, duration, ease)
+		duration = duration or 1
+		ease = ease or 'linear'
+		local propType = type(property)
 		
 		if STRICT then
-			assert(type(tween.target) == 'table' or type(tween.target) == 'userdata',
-				   'tween target must be a table or userdata')
-			assert(tween.prop or tween.getter, 'neither tween prop (property) nor getter are defined')
-			assert(not tween.prop or tween.target[tween.prop],
-				   'no such property ' .. tostring(tween.prop) .. ' on target') 
-			assert(type(tween.duration) == 'number', 'tween duration must be a number')
-			assert(self.easers[tween.ease], 'easer ' .. tween.ease .. ' is not defined')
-		end
+			assert(type(target) == 'table' or type(target) == 'userdata', 'target must be a table or userdata')
+			assert(propType == 'string' or propType == 'number' or propType == 'table', 'property must be a key or table of getter/setter methods')
 			
+			if propType == 'string' or propType == 'number' then
+				assert(target[property], 'no such property ' .. tostring(property) .. ' on target') 
+			end
+
+			assert(type(duration) == 'number', 'duration must be a number')
+			assert(self.easers[ease], 'easer ' .. ease .. ' is not defined')
+		end
+
 		-- check for an existing tween for this target and property
 		
-		for i, otherTweener in ipairs(self.tweens) do
-			if tween.target == otherTweener.target and
-			   tween.prop == otherTweener.prop then
-				if tween.force then
-					table.remove(self.tweens, i)
+		for i, existing in ipairs(self.tweens) do
+			if target == existing.target and property == existing.property then
+				if to == existing.to then
+					return existing.promise
 				else
-					if STRICT then
-						local info = debug.getinfo(2, 'Sl')
-						print('Warning: asked to tween a value that\'s already being tweened, ' ..
-							  'ignoring request; use force = true to override this (' ..
-							  info.short_src .. ', line ' .. info.currentline .. ')')
-					end
-
-					return
+					table.remove(self.tweens, i)
 				end
 			end
 		end
 		
 		-- add it
+
+		tween = { target = target, property = property, propType = propType, to = to, duration = duration, ease = ease }
 		tween.from = self:getTweenValue(tween)
 		tween.type = type(tween.from)
 		
@@ -129,13 +125,7 @@ Tween = Sprite:extend{
 		if tween.type == 'number' then
 			tween.change = tween.to - tween.from
 			if math.abs(tween.change) < NEARLY_ZERO then
-				if STRICT then
-					local info = debug.getinfo(2, 'Sl')
-					print('Warning: asked to tween a value to its current state, ignoring request (' ..
-						  info.short_src .. ', line ' .. info.currentline .. ')')
-				end
-
-				return
+				return Promise:new{ state = 'fulfilled', _resolvedWith = { tween, self } }
 			end
 		elseif tween.type == 'table' then
 			tween.change = {}
@@ -151,21 +141,17 @@ Tween = Sprite:extend{
 			end
 			
 			if skip then
-				if STRICT then
-					local info = debug.getinfo(2, 'Sl')
-					print('Warning: asked to tween a value to its current state, ignoring request (' ..
-						  info.short_src .. ', line ' .. info.currentline .. ')')
-				end
-
-				return
+				return Promise:new{ state = 'fulfilled', _resolvedWith = { tween, self } }
 			end
 		else
 			error('tweened property must either be a number or a table of numbers, is ' .. tween.type)
 		end
 			
 		tween.elapsed = 0
+		tween.promise = Promise:new()
 		table.insert(self.tweens, tween)
 		self.active = true
+		return tween.promise
 	end,
 
 	-- Method: status
@@ -173,18 +159,19 @@ Tween = Sprite:extend{
 	--
 	-- Arguments:
 	--		target - target object
-	--		prop - name of the property being tweened, or getter (as set in the orignal <start()> call)
-	--		to - value being tweened to, optional
+	--		property - name of the property being tweened, or getter
+	--				   (as set in the orignal <start()> call)
 	--
 	-- Returns:
 	--		Either the time left in the tween, or nil if there is
 	--		no tween matching the arguments passed.
 
-	status = function (self, target, prop, to)
+	status = function (self, target, property)
 		for _, t in pairs(self.tweens) do
-			if t.target == target and (t.prop == prop or t.getter == prop) and
-			   (not to or t.to == to) then
-				return t.duration - t.elapsed
+			if t.target == target then
+				if t.property == property or (type(t.property) == 'table' and t.property[1] == property) then
+					return t.duration - t.elapsed
+				end
 			end
 		end
 
@@ -192,23 +179,27 @@ Tween = Sprite:extend{
 	end,
 
 	-- Method: stop
-	-- Stops a tween.
+	-- Stops a tween. The promise associated with it will be failed.
 	--
 	-- Arguments:
 	--		target - tween target
-	-- 		prop - name of property being tweened; if omitted, stops all tweens on the target
+	-- 		property - name of property being tweened, or getter (as set in the original <start()> call); 
+	--				   if omitted, stops all tweens on the target
 	--
 	-- Returns:
 	--		nothing
 
-	stop = function (self, target, prop)
+	stop = function (self, target, property)
 		local found = false
 
 		for i, tween in ipairs(self.tweens) do
-			if tween.target == target and (not prop or tween.prop == prop) then
+			if tween.target == target and (t.property == property or
+			   (type(t.property) == 'table' and t.property[1] == property) or
+			   not property) then
 			   	found = true
+				tween.promise:fail('Tween stopped')
 				table.remove(self.tweens, i)
-			end
+				end
 		end
 
 		if STRICT and not found then
@@ -228,12 +219,7 @@ Tween = Sprite:extend{
 				
 				self:setTweenValue(tween, tween.to)
 				table.remove(self.tweens, i)
-				
-				-- this must happen after the tween is removed
-				-- so that it doesn't appear that it is still running
-				-- to the callback
-				
-				if tween.onComplete then tween.onComplete(tween, self) end
+				tween.promise:fulfill(tween, self)
 			else
 				-- move tween towards finished state
 				
@@ -257,18 +243,18 @@ Tween = Sprite:extend{
 	end,
 
 	getTweenValue = function (self, tween)
-		if tween.getter then
-			return tween.getter(tween.target)
+		if tween.propType == 'string' or tween.propType == 'number' then
+			return tween.target[tween.property]
 		else
-			return tween.target[tween.prop]
+			return tween.property[1](tween.target)
 		end
 	end,
 
 	setTweenValue = function (self, tween, value)
-		if tween.setter then
-			tween.setter(tween.target, value)
+		if tween.propType == 'string' or tween.propType == 'number' then
+			tween.target[tween.property] = value
 		else
-			tween.target[tween.prop] = value
+			tween.property[2](tween.target, value)
 		end
 	end,
 

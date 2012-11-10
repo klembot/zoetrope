@@ -12,20 +12,32 @@ Timers = TestApp:extend
 		self.blue = Fill:new{ x = 500, y = 250, width = 100, height = 100, fill = { 0, 0, 255 }, visible = false }
 		self:add(self.blue)
 		
-		self.view.timer:start{ delay = 0.5, func = self.toggle, arg = { self.red } }
-		self.view.timer:start{ delay = 1, func = self.toggle, arg = { self.green }, repeats = true }
-		self.view.timer:start{ delay = 1.5, func = self.toggle, arg = { self.blue } }
-		self.view.timer:start{ delay = 0, func = self.view.flash, bind = self.view, arg = { {255, 255, 255} } }
+		self.view.timer:after(1, function() end)
+			:andThen(function()
+				self:toggle(self.red)
+			end)
+			:andThen(function()
+				return self.view.timer:after(1, function() self:toggle(self.blue) end)
+			end)
+			:andThen(function()
+				return self.view.timer:after(1, function() self:toggle(self.red) end)
+			end)
+			:andThen(function()
+				return self.view.timer:after(1, function() self:toggle(self.red) end)	
+			end)
+
+		self.view.timer:after(0, function() self.view:flash{255, 255, 255} end)
+		self.view.timer:every(1, function() self:toggle(self.green) end)
 
 		self:add(Text:new
 		{
 			x = 10, y = 550, width = 600, font = 14,
-			text = 'Function calls can be delayed or repeated in game time. If you switch to another ' ..
-				   'window, the green square won\'t blink until you bring the window to the top again.'
+			text = 'Function calls can be delayed or repeated in game time, and linked in sequence. ' ..
+				   'If you switch to another window, the green square won\'t blink until you bring the window to the top again.'
 		})
 	end,
 	
-	toggle = function (sprite)
+	toggle = function (self, sprite)
 		sprite.visible = not sprite.visible
 	end
 }

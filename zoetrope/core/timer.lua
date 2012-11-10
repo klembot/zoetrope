@@ -11,36 +11,61 @@ Timer = Sprite:extend{
 	active = false,
 	solid = false,
 
-	-- Method: start
-	-- Adds a timer to be tracked. All arguments are passed as properties
-	-- of a single object as follows:
+	-- Method: wait
+
+	-- Method: after
+	-- Delays a function call after a certain a mount of time.
 	--
 	-- Arguments:
+	--		* delay - how long to wait, in seconds
 	--		* func - function to call
-	--		* delay - how long to wait to call it, in seconds
-	--		* repeats - if true, then the function is called periodically, not once
-	--		* bind - first argument to pass to the function, imitates bind:func()
-	--		* arg - a table of arguments to pass to the function when called
 	--
 	-- Returns:
-	--		nothing
-
-	start = function (self, timer)
+	--		A <Promise> that is fulfilled after the function is called
+	
+	after = function (self, delay, func)
 		if STRICT then
-			assert(type(timer.func) == 'function', 'func property of timer must be a function')
-			assert(type(timer.delay) == 'number', 'delay property of timer must be a number')
-			assert(not timer.arg or type(timer.arg) == 'table', 'arg property of timer, if specified, must be a table')
+			assert(type(func) == 'function', 'func property of timer must be a function')
+			assert(type(delay) == 'number', 'delay must be a number')
 
-			if timer.delay <= 0 then
+			if delay <= 0 then
 				local info = debug.getinfo(2, 'Sl')
-				print('Warning: timer delay is ' .. timer.delay .. ', will be triggered immediately (' .. 
+				print('Warning: timer delay is ' .. delay .. ', will be triggered immediately (' .. 
 					  info.short_src .. ', line ' .. info.currentline .. ')')
 			end
 		end
 		
 		self.active = true
-		timer.timeLeft = timer.delay
-		table.insert(self.timers, timer)
+		local promise = Promise:new()
+		table.insert(self.timers, { func = func, timeLeft = delay, promise = promise })
+		return promise
+	end,
+
+	-- Method: every
+	-- Repeatedly makes a function call. To stop these calls from
+	-- happening in the future, you must call stop().
+	--
+	-- Arguments:
+	--		* delay - how often to make the function call, in seconds
+	--		* func - function to call
+	--
+	-- Returns:
+	--		nothing
+	
+	every = function (self, delay, func)
+		if STRICT then
+			assert(type(func) == 'function', 'func property of timer must be a function')
+			assert(type(delay) == 'number', 'delay must be a number')
+
+			if delay <= 0 then
+				local info = debug.getinfo(2, 'Sl')
+				print('Warning: timer delay is ' .. delay .. ', will be triggered immediately (' .. 
+					  info.short_src .. ', line ' .. info.currentline .. ')')
+			end
+		end
+		
+		self.active = true
+		table.insert(self.timers, { func = func, timeLeft = delay, interval = delay })
 	end,
 
 	-- Method: status
@@ -48,7 +73,6 @@ Timer = Sprite:extend{
 	--
 	-- Arguments:
 	--		func - the function that is queued
-	--		bind - the bind property used with <start()>, optional
 	--
 	-- Returns:
 	--		the time left until the soonest call matching these arguments,
@@ -58,8 +82,7 @@ Timer = Sprite:extend{
 		local result
 
 		for _, t in pairs(self.timers) do
-			if t.func == func and (not bind or t.bind == bind) and
-			   (not result or result < t.timeLeft) then
+			if t.func == func and (not result or result < t.timeLeft) then
 			   result = t.timeLeft
 			end
 		end
@@ -68,12 +91,11 @@ Timer = Sprite:extend{
 	end,
 	
 	-- Method: stop
-	-- Stops a timer from executing. If there is no function associated
-	-- with this timer, then this has no effect.
+	-- Stops a timer from executing. The promise belonging to it is failed. 
+	-- If there is no function associated with this timer, then this has no effect.
 	--
 	-- Arguments:
 	--		func - function to stop; if omitted, stops all timers
-	--		bind - bind to stop; if omitted, stops all function calls of func argument
 	--
 	-- Returns:
 	--		nothing
@@ -82,7 +104,11 @@ Timer = Sprite:extend{
 		local found = false
 
 		for i, timer in ipairs(self.timers) do
-			if not func or (timer.func == func and (not bind or timer.bind == bind)) then
+			if not func or timer.func == func then
+				if timer.promise then
+					timer.promise:fail('Timer stopped')
+				end
+
 				table.remove(self.timers, i)
 				found = true
 			end
@@ -100,22 +126,14 @@ Timer = Sprite:extend{
 			timer.timeLeft = timer.timeLeft - elapsed
 			
 			if timer.timeLeft <= 0 then
-				if timer.arg then
-					if timer.bind then
-						timer.func(timer.bind, unpack(timer.arg))
-					else
-						timer.func(unpack(timer.arg))
-					end
-				else
-					if timer.bind then
-						timer.func(timer.bind)
-					else
-						timer.func()
-					end
-				end
+				timer.func()
 				
-				if timer.repeats then
-					timer.timeLeft = timer.delay
+				if timer.promise then
+					timer.promise:fulfill()
+				end
+
+				if timer.interval then
+					timer.timeLeft = timer.interval
 					keepActive = true
 				else
 					table.remove(self.timers, i)
