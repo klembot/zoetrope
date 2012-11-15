@@ -193,8 +193,8 @@ Tween = Sprite:extend{
 		local found = false
 
 		for i, tween in ipairs(self.tweens) do
-			if tween.target == target and (t.property == property or
-			   (type(t.property) == 'table' and t.property[1] == property) or
+			if tween.target == target and (tween.property == property or
+			   (type(tween.property) == 'table' and tween.property[1] == property) or
 			   not property) then
 			   	found = true
 				tween.promise:fail('Tween stopped')
