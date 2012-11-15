@@ -1,6 +1,6 @@
 -- Class: Promise
 -- This is a way to communicate with an asynchronous function call that
--- is modeled after the <Promises/A CommonJS spec at http://wiki.commonjs.org/wiki/Promises/A>.
+-- is modeled after the Promises/A CommonJS spec <http://wiki.commonjs.org/wiki/Promises/A>.
 -- The main difference is that instead of then(), it uses andThen() as the connecting
 -- method name, since 'then' is a reserved word in Lua.
 --
@@ -14,7 +14,7 @@
 -- If this happens, the callbacks trigger immediately. This may not be what you expect, so
 -- beware.
 --
--- This implementation is based heavily on <RSVP.js at https://github.com/tildeio/rsvp.js>.
+-- This implementation is based heavily on RSVP.js <https://github.com/tildeio/rsvp.js>.
 
 Promise = Class:extend
 {
@@ -49,7 +49,7 @@ Promise = Class:extend
 
 	fulfill = function (self, ...)
 		if STRICT then
-			assert(self.state == 'unfulfilled', 'Tried to fulfill a promise whose state is ' .. self.state)
+			assert(self.state == 'unfulfilled', 'Tried to fulfill a promise whose state is ' .. (self.state or 'nil'))
 		end
 
 		self.state = 'fulfilled'
@@ -71,7 +71,7 @@ Promise = Class:extend
 	
 	progress = function (self, ...)
 		if STRICT then
-			assert(self.state == 'unfulfilled', 'Tried to send progress on a promise whose state is ' .. self.state)
+			assert(self.state == 'unfulfilled', 'Tried to send progress on a promise whose state is ' .. (self.state or 'nil'))
 		end
 
 		for _, func in pairs(self._onProgresses) do
@@ -90,7 +90,7 @@ Promise = Class:extend
 	
 	fail = function (self, errorMessage)
 		if STRICT then
-			assert(self.state == 'unfulfilled', 'Attempted to fail a promise whose state is ' .. self.state)
+			assert(self.state == 'unfulfilled', 'Attempted to fail a promise whose state is ' .. (self.state or 'nil'))
 		end
 
 		self.state = 'failed'
@@ -134,11 +134,11 @@ Promise = Class:extend
 		-- fulfillments and failures propagate up the chain
 
 		table.insert(self._onFulfills, function (...)
-			Promise._complete(childPromise, onFulfill, 'fulfill', ...)
+			childPromise:_complete(onFulfill, 'fulfill', ...)
 		end)
 
 		table.insert(self._onFails, function (errorMessage)
-			Promise._complete(childPromise, onFail, 'fail', errorMessage)
+			childPromise:_complete(onFail, 'fail', errorMessage)
 		end)
 
 		table.insert(self._onProgresses, onProgress)
@@ -147,14 +147,14 @@ Promise = Class:extend
 
 		if self.state == 'fulfilled' and onFulfill then
 			if self._fulfilledWith then
-				Promise._complete(childPromise, onFulfill, unpack(self._fulfilledWith))
+				childPromise:_complete(onFulfill, 'fulfill', unpack(self._fulfilledWith))
 			else
-				Promise._complete(childPromise, onFulfill)
+				childPromise:_complete(onFulfill, 'fulfill')
 			end
 		end
 
 		if self.state == 'failed' and onFail then
-			Promise._invokeCallback(childPromise, onFail, self._failedWith)
+			childPromise:_complete(onFail, 'fail', self._failedWith)
 		end
 
 		return childPromise
@@ -182,12 +182,11 @@ Promise = Class:extend
 	-- and that errors are passed to the promise's fail method. 
 	--
 	-- arguments:
-	--		promise - promise to process
 	--		callback - callback to call, can be nil
 	--		defaultAction - if unsure as to whether to fulfill or fail, use this
 	--		... - values to pass to the callback
 
-	_complete = function (promise, callback, defaultAction, ...)
+	_complete = function (self, callback, defaultAction, ...)
 		local results, errorMessage
 
 		-- call the callback
@@ -208,26 +207,27 @@ Promise = Class:extend
 		-- if the callback returned a new promise, we link the current promise to it
 
 		if results and type(results[1]) == 'table' and results[1].instanceOf and results[1]:instanceOf(Promise) then
-			results[1]:andThen(function(...) promise:fulfill(...) end, function(errorMessage) promise:fail(errorMessage) end)
+			results[1]:andThen(function(...) self:fulfill(...) end, function(errorMessage) self:fail(errorMessage) end)
 
 		-- if the callback returned a regular value, fulfill the promise
 
 		elseif callback and results then
 			if #results > 1 then
-				promise:fulfill(unpack(results))
+				self:fulfill(unpack(results))
 			else
-				promise:fulfill(results[1])
+				self:fulfill(results[1])
 			end
 
-		-- if there was any kind of error, fail the promise
+		-- if there was any kind of error, fail
 
 		elseif errorMessage then
-			promise:fail(errorMessage)
+			self:fail(errorMessage)
 
 		-- and if we did not actually have a callback, fall back to the default action
+		-- (we have to simulate colon calling syntax here)
 
 		else
-			promise[defaultAction](...)
+			self[defaultAction](self, ...)
 		end
 	end
 }
