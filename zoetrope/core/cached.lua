@@ -23,7 +23,7 @@ Cached = Class:extend{
 
 	-- private property: library
 	-- a table to store already-instantiated assets
-	_library = { image = {}, text = {}, sound = {}, font = {} },
+	_library = { image = {}, text = {}, sound = {}, font = {}, binds = {}, },
 
 	-- Method: image
 	-- Returns a cached image asset.
@@ -151,5 +151,45 @@ Cached = Class:extend{
 		end
 
 		return self._library.font[libKey]
+	end,
+
+	-- Function: bind
+	-- Returns a function that's bound to an object so it can be later called with
+	-- the correct context. This can be abbreviated as just bind().
+	--
+	-- Arguments:
+	--		obj - object to use as function owner
+	--		func - either a string name of a property of obj, or a free-standing
+	--			   function.
+	--		... - any number of extra arguments 
+
+	bind = function (self, obj, func, ...)
+		local arg = {...}
+
+		-- look for previous bind
+		
+		for key, value in pairs(self._library.binds) do
+			if key[1] == func and key[2] == obj and key[3] == arg then
+				return value
+			end
+		end
+
+		-- have to create a new one
+		-- note that we have to create a compound key, hence the loop above
+
+		local result = function()
+			if type(func) == 'string' then
+				return obj[func](obj, unpack(arg))
+			else
+				return func(obj, unpack(arg))
+			end
+		end
+	
+		self._library.binds[{func, obj, arg}] = result
+		return result
 	end
 }
+
+-- We should mark the binds library in particular as weakly bound, as
+-- these things can accumulate quickly.
+setmetatable(Cached._library.binds, { __mode = 'k' })
