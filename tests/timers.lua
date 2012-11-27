@@ -12,19 +12,10 @@ Timers = TestApp:extend
 		self.blue = Fill:new{ x = 500, y = 250, width = 100, height = 100, fill = { 0, 0, 255 }, visible = false }
 		self:add(self.blue)
 		
-		self.view.timer:after(1, function() end)
-			:andThen(function()
-				self:toggle(self.red)
-			end)
-			:andThen(function()
-				return self.view.timer:after(1, function() self:toggle(self.blue) end)
-			end)
-			:andThen(function()
-				return self.view.timer:after(1, function() self:toggle(self.red) end)
-			end)
-			:andThen(function()
-				return self.view.timer:after(1, function() self:toggle(self.red) end)	
-			end)
+		self.view.timer:after(1, bind(self, 'toggle', self.red))
+			:andThen(bind(self.view.timer, 'after', 1, bind(self, 'toggle', self.blue)))
+			:andThen(bind(self.view.timer, 'after', 1, bind(self, 'toggle', self.red)))
+			:andThen(bind(self.view.timer, 'after', 1, bind(self, 'toggle', self.red)))
 
 		self.view.timer:after(0, function() self.view:flash{255, 255, 255} end)
 		self.view.timer:every(1, function() self:toggle(self.green) end)
