@@ -14,7 +14,8 @@
 -- Extends:
 --		<Class>
 
-Cached = Class:extend{
+Cached = Class:extend
+{
 	-- Property: defaultGlyphs
 	-- The default character order of a bitmap font, if none is specified
 	-- in a <font> call.
@@ -169,8 +170,20 @@ Cached = Class:extend{
 		-- look for previous bind
 		
 		for key, value in pairs(self._library.binds) do
-			if key[1] == func and key[2] == obj and key[3] == arg then
-				return value
+			if key[1] == func and key[2] == obj then
+				local match = true
+
+				for i = 1, #arg do
+					if key[i + 2] ~= arg[i] then
+						match = false
+						break
+					end
+				end
+
+				if match then
+					print('found existing bind for ', obj, func, arg)
+					return value
+				end
 			end
 		end
 
@@ -189,7 +202,3 @@ Cached = Class:extend{
 		return result
 	end
 }
-
--- We should mark the binds library in particular as weakly bound, as
--- these things can accumulate quickly.
-setmetatable(Cached._library.binds, { __mode = 'k' })
