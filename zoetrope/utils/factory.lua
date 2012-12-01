@@ -43,6 +43,10 @@ Factory = Class:extend{
 
 	create = function (self, prototype, props)
 		local newObj
+
+		if STRICT then
+			assert(prototype.instanceOf and prototype:instanceOf(Class), 'asked to create something that isn\'t a class')
+		end
 		
 		if self._recycled[prototype] and #self._recycled[prototype] > 0 then
 			newObj = table.remove(self._recycled[prototype])
