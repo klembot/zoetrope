@@ -6,18 +6,19 @@ require 'tests'
 MenuButton = Button:extend
 {
 	onNew = function (self)
-		self.background = Fill:new{ width = 200, height = 24,
-									 fill = { 64, 64, 64 }, border = { 255, 255, 255 } }
+		self.background = Fill:new{ width = 200, height = 24, fill = {175, 208, 229 } }
 		self.label = Text:new{ x = 4, y = 6, align = 'center',
-							    width = 192, height = 16, text = self.label }
+							   width = 192, height = 16, text = self.label, tint = {0.07, 0.27, 0.39} }
 	end,
 
 	onMouseEnter = function (self)
-		self.background.fill = {128, 128, 128}
+		self.background.fill = {20, 69, 101}
+		self.label.tint = {0.68, 0.82, 0.89}
 	end,
 
 	onMouseExit = function (self)
-		self.background.fill = {64, 64, 64}
+		self.background.fill = {175, 208, 229}
+		self.label.tint = {0.07, 0.27, 0.39}
 	end,
 
 	onMouseUp = function (self)
@@ -29,23 +30,20 @@ MenuButton = Button:extend
 MenuBlock = Fill:extend
 {
 	width = 28, height = 16,
-	fill = {255, 255, 255},
+	fill = {248, 248, 248},
 	drag = { x = 25, y = 25 },
 	mass = 1,
 	hits = {},
 	alpha = 0,
-	colors = { {126, 57, 82},
-			   {82, 70, 138}, 
-			   {223, 78, 243}, 
-			   {30, 106, 82}, 
-			   {54, 106, 243}, 
-			   {201, 192, 249},
-			   {82, 94, 13},
-			   {223, 122, 25},
-			   {239, 181, 201},
-			   {54, 205, 25},
-			   {201, 211, 152},
-			   {162, 221, 201}
+	colors = { {239, 187, 45},
+			   {184, 146, 39},
+			   {133, 93, 0},
+			   {133, 93, 0},
+			   {175, 208, 229},
+			   {127, 186, 233},
+			   {127, 186, 233},
+			   {81, 154, 208},
+			   {36, 121, 180},
 			 },
 
 	onNew = function (self)
@@ -153,6 +151,8 @@ the.app = App:new
 		DEBUG = true
 		STRICT = true
 
+		self:add(Fill:new{ x = 0, y = 0, width = self.width, height = self.height, fill = {255, 255, 255} })
+
 		-- blocks
 
 		self.blocks = Group:new()
@@ -184,10 +184,10 @@ the.app = App:new
 
 		print('Welcome to the Zoetrope test suite.')
 
-		self:add(Text:new{ x = 10, y = 470, font = 100, width = 780, tint = {0.5, 0.5, 0.5}, text = 'Zoetrope' })
-		self:add(Text:new{ x = 10, y = 580, font = 11, tint = { 0.75, 0.75, 0.75}, text = 'http://tinyurl.com/libzoetrope' })
+		self:add(Text:new{ x = 10, y = 470, font = 100, width = 780, tint = {0, 0, 0}, text = 'Zoetrope' })
+		self:add(Text:new{ x = 10, y = 580, font = 11, tint = {0.15, 0.15, 0.15}, text = 'http://libzoetrope.org/' })
 		self:add(Text:new{ x = 10, y = 440, font = 14, width = 400, text =
-						   'Click a heading above to see a demo.\nPress the Escape key at any time to return to this menu.' })
+						   'Click a heading above to see a demo.\nPress the Escape key at any time to return to this menu.', tint = {0.15, 0.15, 0.15} })
 		self:useSysCursor(true)
 	end,
 
