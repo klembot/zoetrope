@@ -39,9 +39,8 @@ Scrolling = TestApp:extend
 			layer4:add(Tile:new{ x = x, y = 400, image = 'tests/assets/bluegem.png', scale = 4 })
 		end
 		
-		self.view.tween:start{ target = self.view.translate, prop = 'x',
-							   to = self.width * -4, duration = 10,
-							   ease = 'quadInOut', onComplete = Tween.reverse }
+		self.view.tween:start(self.view.translate, 'x', self.width * -4, 10, 'quadInOut')
+		:andThen(Tween.reverseForever)
 
 		layer4:add(Text:new
 		{

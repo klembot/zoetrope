@@ -23,7 +23,7 @@ SubviewTest = TestApp:extend
 			end,
 
 			onActivate = function (self)
-				self.tween:start{ target = self.bg, prop = 'alpha', to = 0.5, duration = 0.5, onComplete = Tween.reverse }
+				self.tween:start(self.bg, 'alpha', 0.5, 0.5):andThen(Tween.reverseForever)
 			end
 		}
 

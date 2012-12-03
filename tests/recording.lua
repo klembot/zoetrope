@@ -13,8 +13,7 @@ Recording = TestApp:extend
 		self.player = Fill:new{ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } }
 
 		self.recLabel = Text:new { x = 750, y = 10, tint = { 1, 0, 0 }, text = 'REC', visible = false } 
-		self.view.tween:start{ target = self.recLabel, prop = 'alpha', to = 0,
-							   duration = 0.25, onComplete = Tween.reverse }
+		self.view.tween:start(self.recLabel, 'alpha', 0, 0.25):andThen(Tween.reverseForever)
 
 		self:add(self.player)
 		self:add(cursor)

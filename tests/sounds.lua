@@ -12,7 +12,7 @@ Sounds = TestApp:extend
 		self.signal = Fill:new{ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } }
 		self:add(self.signal)
 
-		self.timer:start{ func = self.testSound.play, delay = 1, bind = self.testSound }
+		self.timer:after(1, bind(self.testSound, 'play'))
 
 		self:add(Text:new
 		{
