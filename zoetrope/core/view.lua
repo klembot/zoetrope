@@ -169,6 +169,12 @@ View = Group:extend{
 							for key, value in pairs(tile.properties) do
 								obj.properties[key] = tovalue(value)
 							end
+
+							-- Tiled tile-based objects measure their y
+							-- position at their lower-left corner, instead
+							-- of their upper-left corner as usual
+
+							obj.y = obj.y - obj.height
 						end
 
 						-- create a new object if the class does exist
