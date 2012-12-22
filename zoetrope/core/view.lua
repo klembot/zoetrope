@@ -129,9 +129,9 @@ View = Group:extend{
 
 						-- and mix in properties where applicable
 
-						for i, tile in ipairs(tileProtos) do
-							if map.sprites[i] then
-								map.sprites[i]:mixin(tile.properties)
+						for id, tile in pairs(tileProtos) do
+							if map.sprites[id] then
+								map.sprites[id]:mixin(tile.properties)
 							end
 						end
 					end
