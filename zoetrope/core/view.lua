@@ -253,7 +253,7 @@ View = Group:extend{
 			assert((target.x and target.y and target.width and target.height) or (#target == 2),
 				   'pan target does not appear to be a sprite or coordinate pair')
 			assert(type(duration) == 'number', 'pan duration is not a number')
-			assert(self.tween.easers[ease], 'pan easing method is not defined')
+			assert(self.tween.easers[ease], 'pan easing method ' .. ease .. ' is not defined')
 		end
 
 		if target.x and target.y and target.width and target.height then
