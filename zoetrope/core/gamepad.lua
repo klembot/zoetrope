@@ -237,7 +237,7 @@ Gamepad = Sprite:extend
 	-- Returns:
 	--		string button descriptions; if nothing is just pressed, nil
 
-	allJustPressed = function (self)
+	allJustReleased = function (self)
 		local result = {}
 
 		for key, value in pairs(self._thisFrame) do
