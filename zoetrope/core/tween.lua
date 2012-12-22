@@ -199,7 +199,7 @@ Tween = Sprite:extend{
 			   	found = true
 				tween.promise:fail('Tween stopped')
 				table.remove(self.tweens, i)
-				end
+			end
 		end
 
 		if STRICT and not found then
