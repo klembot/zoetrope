@@ -123,9 +123,9 @@ Promise = Class:extend
 			local tFail = type(onFail)
 			local tProgress = type(onProgress)
 
-			assert(tFulfill == 'function' or tFulfill == 'nil', 'Fulfilled handler for promise is not a function')
-			assert(tFail == 'function' or tFail == 'nil', 'Failed handler for promise is not a function')
-			assert(tProgress == 'function' or tProgress == 'nil', 'Progress handler for promise is not a function')
+			assert(tFulfill == 'function' or tFulfill == 'nil', 'Fulfilled handler for promise is ' .. tFulfill ..', not a function')
+			assert(tFail == 'function' or tFail == 'nil', 'Failed handler for promise is ' .. tFail .. ', not a function')
+			assert(tProgress == 'function' or tProgress == 'nil', 'Progress handler for promise is ' .. tProgress ..', not a function')
 		end
 
 		local childPromise = Promise:new()
@@ -222,6 +222,7 @@ Promise = Class:extend
 
 		elseif errorMessage then
 			self:fail(errorMessage)
+			error(errorMessage)
 
 		-- and if we did not actually have a callback, fall back to the default action
 		-- (we have to simulate colon calling syntax here)
