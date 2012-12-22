@@ -126,10 +126,11 @@ Timer = Sprite:extend{
 			timer.timeLeft = timer.timeLeft - elapsed
 			
 			if timer.timeLeft <= 0 then
-				timer.func()
 				
 				if timer.promise then
-					timer.promise:fulfill()
+					timer.promise:fulfill(timer.func())
+				else
+					timer.func()
 				end
 
 				if timer.interval then
