@@ -167,6 +167,10 @@ Cached = Class:extend
 	bind = function (self, obj, func, ...)
 		local arg = {...}
 
+		if STRICT and type(func) == 'string' then
+			assert(type(obj[func]) == 'function', 'asked to bind an object to a non-existent method named ' .. func)
+		end
+
 		-- look for previous bind
 		
 		for key, value in pairs(self._library.binds) do
@@ -181,7 +185,6 @@ Cached = Class:extend
 				end
 
 				if match then
-					print('found existing bind for ', obj, func, arg)
 					return value
 				end
 			end
