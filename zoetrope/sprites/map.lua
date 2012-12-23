@@ -221,22 +221,81 @@ Map = Sprite:extend{
 				
 					self:subdisplace(othSpr.sprites)
 				else
+					-- determine sprites we might intersect with
+
 					local startX, startY = self:pixelToMap(othSpr.x - self.x, othSpr.y - self.y)
 					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
 													   othSpr.y + othSpr.height - self.y)
-					local x, y
+					local hit = true
+
+					-- We displace the target sprite along the axis that would satisfy the
+					-- most map sprites, but at the minimum distance for all of them.
+					-- xVotes and yVotes track which axis should be used; this is a
+					-- proportional vote, with sprites that have large amounts of overlap
+					-- getting more of a chance to overrule the others. We run this loop
+					-- repeatedly to make sure we end up with the target sprite not overlapping
+					-- anything in the map.
+					--
+					-- This is based on the technique described at:
+					-- http://go.colorize.net/xna/2d_collision_response_xna/
+
+					while hit do
+						hit = false
+
+						local xVotes, yVotes = 0, 0
+						local minChangeX, minChangeY, absMinChangeX, absMinChangeY
+						local origX, origY = othSpr.x, othSpr.y
+
+						for x = startX, endX do
+							for y = startY, endY do
+								local spr = self.sprites[self.map[x][y]]
+								
+								if spr and spr.solid then
+									-- position our map sprite as if it were onscreen
+									
+									spr.x = self.x + (x - 1) * self.spriteWidth
+									spr.y = self.y + (y - 1) * self.spriteHeight
 					
-					for x = startX, endX do
-						for y = startY, endY do
-							local spr = self.sprites[self.map[x][y]]
-							
-							if spr and spr.solid then
-								-- position our map sprite as if it were onscreen
-								
-								spr.x = self.x + (x - 1) * self.spriteWidth
-								spr.y = self.y + (y - 1) * self.spriteHeight
-								
-								spr:displace(othSpr)
+									-- displace and check to see if this displacement
+									-- would result in a smaller shift than any so far
+
+									spr:displace(othSpr)
+									local xChange = othSpr.x - origX
+									local yChange = othSpr.y - origY
+
+									if xChange ~= 0 then
+										xVotes = xVotes + math.abs(xChange)
+										hit = true
+
+										if not minChangeX or math.abs(xChange) < absMinChangeX then
+											minChangeX = xChange
+											absMinChangeX = math.abs(xChange)
+										end
+									end
+
+									if yChange ~= 0 then
+										yVotes = yVotes + math.abs(yChange)
+										hit = true
+
+										if not minChangeY or math.abs(yChange) < absMinChangeY then
+											minChangeY = yChange
+											absMinChangeY = math.abs(yChange)
+										end
+									end
+
+									-- restore sprite to original position
+
+									othSpr.x = origX
+									othSpr.y = origY
+								end
+							end
+						end
+
+						if hit then
+							if xVotes > 0 and xVotes > yVotes then
+								othSpr.x = othSpr.x + minChangeX
+							elseif yVotes > 0 then
+								othSpr.y = othSpr.y + minChangeY
 							end
 						end
 					end
