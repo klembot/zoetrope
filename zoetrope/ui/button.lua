@@ -33,6 +33,13 @@ Button = Sprite:extend{
 	-- Propetrty: label
 	-- The label <Sprite> of the button.
 
+	-- Property: enabled
+	-- If false, then no events will fire for this object, even just
+	-- mouse enter/exit ones. It also forces the <mouseOver> property to
+	-- false. This does not change the appearance of the button
+	-- on its own; that's up to you.
+	enabled = true,
+
 	-- Property: mouseOver
 	-- Tracks whether the user's mouse is over the button this frame.
 	mouseOver = false,
@@ -67,32 +74,36 @@ Button = Sprite:extend{
 
 		-- call hooks for mouse movement events
 
-		local mouseOver = self:intersects(the.mouse.x, the.mouse.y)
+		if self.enabled then
+			local mouseOver = self:intersects(the.mouse.x, the.mouse.y)
 
-		if mouseOver then self:callHook('onMouseOver') end
-		if mouseOver and not self.mouseOver then self:callHook('onMouseEnter') end
-		if not mouseOver and self.mouseOver then self:callHook('onMouseExit') end
+			if mouseOver then self:callHook('onMouseOver') end
+			if mouseOver and not self.mouseOver then self:callHook('onMouseEnter') end
+			if not mouseOver and self.mouseOver then self:callHook('onMouseExit') end
 
-		-- check for clicks
+			-- check for clicks
 
-		if mouseOver and the.mouse:justPressed() then
-			self.beingClicked = true
-			self:callHook('onMouseDown')
-		end
-
-		if self.beingClicked and the.mouse:justReleased() then
-			if mouseOver then
-				self:callHook('onMouseUp')
-			else
-				if label and label.onMouseUp then label:onMouseUp() end
-				if bg and bg.onMouseUp then label:onMouseUp() end
-				if self.onMouseUp then self:onMouseUp() end
+			if mouseOver and the.mouse:justPressed() then
+				self.beingClicked = true
+				self:callHook('onMouseDown')
 			end
 
-			self.beingClicked = false
-		end
+			if self.beingClicked and the.mouse:justReleased() then
+				if mouseOver then
+					self:callHook('onMouseUp')
+				else
+					if label and label.onMouseUp then label:onMouseUp() end
+					if bg and bg.onMouseUp then label:onMouseUp() end
+					if self.onMouseUp then self:onMouseUp() end
+				end
 
-		self.mouseOver = mouseOver
+				self.beingClicked = false
+			end
+
+			self.mouseOver = mouseOver
+		else
+			self.mouseOver = false
+		end
 
 		-- let label and background update
 
