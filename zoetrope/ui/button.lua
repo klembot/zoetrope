@@ -26,7 +26,8 @@
 -- Event: onMouseUp
 -- Called when the user releases the mouse over the button.
 
-Button = Sprite:extend{
+Button = Sprite:extend
+{
 	-- Property: background
 	-- The background <Sprite> of the button.
 
@@ -75,21 +76,23 @@ Button = Sprite:extend{
 		-- call hooks for mouse movement events
 
 		if self.enabled then
-			local mouseOver = self:intersects(the.mouse.x, the.mouse.y)
+			local overBefore = self.mouseOver
+			self.mouseOver = self:intersects(the.mouse.x, the.mouse.y)
+			print(self.mouseOver)
 
-			if mouseOver then self:callHook('onMouseOver') end
-			if mouseOver and not self.mouseOver then self:callHook('onMouseEnter') end
-			if not mouseOver and self.mouseOver then self:callHook('onMouseExit') end
+			if self.mouseOver then self:callHook('onMouseOver') end
+			if self.mouseOver and not overBefore then self:callHook('onMouseEnter') end
+			if not self.mouseOver and overBefore then self:callHook('onMouseExit') end
 
 			-- check for clicks
 
-			if mouseOver and the.mouse:justPressed() then
+			if self.mouseOver and the.mouse:justPressed() then
 				self.beingClicked = true
 				self:callHook('onMouseDown')
 			end
 
 			if self.beingClicked and the.mouse:justReleased() then
-				if mouseOver then
+				if self.mouseOver then
 					self:callHook('onMouseUp')
 				else
 					if label and label.onMouseUp then label:onMouseUp() end
@@ -99,8 +102,6 @@ Button = Sprite:extend{
 
 				self.beingClicked = false
 			end
-
-			self.mouseOver = mouseOver
 		else
 			self.mouseOver = false
 		end
