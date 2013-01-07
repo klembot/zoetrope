@@ -12,7 +12,8 @@
 -- Extends:
 --		<Sprite>
 
-Map = Sprite:extend{
+Map = Sprite:extend
+{
 	-- Constant: NO_SPRITE
 	-- Represents a map entry with no sprite.
 	NO_SPRITE = -1,
@@ -203,6 +204,9 @@ Map = Sprite:extend{
 	--		other - other <Sprite> or <Group> to displace
 	--		xHint - force horizontal displacement in one direction, uses direction constants
 	--		yHint - force vertical displacement in one direction, uses direction constants
+	--
+	-- Returns:
+	--		nothing
 
 	subdisplace = function (self, other, xHint, yHint)	
 		local others

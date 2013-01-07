@@ -19,6 +19,13 @@ Collisions = TestApp:extend
 							
 		self.collidable = Fill:new{ x = 20, y = 20, width = 32, height = 32,
 									fill = {0, 255, 0} }
+
+		self.wall = Group:new()
+		self:add(self.wall)
+		self.wall:add(Fill:new{ x = 20, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
+		self.wall:add(Fill:new{ x = 38, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
+		self.wall:add(Fill:new{ x = 56, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
+		self.wall:add(Fill:new{ x = 74, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
 		
 		self:add(self.collidable)		
 		self:add(self.obstacle)
@@ -54,6 +61,7 @@ Collisions = TestApp:extend
 		self.player:collide(self.collidable)
 		self.obstacle:displace(self.player)
 		self.obstacle:displace(self.pushable)
+		self.wall:displace(self.player)
 		self.player:displace(self.pushable)
 	end
 }

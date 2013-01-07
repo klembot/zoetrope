@@ -32,7 +32,8 @@
 -- this event occurs for both sprites. The sprite is passed three arguments: the other sprite, the
 -- horizontal overlap, and the vertical overlap between the other sprite, in pixels.
 
-Sprite = Class:extend{
+Sprite = Class:extend
+{
 	-- Property: active
 	-- If false, the sprite will not receive an update-related events.
 	active = true,
@@ -152,6 +153,55 @@ Sprite = Class:extend{
 		self.solid = true
 	end,
 
+	-- Method: intersects
+	-- Returns whether a point or rectangle intersects this sprite.
+	--
+	-- Arguments:
+	--		x - top left horizontal coordinate
+	--		y - top left vertical coordinate
+	--		width - width of the rectangle, omit for points
+	--		height - height of the rectangle, omit for points
+	--
+	-- Returns:
+	--		boolean
+
+	intersects = function (self, x, y, width, height)
+		return self.x < x + (width or 0) and self.x + self.width > x and
+			   self.y < y + (height or 0) and self.y + self.height > y
+	end,
+
+	-- Method: overlap
+	-- Returns the horizontal and vertical overlap of this sprite
+	-- and a rectangle. This ignores the sprite's <solid> property
+	-- and does not trigger any <onCollide> events.
+	--
+	-- Arguments:
+	--		x - top left horizontal coordinate
+	--		y - top left vertical coordinate
+	--		width - width of the rectangle
+	--		height - height of the rectangles
+	--
+	-- Returns:
+	--		Two numbers: horizontal overlap in pixels, and vertical overlap in pixels.
+
+	overlap = function (self, x, y, width, height)
+		local selfRight = self.x + self.width
+		local selfBottom = self.y + self.height
+		local right = x + width
+		local bottom = y + height
+
+		-- this is cribbed from
+		-- http://frey.co.nz/old/2007/11/area-of-two-rectangles-algorithm/
+
+		if self.x < right and selfRight > x and
+		   self.y < bottom and selfBottom > y then
+			return math.min(selfRight, right) - math.max(self.x, x),
+				   math.min(selfBottom, bottom) - math.max(self.y, y)
+		else
+			return 0, 0
+		end
+	end,
+
 	-- Method: collide
 	-- Checks whether sprites collide by checking rectangles. If a collision is detected,
 	-- onCollide() is called on both this sprite and the one it collides with, passing
@@ -169,29 +219,15 @@ Sprite = Class:extend{
 		if other.sprites then
 			return other:collide(self)
 		else
-			-- this is cribbed from
-			-- http://frey.co.nz/old/2007/11/area-of-two-rectangles-algorithm/
+			local xOverlap, yOverlap = self:overlap(other.x, other.y, other.width, other.height)
 
-			local right = self.x + self.width
-			local bottom = self.y + self.height
-			local othRight = other.x + other.width
-			local othBottom = other.y + other.height
-				
-			-- is there an overlap at all?
-			
-			if self.x < othRight and right > other.x and
-			   self.y < othBottom and bottom > other.y then
-			   
-				-- calculate overlaps and call onCollide()
-				local horizOverlap = math.min(right, othRight) - math.max(self.x, other.x)
-				local vertOverlap = math.min(bottom, othBottom)- math.max(self.y, other.y)
-			
+			if xOverlap ~= 0 or yOverlap ~= 0 then	
 				if self.onCollide then
-					self:onCollide(other, horizOverlap, vertOverlap)
+					self:onCollide(other, xOverlap, yOverlap)
 				end
 				
 				if other.onCollide then
-					other:onCollide(self, horizOverlap, vertOverlap)
+					other:onCollide(self, xOverlap, yOverlap)
 				end
 
 				return true
@@ -202,15 +238,17 @@ Sprite = Class:extend{
 	end,
 
 	-- Method: displace
-	-- Displaces another sprite so that it no longer overlaps this one.
+	-- Displaces another sprite or group so that it no longer overlaps this one.
 	-- This by default seeks to move the other sprite the least amount possible.
 	-- You can give this function a hint about which way it ought to move the other
 	-- sprite (e.g. by consulting its current motion) through the two optional
 	-- arguments. A single displace() call will *either* move the other sprite
 	-- horizontally or vertically, not along both axes.
 	--
+	-- This does *not* cause onCollide events to occur on the sprites.
+	--
 	-- Arguments:
-	--		other - sprite to displace
+	--		other - sprite or group to displace
 	-- 		xHint - force horizontal displacement in one direction, uses direction constants, optional
 	--		yHint - force vertical displacement in one direction, uses direction constants, optional
 	--
@@ -218,93 +256,69 @@ Sprite = Class:extend{
 	--		nothing
 
 	displace = function (self, other, xHint, yHint)	
-		if not self.solid or self == other then return false end
+		if not self.solid or self == other or not other.solid then return end
 		if STRICT then assert(other:instanceOf(Sprite), 'asked to displace a non-sprite') end
-			
-		local left = self.x
-		local right = self.x + self.width
-		local top = self.y
-		local bottom = self.y + self.height
-		local othLeft = other.x
-		local othRight = other.x + other.width
-		local othTop = other.y
-		local othBottom = other.y + other.height
+
 		local xChange = 0
 		local yChange = 0
-		
-		-- resolve horizontal overlap
-		
-		if (othLeft >= left and othLeft <= right) or
-		   (othRight >= left and othRight <= right) or
-		   (left >= othLeft and left <= othRight) or
-		   (right >= othLeft and right <= othRight) then
-			local leftMove = (othLeft - left) + other.width
-			local rightMove = right - othLeft
-			
-			if xHint == LEFT then
-				xChange = - leftMove
-			elseif xHint == RIGHT then
-				xChange = rightMove
-			else
-				if leftMove < rightMove then
-					xChange = - leftMove
-				else
-					xChange = rightMove
-				end
-			end
-		end
-		
-		-- resolve vertical overlap
 
-		if (othTop >= top and othTop <= bottom) or
-		   (othBottom >= top and othBottom <= bottom) or
-		   (top >= othTop and top <= othBottom) or
-		   (bottom >= othTop and bottom <= othBottom) then
-			local upMove = (othTop - top) + other.height
-			local downMove = bottom - othTop
-			
-			if yHint == UP then
-				yChange = - upMove
-			elseif yHint == DOWN then
-				yChange = downMove
-			else
-				if upMove < downMove then
-					yChange = - upMove
-				else
-					yChange = downMove
-				end
+		if other.sprites then
+			-- handle groups
+
+			for _, spr in pairs(other.sprites) do
+				self:displace(spr, xHint, yHint)
 			end
-		end
-		
-		-- choose the option that moves the other sprite the least
-		
-		if math.abs(xChange) > math.abs(yChange) then
-			other.y = other.y + yChange
 		else
-			other.x = other.x + xChange
+			-- handle sprites
+
+			local xOverlap, yOverlap = self:overlap(other.x, other.y, other.width, other.height)
+			
+			-- resolve horizontal overlap
+
+			if xOverlap ~= 0 then
+				local leftMove = (other.x - self.x) + other.width
+				local rightMove = (self.x + self.width) - other.x
+				
+				if xHint == LEFT then
+					xChange = - leftMove
+				elseif xHint == RIGHT then
+					xChange = rightMove
+				else
+					if leftMove < rightMove then
+						xChange = - leftMove
+					else
+						xChange = rightMove
+					end
+				end
+			end
+			
+			-- resolve vertical overlap
+
+			if yOverlap ~= 0 then
+				local upMove = (other.y - self.y) + other.height
+				local downMove = (self.y + self.height) - other.y
+				
+				if yHint == UP then
+					yChange = - upMove
+				elseif yHint == DOWN then
+					yChange = downMove
+				else
+					if upMove < downMove then
+						yChange = - upMove
+					else
+						yChange = downMove
+					end
+				end
+			end
+			
+			-- choose the option that moves the other sprite the least
+			
+			if math.abs(xChange) > math.abs(yChange) then
+				other.y = other.y + yChange
+			else
+				other.x = other.x + xChange
+			end
 		end
-	end,
-
-	-- Method: intersects
-	-- Returns whether a point or rectangle intersects with this sprite.
-	-- If you want to check whether a particular sprite intersects with this one,
-	-- use <collide>.
-	--
-	-- Arguments:
-	--		x - top left horizontal coordinate
-	--		y - top left vertical coordinate
-	--		width - width of the rectangle, omit for points
-	--		height - height of the rectangle, omit for points
-	--
-	-- Returns:
-	--		boolean
-
-	intersects = function (self, x, y, width, height)
-		local right = x + (width or 0)
-		local bottom = y + (height or 0)
-
-		return self.x < right and self.x + self.width > x and
-		       self.y < bottom and self.y + self.height > y
 	end,
 
 	-- Method: push

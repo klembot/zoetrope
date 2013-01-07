@@ -110,7 +110,7 @@ Group = Class:extend
 	-- This calls the <Sprite.onCollide> event handlers on all sprites that
 	-- collide with the same arguments <Sprite.collide> does.
 	--
-	-- It's often useful to collide a group with itself, e.g. myGroup:collide(myGroup).
+	-- It's often useful to collide a group with itself, e.g. myGroup:collide().
 	-- This checks for collisions between the sprites that make up the group.
 	--
 	-- Arguments:
@@ -165,11 +165,11 @@ Group = Class:extend
 	end,
 
 	-- Method: displace
-	-- Displaces a sprite or group by all solid sprites in this group. This will call onCollide()
-	-- for those sprites in this group that are being displaced.
+	-- Displaces a sprite or group by all solid sprites in this group. This will *not* cause
+	-- any onCollide event handlers to be called.
 	--
 	-- Arguments:
-	-- 		other - <Sprite> or <Group> to collide with
+	-- 		other - <Sprite> or <Group> to collide with, default self
 	-- 		xHint - force horizontal displacement in one direction, uses direction constants, optional
 	--		yHint - force vertical displacement in one direction, uses direction constants, optional
 	-- 
@@ -180,6 +180,8 @@ Group = Class:extend
 	--		<Sprite.displace>
 
 	displace = function (self, other, xHint, yHint)
+		other = other or self
+
 		if STRICT then
 			assert(other:instanceOf(Group) or other:instanceOf(Sprite), 'asked to displace non-group/sprite ' ..
 				   type(other))
@@ -205,7 +207,7 @@ Group = Class:extend
 						for y = startY, endY do
 							if grid[x][y] then
 								for _, spr in pairs(grid[x][y]) do
-									if spr ~= othSpr and spr:collide(othSpr) then
+									if spr ~= othSpr and spr:intersects(othSpr.x, othSpr.y, othSpr.width, othSpr.height) then
 										table.insert(displacers, spr)
 									end
 								end
@@ -275,7 +277,7 @@ Group = Class:extend
 			local displacers = {}
 
 			for _, spr in pairs(self.sprites) do
-				if spr ~= other and spr:collide(other) then
+				if spr ~= other and spr:intersects(other.x, other.y, other.width, other.height) then
 					table.insert(displacers, spr)
 				end
 			end
