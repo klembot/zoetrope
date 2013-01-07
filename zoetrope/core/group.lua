@@ -130,7 +130,7 @@ Group = Class:extend
 				   type(other))
 		end
 
-		if not self.solid or not other then return false end
+		if not self.solid or not other.solid then return false end
 		local hit = false
 
 		if other.sprites then
@@ -165,7 +165,8 @@ Group = Class:extend
 	end,
 
 	-- Method: displace
-	-- Displaces a sprite or group by all solid sprites in this group.
+	-- Displaces a sprite or group by all solid sprites in this group. This will call onCollide()
+	-- for those sprites in this group that are being displaced.
 	--
 	-- Arguments:
 	-- 		other - <Sprite> or <Group> to collide with
@@ -184,9 +185,11 @@ Group = Class:extend
 				   type(other))
 		end
 
-		if not self.solid or not other then return false end
+		if not self.solid or not other.solid then return false end
 
 		if other.sprites then
+			-- group displacing group
+
 			local grid = self:grid()
 			local gridSize = self.gridSize
 
@@ -195,22 +198,141 @@ Group = Class:extend
 				local endX = math.floor((othSpr.x + othSpr.width) / gridSize)
 				local startY = math.floor(othSpr.y / gridSize)
 				local endY = math.floor((othSpr.y + othSpr.height) / gridSize)
+				local displacers = {}
 
 				for x = startX, endX do
 					if grid[x] then
 						for y = startY, endY do
 							if grid[x][y] then
 								for _, spr in pairs(grid[x][y]) do
-									spr:displace(othSpr)
+									if spr ~= othSpr and spr:collide(othSpr) then
+										table.insert(displacers, spr)
+									end
 								end
+							end
+						end
+					end
+				end
+
+				-- see Map:subdisplace() for how this is done
+
+				if #displacers > 0 then
+					local hit = true
+					local loops = 0
+
+					while hit and loops < 3 do
+						hit = false
+						loops = loops + 1
+
+						local xVotes, yVotes = 0, 0
+						local minChangeX, minChangeY, absMinChangeX, absMinChangeY
+						local origX, origY = othSpr.x, othSpr.y
+
+						for _, spr in pairs(displacers) do
+							spr:displace(othSpr)
+							local xChange = othSpr.x - origX
+							local yChange = othSpr.y - origY
+
+							if xChange ~= 0 then
+								xVotes = xVotes + math.abs(xChange)
+								hit = true
+
+								if not minChangeX or math.abs(xChange) < absMinChangeX then
+									minChangeX = xChange
+									absMinChangeX = math.abs(xChange)
+								end
+							end
+
+							if yChange ~= 0 then
+								yVotes = yVotes + math.abs(yChange)
+								hit = true
+
+								if not minChangeY or math.abs(yChange) < absMinChangeY then
+									minChangeY = yChange
+									absMinChangeY = math.abs(yChange)
+								end
+							end
+
+							-- restore sprite to original position
+
+							othSpr.x = origX
+							othSpr.y = origY
+						end
+
+						if hit then
+							if xVotes > 0 and xVotes > yVotes then
+								othSpr.x = othSpr.x + minChangeX
+							elseif yVotes > 0 then
+								othSpr.y = othSpr.y + minChangeY
 							end
 						end
 					end
 				end
 			end
 		else
+			-- group displacing sprite
+
+			local displacers = {}
+
 			for _, spr in pairs(self.sprites) do
-				spr:displace(other)
+				if spr ~= other and spr:collide(other) then
+					table.insert(displacers, spr)
+				end
+			end
+
+			-- see Map:subdisplace() for how this is done
+
+			if #displacers > 0 then
+				local hit = true
+				local loops = 0
+
+				while hit and loops < 3 do
+					hit = false
+					loops = loops + 1
+
+					local xVotes, yVotes = 0, 0
+					local minChangeX, minChangeY, absMinChangeX, absMinChangeY
+					local origX, origY = other.x, other.y
+
+					for _, spr in pairs(displacers) do
+						spr:displace(other)
+						local xChange = other.x - origX
+						local yChange = other.y - origY
+
+						if xChange ~= 0 then
+							xVotes = xVotes + math.abs(xChange)
+							hit = true
+
+							if not minChangeX or math.abs(xChange) < absMinChangeX then
+								minChangeX = xChange
+								absMinChangeX = math.abs(xChange)
+							end
+						end
+
+						if yChange ~= 0 then
+							yVotes = yVotes + math.abs(yChange)
+							hit = true
+
+							if not minChangeY or math.abs(yChange) < absMinChangeY then
+								minChangeY = yChange
+								absMinChangeY = math.abs(yChange)
+							end
+						end
+
+						-- restore sprite to original position
+
+						other.x = origX
+						other.y = origY
+					end
+
+					if hit then
+						if xVotes > 0 and xVotes > yVotes then
+							other.x = other.x + minChangeX
+						elseif yVotes > 0 then
+							other.y = other.y + minChangeY
+						end
+					end
+				end
 			end
 		end
 	end,
