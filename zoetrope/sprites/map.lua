@@ -227,6 +227,7 @@ Map = Sprite:extend{
 					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
 													   othSpr.y + othSpr.height - self.y)
 					local hit = true
+					local loops = 0
 
 					-- We displace the target sprite along the axis that would satisfy the
 					-- most map sprites, but at the minimum distance for all of them.
@@ -239,8 +240,9 @@ Map = Sprite:extend{
 					-- This is based on the technique described at:
 					-- http://go.colorize.net/xna/2d_collision_response_xna/
 
-					while hit do
+					while hit and loops < 3 do
 						hit = false
+						loops = loops + 1
 
 						local xVotes, yVotes = 0, 0
 						local minChangeX, minChangeY, absMinChangeX, absMinChangeY
