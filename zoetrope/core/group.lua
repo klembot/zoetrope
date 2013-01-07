@@ -28,8 +28,9 @@ Group = Class:extend
 	visible = true,
 
 	-- Property: solid
-	-- If false, nothing will collide against this group. This does not prevent
-	-- collision checking against individual sprites in this group, however.
+	-- If false, nothing will collide against this group, nor will this group
+	-- displace any other sprite. This does not prevent collision checking
+	-- against individual sprites in this group, however.
 	solid = true,
 
 	-- Property: sprites
@@ -207,7 +208,7 @@ Group = Class:extend
 						for y = startY, endY do
 							if grid[x][y] then
 								for _, spr in pairs(grid[x][y]) do
-									if spr ~= othSpr and spr:intersects(othSpr.x, othSpr.y, othSpr.width, othSpr.height) then
+									if spr ~= othSpr and spr.solid and spr:intersects(othSpr.x, othSpr.y, othSpr.width, othSpr.height) then
 										table.insert(displacers, spr)
 									end
 								end

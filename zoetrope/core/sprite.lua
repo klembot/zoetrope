@@ -44,6 +44,7 @@ Sprite = Class:extend
 
 	-- Property: solid
 	-- If false, the sprite will never be eligible to collide with another one.
+	-- It will also never displace another one.
 	solid = true,
 
 	-- Property: x
