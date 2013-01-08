@@ -1,5 +1,18 @@
 require 'zoetrope'
 
+CollisionWall = Fill:extend
+{
+	fill = {255, 0, 255},
+	width = 16,
+	height = 16,
+
+	onCollide = function (self, other)
+		if other == the.app.player then
+			self:displace(other)
+		end
+	end
+}
+
 Collisions = TestApp:extend
 {
 	onRun = function (self)
@@ -22,11 +35,13 @@ Collisions = TestApp:extend
 
 		self.wall = Group:new()
 		self:add(self.wall)
-		self.wall:add(Fill:new{ x = 20, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
-		self.wall:add(Fill:new{ x = 38, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
-		self.wall:add(Fill:new{ x = 56, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
-		self.wall:add(Fill:new{ x = 74, y = 100, width = 16, height = 16, fill = {255, 0, 0} })
-		
+		self.wall:add(CollisionWall:new{ x = 20, y = 100 })
+		self.wall:add(CollisionWall:new{ x = 36, y = 100 })
+		self.wall:add(CollisionWall:new{ x = 52, y = 100 })
+		self.wall:add(CollisionWall:new{ x = 68, y = 100 })
+		self.wall:add(CollisionWall:new{ x = 84, y = 100 })
+		self.wall:add(CollisionWall:new{ x = 84, y = 84 })
+
 		self:add(self.collidable)		
 		self:add(self.obstacle)
 		self:add(self.pushable)
