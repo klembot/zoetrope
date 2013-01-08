@@ -78,7 +78,6 @@ Button = Sprite:extend
 		if self.enabled then
 			local overBefore = self.mouseOver
 			self.mouseOver = self:intersects(the.mouse.x, the.mouse.y)
-			print(self.mouseOver)
 
 			if self.mouseOver then self:callHook('onMouseOver') end
 			if self.mouseOver and not overBefore then self:callHook('onMouseEnter') end
