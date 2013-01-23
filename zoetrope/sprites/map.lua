@@ -368,8 +368,6 @@ Map = Sprite:extend
 				sprite:draw(coords[1], coords[2])
 			end
 		end
-		
-		Sprite.draw(self)
 	end,
 
 	-- Method: pixelToMap

@@ -75,8 +75,6 @@ Fill = Sprite:extend{
 		if scaleX ~= 1 or scaleY ~= 1 or self.rotation ~= 0 then
 			love.graphics.pop()
 		end
-		
-		Sprite.draw(self, x, y)
 	end,
 
 	__tostring = function (self)

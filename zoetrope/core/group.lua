@@ -5,9 +5,6 @@
 -- Extends:
 --		<Class>
 --
--- Event: onDraw
--- Called after all member sprites are drawn onscreen.
---
 -- Event: onUpdate
 -- Called once each frame, with the elapsed time since the last frame in seconds.
 --
@@ -390,8 +387,6 @@ Group = Class:extend
 			end
 		end
 			
-		if self.onDraw then self:onDraw() end
-
 		if self.effect then
 			if self.effectType == 'screen' then
 				love.graphics.setPixelEffect(self.effect)

@@ -99,8 +99,6 @@ Tile = Sprite:extend
 		if colored then
 			love.graphics.setColor(255, 255, 255, 255)
 		end
-			
-		Sprite.draw(self, x, y)
 	end,
 
 	__tostring = function (self)

@@ -15,9 +15,6 @@
 -- Extends:
 --		<Class>
 --
--- Event: onDraw
--- Called after drawing takes place.
---
 -- Event: onUpdate
 -- Called once each frame, with the elapsed time since the last frame in seconds.
 --
@@ -437,7 +434,7 @@ Sprite = Class:extend
 	end,
 
 	draw = function (self, x, y)
-		if self.onDraw then self:onDraw(x, y) end
+		-- subclasses do interesting things here
 	end,
 
 	collidedWith = function (self, other, xOverlap, yOverlap)
