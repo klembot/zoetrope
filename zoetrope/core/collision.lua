@@ -127,13 +127,8 @@ Collision = Class:extend
 		table.sort(collisions, self.sortCollisions)
 
 		for _, col in ipairs(collisions) do
-			if col.a.onCollide then
-				col.a:onCollide(col.b, col.x, col.y)
-			end
-
-			if col.b.onCollide then
-				col.b:onCollide(col.a, col.x, col.y)
-			end
+			col.a:collidedWith(col.b, col.x, col.y)
+			col.b:collidedWith(col.a, col.x, col.y)
 		end
 	end,
 
