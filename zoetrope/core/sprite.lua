@@ -204,38 +204,18 @@ Sprite = Class:extend
 	end,
 
 	-- Method: collide
-	-- Checks whether sprites collide by checking rectangles. If a collision is detected,
+	-- Checks whether this sprite collides with other <Sprite>s ad <Group>s. If a collision is detected,
 	-- onCollide() is called on both this sprite and the one it collides with, passing
 	-- the amount of horizontal and vertical overlap between the sprites in pixels.
 	--
 	-- Arguments:
-	--		other - <Sprite> or <Group> to collide
+	-- 		... - any number of <Sprite>s or <Group>s to collide with.
 	--
 	-- Returns:
-	--		boolean, whether any collision was detected
+	--		nothing
 
-	collide = function (self, other)
-		if not self.solid or not other.solid or self == other then return false end
-
-		if other.sprites then
-			return other:collide(self)
-		else
-			local xOverlap, yOverlap = self:overlap(other.x, other.y, other.width, other.height)
-
-			if xOverlap ~= 0 or yOverlap ~= 0 then	
-				if self.onCollide then
-					self:onCollide(other, xOverlap, yOverlap)
-				end
-				
-				if other.onCollide then
-					other:onCollide(self, xOverlap, yOverlap)
-				end
-
-				return true
-			end
-		end
-
-		return false
+	collide = function (self, ...)
+		Collision:check(self, ...)
 	end,
 
 	-- Method: displace
@@ -458,5 +438,9 @@ Sprite = Class:extend
 
 	draw = function (self, x, y)
 		if self.onDraw then self:onDraw(x, y) end
+	end,
+
+	collidedWith = function (self, other, xOverlap, yOverlap)
+		if self.onCollide then self:onCollide(other, xOverlap, yOverlap) end
 	end
 }

@@ -116,6 +116,7 @@ require 'zoetrope.core.class'
 
 require 'zoetrope.core.app'
 require 'zoetrope.core.cached'
+require 'zoetrope.core.collision'
 require 'zoetrope.core.globals'
 require 'zoetrope.core.sprite'
 require 'zoetrope.core.gamepad'
