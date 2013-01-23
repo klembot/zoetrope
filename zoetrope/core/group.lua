@@ -49,13 +49,6 @@ Group = Class:extend
 	-- sprites at their normal position, set both x and y to 1.
 	translateScale = { x = 1, y = 1 },
 
-	-- Property: gridSize
-	-- The size, in pixels, of the grid used for collision detection.
-	-- This partitions off space so that collision checks only need to do real
-	-- checks against a few sprites at a time. If you notice collision detection
-	-- taking a long time, changing this number may help.
-	gridSize = 50,
-
 	-- Method: add
 	-- Adds a sprite to the group.
 	--
@@ -256,54 +249,6 @@ Group = Class:extend
 		end
 
 		return false
-	end,
-
-	-- Method: grid
-	-- Creates a table indexed by x and y dimensions, with each
-	-- cell a table of sprites that touch this grid element. For
-	-- example, with a grid size of 50, a sprite at (10, 10) that 
-	-- is 50 pixels square would be in the grid at [0][0], [1][0],
-	-- [0][1], and [1][1].
-	--
-	-- This can be used to speed up work that involves checking
-	-- for sprites near each other, e.g. collision detection.
-	--
-	-- Arguments:
-	--		existing - existing grid table to add sprites into,
-	--				   optional. Anything you pass must have
-	--				   used the same size as the current call.
-	--
-	-- Returns:
-	--		table
-
-	grid = function (self, existing)
-		local result = existing or {}
-		local size = self.gridSize
-
-		for _, spr in pairs(self.sprites) do
-			if spr.sprites then
-				local oldSize = spr.gridSize
-				spr.gridSize = self.gridSize
-				result = spr:grid(result)
-				spr.gridSize = oldSize
-			else
-				local startX = math.floor(spr.x / size)
-				local endX = math.floor((spr.x + spr.width) / size)
-				local startY = math.floor(spr.y / size)
-				local endY = math.floor((spr.y + spr.height) / size)
-
-				for x = startX, endX do
-					if not result[x] then result[x] = {} end
-
-					for y = startY, endY do
-						if not result[x][y] then result[x][y] = {} end
-						table.insert(result[x][y], spr)
-					end
-				end
-			end
-		end
-
-		return result
 	end,
 
 	-- passes startFrame events to member sprites
