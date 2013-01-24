@@ -56,28 +56,48 @@ Collision = Class:extend
 		local grid = {}
 		local gridSize = a.gridSize or self.gridSize
 		local gridded = {}
+		local deferred = {}
+		local aHuge = {}
 		local aCells = {}
 
 		for i, spr in ipairs(list) do
 			if not gridded[spr] then
-				if i <= aLength then
-					aCells[spr] = {}
-				end
-
 				local startX = math.floor(spr.x / gridSize)
 				local endX = math.floor((spr.x + spr.width) / gridSize)
 				local startY = math.floor(spr.y / gridSize)
 				local endY = math.floor((spr.y + spr.height) / gridSize)
+
+				-- Special casing of very large sprites (as defined as >= 25 cells in
+				-- area). If they are in the A list, we just reserve them
+				-- for later and check them against all sprites in the other lists.
+				-- If they are not in the A list, we defer them to the very end of the gridding
+				-- process, only to cells that have already been gridded by virtue of another
+				-- sprite being in them.
+				--
+				-- The assumption here is that huge sprites are probably big tilemaps, and
+				-- thus likely to collide with every sprite anyway.
+
+				if (endX - startX) * (endY - startY) > 25 then
+					if i <= aLength then
+						table.insert(aHuge, spr)
+					else
+						table.insert(deferred, { spr = spr, startX = startX, endX = endX, startY = startY, endY = endY })
+					end
+				else
+					if i <= aLength then
+						aCells[spr] = {}
+					end
 				
-				for x = startX, endX do
-					grid[x] = grid[x] or {}
+					for x = startX, endX do
+						grid[x] = grid[x] or {}
 
-					for y = startY, endY do
-						grid[x][y] = grid[x][y] or {}
-						table.insert(grid[x][y], spr)
+						for y = startY, endY do
+							grid[x][y] = grid[x][y] or {}
+							table.insert(grid[x][y], spr)
 
-						if i <= aLength then
-							table.insert(aCells[spr], grid[x][y])
+							if i <= aLength then
+								table.insert(aCells[spr], grid[x][y])
+							end
 						end
 					end
 				end
@@ -86,9 +106,24 @@ Collision = Class:extend
 			end
 		end
 
+		-- Grid all huge sprites we just deferred. Unlike above,
+		-- we only add them to grid cells that already have sprites in them.
+
+		for _, d in pairs(deferred) do
+			for x = startX, endX do
+				if grid[x] then
+					for y = startY, endY do
+						if grid[x][y] then
+							table.insert(grid[x][y], spr)
+						end
+					end
+				end
+			end
+		end
+
 		-- aCells now is a table whose keys are sprites in this group,
 		-- and whose values are a table of grid cells that the sprite is in.
-		-- We now build a list of all collisions.
+		-- We now build a list of collisions based on that.
 
 		local collisions = {}
 		local alreadyCollided = {}
@@ -111,6 +146,29 @@ Collision = Class:extend
 						alreadyCollided[aSpr][bSpr] = true
 						alreadyCollided[bSpr][aSpr] = true
 					end
+				end
+			end
+		end
+
+		-- Run through the huge sprites in the A list, if any, adding
+		-- collisions to the existing list.
+
+		for _, aSpr in pairs(aHuge) do
+			alreadyCollided[aSpr] = alreadyCollided[aSpr] or {}
+
+			for i = aLength + 1, #list do
+				local bSpr = list[i]
+
+				if aSpr ~= bSpr and not alreadyCollided[aSpr][bSpr] then
+					local xOverlap, yOverlap = bSpr:overlap(aSpr.x, aSpr.y, aSpr.width, aSpr.height)
+
+					if xOverlap ~= 0 or yOverlap ~= 0 then
+						table.insert(collisions, { area = xOverlap * yOverlap, x = xOverlap, y = yOverlap, a = aSpr, b = bSpr })
+					end
+
+					alreadyCollided[bSpr] = alreadyCollided[bSpr] or {}
+					alreadyCollided[aSpr][bSpr] = true
+					alreadyCollided[bSpr][aSpr] = true
 				end
 			end
 		end
