@@ -8,7 +8,8 @@
 -- Extends:
 --		<Group>
 
-View = Group:extend{
+View = Group:extend
+{
 	-- Property: timer
 	-- A built-in <Timer> object for use as needed.
 

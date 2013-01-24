@@ -28,7 +28,10 @@ Maps = TestApp:extend
 		
 		self.map2 = Map:new{ x = 256, y = 300, spriteWidth = 24, spriteHeight = 24 }
 		self.map2:loadMap('tests/assets/map.csv')
-		self.map2.sprites[1] = Fill:new{ width = 24, height = 24, fill = {0, 0, 255} }
+		self.map2.sprites[1] = Fill:new{ width = 24, height = 24, fill = {0, 0, 255},
+			onCollide = function (self, other)
+				self:displace(other)
+			end }
 		self:add(self.map2)
 		
 		-- map with loadTiles() used
@@ -62,9 +65,7 @@ Maps = TestApp:extend
 	end,
 	
 	onUpdate = function (self, elapsed)
-		if (self.map2:subcollide(self.player)) then
-			self.map2:subdisplace(self.player)
-		end
+		self.map2:collide(self.player)
 	
 		self.player.velocity.x = 0
 		self.player.velocity.y = 0

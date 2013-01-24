@@ -92,8 +92,8 @@ Map = Sprite:extend
 		
 		-- set bounds
 		
-		self.width = #self.map[1] * self.spriteWidth
-		self.height = #self.map * self.spriteHeight
+		self.width = #self.map * self.spriteWidth
+		self.height = #self.map[1] * self.spriteHeight
 		
 		return self
 	end,
@@ -138,175 +138,97 @@ Map = Sprite:extend
 		return self
 	end,
 
-	-- Method: subcollide
-	-- This acts as a wrapper to multiple collide() calls, as if
-	-- there really were all the sprites in their particular positions.
-	-- This is much more useful than Map:collide(), which simply checks
-	-- if a sprite or group is touching the map at all. 
+	-- This overrides a method in <Sprite>, passing along
+	-- collidedWith() calls to all sprites in the map touching a
+	-- sprite.
 	--
 	-- Arguments:
-	--		other - other <Sprite> or <Group>
-	--
-	-- Returns:
-	--		boolean, whether any collision was detected
-
-	subcollide = function (self, other)
-		local hit = false
-		local others
-
-		if other.sprites then
-			others = other.sprites
-		else
-			others = { other }
-		end
-
-		for _, othSpr in pairs(others) do
-			if othSpr.solid then
-				if othSpr.sprites then
-					-- recurse into subgroups
-					-- order is important here to avoid short-circuiting inappopriately
-				
-					hit = self:subcollide(othSpr.sprites) or hit
-				else
-					local startX, startY = self:pixelToMap(othSpr.x - self.x, othSpr.y - self.y)
-					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
-													   othSpr.y + othSpr.height - self.y)
-					local x, y
-					
-					for x = startX, endX do
-						for y = startY, endY do
-							local spr = self.sprites[self.map[x][y]]
-							
-							if spr and spr.solid then
-								-- position our map sprite as if it were onscreen
-								
-								spr.x = self.x + (x - 1) * self.spriteWidth
-								spr.y = self.y + (y - 1) * self.spriteHeight
-								
-								hit = spr:collide(othSpr) or hit
-							end
-						end
-					end
-				end
-			end
-		end
-
-		return hit
-	end,
-
-	-- Method: subdisplace
-	-- This acts as a wrapper to multiple displace() calls, as if
-	-- there really were all the sprites in their particular positions.
-	-- This is much more useful than Map:displace(), which pushes a sprite or group
-	-- so that it does not touch the map in its entirety. 
-	--
-	-- Arguments:
-	--		other - other <Sprite> or <Group> to displace
-	--		xHint - force horizontal displacement in one direction, uses direction constants
-	--		yHint - force vertical displacement in one direction, uses direction constants
+	--		other - other <Sprite>
 	--
 	-- Returns:
 	--		nothing
 
-	subdisplace = function (self, other, xHint, yHint)	
-		local others
+	collidedWith = function (self, other)
+		local spriteWidth = self.spriteWidth
+		local spriteHeight = self.spriteHeight
+		local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
+		local endX, endY = self:pixelToMap(other.x + other.width - self.x,
+										   other.y + other.height - self.y)
 
-		if other.sprites then
-			others = other.sprites
-		else
-			others = { other }
-		end
+		-- collect collisions against sprites
 
-		for _, othSpr in pairs(others) do
-			if othSpr.solid then
-				if othSpr.sprites then
-					-- recurse into subgroups
-					-- order is important here to avoid short-circuiting inappopriately
+		local collisions = {}
+		
+		for x = startX, endX do 
+			for y = startY, endY do
+				local spr = self.sprites[self.map[x][y]]
 				
-					self:subdisplace(othSpr.sprites)
-				else
-					-- determine sprites we might intersect with
-
-					local startX, startY = self:pixelToMap(othSpr.x - self.x, othSpr.y - self.y)
-					local endX, endY = self:pixelToMap(othSpr.x + othSpr.width - self.x,
-													   othSpr.y + othSpr.height - self.y)
-					local hit = true
-					local loops = 0
-
-					-- We displace the target sprite along the axis that would satisfy the
-					-- most map sprites, but at the minimum distance for all of them.
-					-- xVotes and yVotes track which axis should be used; this is a
-					-- proportional vote, with sprites that have large amounts of overlap
-					-- getting more of a chance to overrule the others. We run this loop
-					-- repeatedly to make sure we end up with the target sprite not overlapping
-					-- anything in the map.
-					--
-					-- This is based on the technique described at:
-					-- http://go.colorize.net/xna/2d_collision_response_xna/
-
-					while hit and loops < 3 do
-						hit = false
-						loops = loops + 1
-
-						local xVotes, yVotes = 0, 0
-						local minChangeX, minChangeY, absMinChangeX, absMinChangeY
-						local origX, origY = othSpr.x, othSpr.y
-
-						for x = startX, endX do
-							for y = startY, endY do
-								local spr = self.sprites[self.map[x][y]]
-								
-								if spr and spr.solid then
-									-- position our map sprite as if it were onscreen
-									
-									spr.x = self.x + (x - 1) * self.spriteWidth
-									spr.y = self.y + (y - 1) * self.spriteHeight
+				if spr and spr.solid then
+					local sprX = self.x + (x - 1) * spriteWidth
+					local sprY = self.y + (y - 1) * spriteHeight
 					
-									-- displace and check to see if this displacement
-									-- would result in a smaller shift than any so far
+					local xOverlap, yOverlap = other:overlap(sprX, sprY, spriteWidth, spriteHeight)
 
-									spr:displace(othSpr)
-									local xChange = othSpr.x - origX
-									local yChange = othSpr.y - origY
-
-									if xChange ~= 0 then
-										xVotes = xVotes + math.abs(xChange)
-										hit = true
-
-										if not minChangeX or math.abs(xChange) < absMinChangeX then
-											minChangeX = xChange
-											absMinChangeX = math.abs(xChange)
-										end
-									end
-
-									if yChange ~= 0 then
-										yVotes = yVotes + math.abs(yChange)
-										hit = true
-
-										if not minChangeY or math.abs(yChange) < absMinChangeY then
-											minChangeY = yChange
-											absMinChangeY = math.abs(yChange)
-										end
-									end
-
-									-- restore sprite to original position
-
-									othSpr.x = origX
-									othSpr.y = origY
-								end
-							end
-						end
-
-						if hit then
-							if xVotes > 0 and xVotes > yVotes then
-								othSpr.x = othSpr.x + minChangeX
-							elseif yVotes > 0 then
-								othSpr.y = othSpr.y + minChangeY
-							end
-						end
+					if xOverlap ~= 0 or yOverlap ~= 0 then
+						table.insert(collisions, { area = xOverlap * yOverlap, x = xOverlap, y = yOverlap,
+												   a = spr, ax = sprX, ay = sprY })
 					end
 				end
 			end
+		end
+
+		-- sort as usual and pass off collidedWith() calls
+
+		table.sort(collisions, Collision.sortCollisions)
+
+		for _, col in ipairs(collisions) do
+			col.a.x, col.a.y = col.ax, col.ay
+			col.a:collidedWith(other, col.x, col.y)
+		end
+	end,
+
+	-- this is here mainly for completeness; it's better to specify displacement
+	-- in individual map sprites
+
+	displace = function (self, other, xHint, yHint)	
+		if not self.solid or self == other or not other.solid then return end
+		if STRICT then assert(other:instanceOf(Sprite), 'asked to displace a non-sprite') end
+
+		local spriteWidth = self.spriteWidth
+		local spriteHeight = self.spriteHeight
+		local startX, startY = self:pixelToMap(other.x - self.x, other.y - self.y)
+		local endX, endY = self:pixelToMap(other.x + other.width - self.x,
+										   other.y + other.height - self.y)
+
+		-- collect collisions against sprites
+
+		local collisions = {}
+		
+		for x = startX, endX do 
+			for y = startY, endY do
+				local spr = self.sprites[self.map[x][y]]
+				
+				if spr and spr.solid then
+					local sprX = self.x + (x - 1) * spriteWidth
+					local sprY = self.y + (y - 1) * spriteHeight
+					
+					local xOverlap, yOverlap = other:overlap(sprX, sprY, spriteWidth, spriteHeight)
+
+					if xOverlap ~= 0 or yOverlap ~= 0 then
+						table.insert(collisions, { area = xOverlap * yOverlap, x = xOverlap, y = yOverlap,
+												   a = spr, ax = sprX, ay = sprY })
+					end
+				end
+			end
+		end
+
+		-- sort as usual and displace
+
+		table.sort(collisions, Collision.sortCollisions)
+
+		for _, col in ipairs(collisions) do
+			col.a.x, col.a.y = col.ax, col.ay
+			col.a:displace(other)
 		end
 	end,
 

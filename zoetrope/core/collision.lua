@@ -147,7 +147,9 @@ Collision = Class:extend
 		local result = existing or {}
 		
 		if source.solid then
-			if source.sprites then
+			if source.x and source.y and source.width and source.height then
+				table.insert(result, source)
+			elseif source.sprites then
 				for _, spr in pairs(source.sprites) do
 					if spr.sprites then
 						result = self:solidSprites(spr, result)
@@ -155,8 +157,6 @@ Collision = Class:extend
 						table.insert(result, spr)
 					end
 				end
-			else
-				table.insert(result, source)
 			end
 		end
 
