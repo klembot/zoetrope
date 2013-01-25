@@ -96,6 +96,68 @@ Group = Class:extend
 		end
 	end,
 
+	-- Method: moveToFront
+	-- Moves a sprite in the group so that it is drawn on top
+	-- of all other sprites in the group.
+	--
+	-- Arguments:
+	--		sprite - <Sprite> to move, should already be a member of the group
+	--
+	-- Returns:
+	--		nothing
+
+	moveToFront = function (self, sprite)
+		for i, spr in ipairs(self.sprites) do
+			if spr == sprite then
+				table.remove(self.sprites, i)
+				table.insert(self.sprites, sprite)
+				return
+			end
+		end
+
+		if STRICT then
+			print('Warning: asked to move sprite to front of group, but is not a member: ' .. sprite)
+		end
+	end,
+
+	-- Method: moveToBack
+	-- Moves a sprite in the group so that it is drawn below
+	-- all other sprites in the group.
+	--
+	-- Arguments:
+	--		sprite - <Sprite> to move, should already be a member of the group
+	--
+	-- Returns:
+	--		nothing
+	
+	moveToBack = function (self, sprite)
+		for i, spr in ipairs(self.sprites) do
+			if spr == sprite then
+				table.remove(self.sprites, i)
+				table.insert(self.sprites, 1, sprite)
+				return
+			end
+		end
+
+		if STRICT then
+			print('Asked to move sprite to back of group, but is not a member: ' .. sprite)
+		end
+	end,
+
+	-- Method: sort
+	-- Sorts members into a new draw sequence.
+	--
+	-- Arguments:
+	--		func - function to perform the sort. This will receive two <Sprite>s as arguments;
+	--			   the function must return whether the first should be drawn below the second.
+	--
+	-- Returns:
+	--		nothing
+
+	sort = function (self, func)
+		table.sort(self.sprites, func)
+	end,
+
 	-- Method: collide
 	-- Collides all solid sprites in the group with another sprite or group.
 	-- This calls the <Sprite.onCollide> event handlers on all sprites that
