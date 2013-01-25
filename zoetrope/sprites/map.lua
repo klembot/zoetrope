@@ -184,6 +184,7 @@ Map = Sprite:extend
 		for _, col in ipairs(collisions) do
 			col.a.x, col.a.y = col.ax, col.ay
 			col.a:collidedWith(other, col.x, col.y)
+			other:collidedWith(col.a, col.x, col.y)
 		end
 	end,
 
