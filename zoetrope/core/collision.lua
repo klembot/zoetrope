@@ -110,11 +110,11 @@ Collision = Class:extend
 		-- we only add them to grid cells that already have sprites in them.
 
 		for _, d in pairs(deferred) do
-			for x = startX, endX do
+			for x = d.startX, d.endX do
 				if grid[x] then
-					for y = startY, endY do
+					for y = d.startY, d.endY do
 						if grid[x][y] then
-							table.insert(grid[x][y], spr)
+							table.insert(grid[x][y], d.spr)
 						end
 					end
 				end
