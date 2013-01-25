@@ -80,11 +80,14 @@ View = Group:extend
 	--
 	-- Arguments:
 	--		file - filename to load
+	--		tileClass - class to create tiles in tile layers with; constructor
+	--				    will be called with properties: image, width,
+	--			 	    height, imageOffset (with x and y sub-properties)
 	--
 	-- Returns:
 	--		nothing
 
-	loadLayers = function (self, file)
+	loadLayers = function (self, file, tileClass)
 		local ok, data = pcall(loadstring(Cached:text(file)))
 		local _, _, directory = string.find(file, '^(.*[/\\])')
 		directory = directory or ''
@@ -126,7 +129,7 @@ View = Group:extend
 					-- load tiles
 
 					for _, tiles in pairs(data.tilesets) do
-						map:loadTiles(directory .. tiles.image, Tile, tiles.firstgid)
+						map:loadTiles(directory .. tiles.image, tileClass or Tile, tiles.firstgid)
 
 						-- and mix in properties where applicable
 
