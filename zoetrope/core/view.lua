@@ -374,10 +374,12 @@ View = Group:extend
 	end,
 
 	update = function (self, elapsed)
-		local screenWidth = the.app.width
-		local screenHeight = the.app.height
+		Group.update(self, elapsed)
 
 		-- follow the focused sprite
+
+		local screenWidth = the.app.width
+		local screenHeight = the.app.height
 		
 		if self.focus and self.focus.width < screenWidth
 		   and self.focus.height < screenHeight then
@@ -404,8 +406,6 @@ View = Group:extend
 		if self.translate.y < screenHeight - self.maxVisible.y then
 			self.translate.y = screenHeight - self.maxVisible.y
 		end
-
-		Group.update(self, elapsed)
 	end,
 
 	draw = function (self, x, y)

@@ -318,11 +318,12 @@ Group = Class:extend
 	startFrame = function (self, elapsed)
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
-		if self.onStartFrame then self:onStartFrame(elapsed) end
 		
 		for _, spr in pairs(self.sprites) do
 			if spr.active then spr:startFrame(elapsed) end
 		end
+
+		if self.onStartFrame then self:onStartFrame(elapsed) end
 	end,
 
 	-- passes update events to member sprites
@@ -330,11 +331,12 @@ Group = Class:extend
 	update = function (self, elapsed)
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
-		if self.onUpdate then self:onUpdate(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
 			if spr.active then spr:update(elapsed) end
 		end
+
+		if self.onUpdate then self:onUpdate(elapsed) end
 	end,
 
 	-- passes endFrame events to member sprites
@@ -342,11 +344,12 @@ Group = Class:extend
 	endFrame = function (self, elapsed)
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
-		if self.onEndFrame then self:onEndFrame(elapsed) end
 
 		for _, spr in pairs(self.sprites) do
 			if spr.active then spr:endFrame(elapsed) end
 		end
+
+		if self.onEndFrame then self:onEndFrame(elapsed) end
 	end,
 
 	-- Method: draw

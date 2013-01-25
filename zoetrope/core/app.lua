@@ -380,12 +380,13 @@ App = Class:extend
 		self._sleepTime = 0
 
 		-- update everyone
-		-- app gets precedence, then meta view, then view
+		-- all update events bubble up from child to parent
+		-- (we consider the meta view a little 
 
-		if self.onStartFrame then self:onStartFrame(elapsed) end
-		self.meta:startFrame(elapsed)
-		
 		view:startFrame(elapsed)
+		self.meta:startFrame(elapsed)
+		if self.onStartFrame then self:onStartFrame(elapsed) end
+		
 		view:update(elapsed)	
 		self.meta:update(elapsed)
 		if self.onUpdate then self:onUpdate(elapsed) end
@@ -401,7 +402,6 @@ App = Class:extend
 		if inset then love.graphics.translate(self.inset.x, self.inset.y) end
 		self.view:draw()
 		self.meta:draw()
-		if self.onDraw then self:onDraw() end
 		if inset then love.graphics.translate(0, 0) end
 
 		-- sleep off any unneeded time to keep up at our FPS
