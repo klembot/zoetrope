@@ -36,13 +36,17 @@ Cached = Class:extend
 	--		Love image object
 
 	image = function (self, path)
-		assert(type(path) == 'string', 'path must be a string')
-
-		if not self._library.image[path] then
-			self._library.image[path] = love.graphics.newImage(path)
+		if STRICT then
+			assert(type(path) == 'string', 'path must be a string')
 		end
 
-		return self._library.image[path]
+		local realPath = self:_absolutePath(path)
+
+		if not self._library.image[realPath] then
+			self._library.image[realPath] = love.graphics.newImage(realPath)
+		end
+
+		return self._library.image[realPath]
 	end,
 
 	-- Method: text
@@ -55,13 +59,17 @@ Cached = Class:extend
 	--		string
 
 	text = function (self, path)
-		assert(type(path) == 'string', 'path must be a string')
-
-		if not self._library.text[path] then
-			self._library.text[path] = love.filesystem.read(path)
+		if STRICT then
+			assert(type(path) == 'string', 'path must be a string')
 		end
 
-		return self._library.text[path]
+		local realPath = self:_absolutePath(path)
+
+		if not self._library.text[realPath] then
+			self._library.text[realPath] = love.filesystem.read(realPath)
+		end
+
+		return self._library.text[realPath]
 	end,
 
 	-- Method: sound
@@ -85,13 +93,17 @@ Cached = Class:extend
 	--		<playSound>, <sound>
 
 	sound = function (self, path, length)
-		assert(type(path) == 'string', 'path must be a string')
+		if STRICT then
+			assert(type(path) == 'string', 'path must be a string')
+		end
 
-		if not self._library.sound[path] then
+		local realPath = self:_absolutePath(path)
+
+		if not self._library.sound[realPath] then
 			if length == 'short' then
-				self._library.sound[path] = love.sound.newSoundData(path)
+				self._library.sound[realPath] = love.sound.newSoundData(realPath)
 			elseif length == 'long' then
-				self._library.sound[path] = love.sound.newDecoder(path)
+				self._library.sound[realPath] = love.sound.newDecoder(realPath)
 			else
 				error('length must be either "short" or "long"')
 			end
@@ -120,6 +132,10 @@ Cached = Class:extend
 	font = function (self, ...)
 		local arg = {...}
 		local libKey = arg[1]
+
+		if type(libKey) == 'string' then
+			libKey = self:_absolutePath(libKey)
+		end
 
 		if #arg > 1 then libKey = libKey .. arg[2] end
 
@@ -202,6 +218,27 @@ Cached = Class:extend
 		end
 	
 		self._library.binds[{func, obj, arg}] = result
+		return result
+	end,
+
+	-- internal function: _absolutePath
+	-- Replaces any .. references in a path, where possible. 
+	--
+	-- Arguments:
+	--		rawPath - string path to expand
+	--
+	-- Returns:
+	--		string
+
+	_absolutePath = function (self, rawPath)
+		local matches
+		local result = rawPath
+
+		repeat
+			result, matches = string.gsub(result, '[^/]+/%.%./', '')
+			print(result)
+		until matches == 0
+
 		return result
 	end
 }

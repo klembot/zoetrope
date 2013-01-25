@@ -1,8 +1,10 @@
 SpriteTypes = TestApp:extend
 {
 	title = 'Sprite Types',
-	blueGem = 'tests/assets/bluegem.png',
-	chestAnim = 'tests/assets/animation.png',
+
+	-- test .. in paths
+	blueGem = 'tests/assets/../assets/bluegem.png',
+	chestAnim = 'tests/assets/../../tests/assets/animation.png',
 	
 	onNew = function (self)
 		print 'This demonstrates the different types of sprites available in Zoetrope.'
