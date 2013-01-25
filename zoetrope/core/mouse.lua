@@ -200,13 +200,23 @@ Mouse = Sprite:extend{
 	end,
 
 	mouseReleased = function (self, button)
-		self._thisFrame[button] = false
+		-- we ignore wheel-related events to force the button
+		-- to be detectable for at least one frame
+
+		if button ~= 'wd' and button ~= 'wu' then
+			self._thisFrame[button] = false
+		end
 	end,
 
 	endFrame = function (self, elapsed)
 		for key, value in pairs(self._thisFrame) do
 			self._lastFrame[key] = value
 		end
+
+		-- now force mouse wheel buttons to be released
+
+		self._thisFrame.wd = false
+		self._thisFrame.wu = false
 	
 		self.x = love.mouse.getX() - the.app.inset.x
 		self.y = love.mouse.getY() - the.app.inset.y
