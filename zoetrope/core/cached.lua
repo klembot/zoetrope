@@ -236,7 +236,6 @@ Cached = Class:extend
 
 		repeat
 			result, matches = string.gsub(result, '[^/]+/%.%./', '')
-			print(result)
 		until matches == 0
 
 		return result
