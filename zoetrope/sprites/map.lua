@@ -138,6 +138,100 @@ Map = Sprite:extend
 		return self
 	end,
 
+	-- Method: getMapSize
+	-- Returns the size of the map in map coordinates.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		width and height in integers
+
+	getMapSize = function (self)
+		if #self.map == 0 then
+			return 0, 0
+		else
+			return #self.map, #self.map[1]
+		end
+	end,
+
+	-- Method: pixelToMap
+	-- Converts pixels to map coordinates.
+	--
+	-- Arguments:
+	--		x - x coordinate in pixels
+	--		y - y coordinate in pixels
+	--		clamp - clamp to map bounds? defaults to true
+	--
+	-- Returns:
+	--		x, y map coordinates
+
+	pixelToMap = function (self, x, y, clamp)
+		if type(clamp) == 'nil' then clamp = true end
+
+		-- remember, Lua tables start at index 1
+
+		local mapX = math.floor(x / self.spriteWidth) + 1
+		local mapY = math.floor(y / self.spriteHeight) + 1
+		
+		-- clamp to map bounds
+		
+		if clamp then
+			if mapX < 1 then mapX = 1 end
+			if mapY < 1 then mapY = 1 end
+			if mapX > #self.map then mapX = #self.map end
+			if mapY > #self.map[1] then mapY = #self.map[1] end
+		end
+
+		return mapX, mapY
+	end,
+
+	-- Method: spriteAtMap
+	-- Returns the sprite at a given set of map coordinates, with
+	-- the correct pixel position for that sprite. Remember that
+	-- sprites in maps are shared, so any changes you make to one
+	-- sprite will carry over to all instances of that sprite in the map.
+	--
+	-- Arguments:
+	--		x - x coordinate in map units
+	--		y - y coordinate in map units
+	--
+	-- Returns:
+	--		<Sprite> instance. If no sprite is present at these
+	--		coordinates, the method returns nil.
+
+	spriteAtMap = function (self, x, y)
+		if self.map[x] and self.map[x][y] then
+			local spr = self.sprites[self.map[x][y]]
+
+			if spr then 
+				spr.x = (x - 1) * self.spriteWidth
+				spr.y = (y - 1) * self.spriteHeight
+				return spr
+			end
+		elseif STRICT then
+			print('Warning: asked for map sprite at ' .. x .. ', ' .. y ' but map isn\'t that big')
+		end
+	end,
+
+	-- Method: spriteAtPixel
+	-- Returns the sprite at a given set of pixel coordinates, with
+	-- the correct pixel position for that sprite. Remember that
+	-- sprites in maps are shared, so any changes you make to one
+	-- sprite will carry over to all instances of that sprite in the map.
+	--
+	-- Arguments:
+	--		x - x coordinate in pixels
+	--		y - y coordinate in pixels
+	--
+	-- Returns:
+	--		<Sprite> instance. If no sprite is present at these
+	--		coordinates, the method returns nil.
+
+	spriteAtPixel = function (self, x, y)
+		return self:spriteAtMap((x - 1) * self.spriteWidth, (y - 1) * self.spriteHeight)
+	end,
+
 	-- This overrides a method in <Sprite>, passing along
 	-- collidedWith() calls to all sprites in the map touching a
 	-- sprite.
@@ -233,23 +327,6 @@ Map = Sprite:extend
 		end
 	end,
 
-	-- Method: getMapSize
-	-- Returns the size of the map in sprites.
-	--
-	-- Arguments:
-	--		none
-	--
-	-- Returns:
-	--		width and height in integers
-
-	getMapSize = function (self)
-		if #self.map == 0 then
-			return 0, 0
-		else
-			return #self.map, #self.map[1]
-		end
-	end,
-
 	draw = function (self, x, y)
 		-- lock our x/y coordinates to integers
 		-- to avoid gaps in the tiles
@@ -291,37 +368,6 @@ Map = Sprite:extend
 				sprite:draw(coords[1], coords[2])
 			end
 		end
-	end,
-
-	-- Method: pixelToMap
-	-- Converts pixels to map coordinates.
-	--
-	-- Arguments:
-	--		x - x coordinate in pixels
-	--		y - y coordinate in pixels
-	--		clamp - clamp to map bounds? defaults to true
-	--
-	-- Returns:
-	--		x, y map coordinates
-
-	pixelToMap = function (self, x, y, clamp)
-		if type(clamp) == 'nil' then clamp = true end
-
-		-- remember, Lua tables start at index 1
-
-		local mapX = math.floor(x / self.spriteWidth) + 1
-		local mapY = math.floor(y / self.spriteHeight) + 1
-		
-		-- clamp to map bounds
-		
-		if clamp then
-			if mapX < 1 then mapX = 1 end
-			if mapY < 1 then mapY = 1 end
-			if mapX > #self.map then mapX = #self.map end
-			if mapY > #self.map[1] then mapY = #self.map[1] end
-		end
-
-		return mapX, mapY
 	end,
 
 	-- makes sure all sprites receive startFrame messages
