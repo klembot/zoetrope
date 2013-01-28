@@ -341,6 +341,8 @@ DebugConsole = Group:extend{
 if debugger then
 	debugger.reload = function()
 		if DEBUG then
+			love.audio.stop()
+
 			-- create local references to needed variables
 			-- because we're about to blow the global scope away
 
