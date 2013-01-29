@@ -12,7 +12,8 @@
 --		- Control-Alt-S saves a screenshot to the app's directory --
 --		  see https://love2d.org/wiki/love.filesystem for where this is.
 
-DebugConsole = Group:extend{
+DebugConsole = Group:extend
+{
 	-- Property: toggleKey
 	-- What key toggles visibility. By default, this is the tab key.
 	toggleKey = 'tab',
@@ -83,7 +84,8 @@ DebugConsole = Group:extend{
 		obj:add(obj.prompt)
 
 		local inputIndent = obj.log._fontObj:getWidth('>') + 4
-		obj.input = TextInput:new{
+		obj.input = TextInput:new
+		{
 			x = inputIndent, y = 0, width = the.app.width,
 			active = false,
 			onType = function (self, char)
@@ -117,6 +119,22 @@ DebugConsole = Group:extend{
 
 		obj._oldPrint = print
 		print = function (...)
+			local caller = debug.getinfo(2)
+
+			if caller.linedefined ~= 0 then
+				obj.log.text = obj.log.text .. '(' .. caller.short_src .. ':' .. caller.linedefined .. ') '
+			end
+
+			for _, value in pairs{...} do
+				obj.log.text = obj.log.text .. tostring(value) .. ' '
+			end
+
+			obj.log.text = obj.log.text .. '\n'
+			obj._updateLog = true
+			obj._oldPrint(...)
+		end
+
+		debugger._unsourcedPrint = function (...)
 			for _, value in pairs{...} do
 				obj.log.text = obj.log.text .. tostring(value) .. ' '
 			end
@@ -171,7 +189,7 @@ DebugConsole = Group:extend{
 
 	execute = function (self, code)
 		if string.sub(code, 1, 1) == '=' then
-			code = 'print (' .. string.sub(code, 2) .. ')'
+			code = 'debugger._unsourcedPrint (' .. string.sub(code, 2) .. ')'
 		end
 
 		local func, err = loadstring(code)
@@ -180,14 +198,14 @@ DebugConsole = Group:extend{
 			local ok, result = pcall(func)
 
 			if not ok then
-				print('Error, ' .. tostring(result) .. '\n')
+				debugger._unsourcedPrint('Error, ' .. tostring(result) .. '\n')
 			else
-				print('')
+				debugger._unsourcedPrint('')
 			end
 
 			return tostring(result)
 		else
-			print('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
+			debugger._unsourcedPrint('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
 		end
 	end,
 
@@ -265,12 +283,13 @@ DebugConsole = Group:extend{
 			-- update log
 
 			if self._updateLog then
-				local maxHeight = the.app.height - 20
+				local lineHeight = self.log._fontObj:getHeight()
 				local _, height = self.log:getSize()
-
-				while height > maxHeight do
-					self.log.text = string.gsub(self.log.text, '^.-\n', '') 
-					_, height = self.log:getSize()
+				local linesToDelete = math.ceil((height - the.app.height - 20) / lineHeight)
+				
+				if linesToDelete > 0 then
+					self.log.text = string.gsub(self.log.text, '.-\n', '', linesToDelete) 
+					height = height - linesToDelete * lineHeight
 				end
 
 				self.prompt.y = height + 4
@@ -310,7 +329,7 @@ DebugConsole = Group:extend{
 			end
 
 			if the.keys:justPressed('return') then
-				print('>' .. self.input.text)
+				debugger._unsourcedPrint('>' .. self.input.text)
 				self:execute(self.input.text)
 				table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
 
