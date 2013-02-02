@@ -16,7 +16,8 @@
 -- Extends:
 --		<Sprite>
 
-Keys = Sprite:extend{
+Keys = Sprite:extend
+{
 	visible = false,
 
 	-- Property: typed
@@ -203,12 +204,23 @@ Keys = Sprite:extend{
 		return unpack(result)
 	end,
 
+	-- Converts a character code to a Unicode string
+	-- see http://stackoverflow.com/questions/7780179/what-is-the-way-to-represent-a-unichar-in-lua/7799843
+
+	unicodeChar = function (self, code)
+		if code == nil then return nil end
+		if code < 32 then return string.format('\\x%02x', code) end
+		if code < 126 then return string.char(code) end
+		if code < 65539 then return string.format("\\u%04x", code) end
+		if code < 1114111 then return string.format("\\u%08x", code) end
+	end,
+
 	-- Connects to the love.keypressed callback
 
 	keyPressed = function (self, key, unicode)
 		self._thisFrame[key] = true
 		if unicode and unicode >= 0x20 and unicode ~= 127 and unicode < 0x3000 then
-			self.typed = self.typed .. string.char(unicode)
+			self.typed = self.typed .. self:unicodeChar(unicode)
 		end
 
 		-- aliases for modifiers
