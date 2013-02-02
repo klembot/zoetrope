@@ -78,7 +78,6 @@ Storage = Class:extend{
 		local ok, data = pcall(love.filesystem.read, self.filename)
 
 		if ok then
-			print(data)
 			ok, self.data = pcall(loadstring('return ' .. data))
 			
 			if not ok then
