@@ -36,6 +36,6 @@ Tiled = TestApp:extend
 	end,
 
 	onUpdate = function (self)
-		self.view.map:subdisplace(the.player)
+		self.view.map:displace(the.player)
 	end
 }
