@@ -17,7 +17,8 @@
 -- Event: onNew
 -- 		Called once, when a new object is created via <new()>.
 
-Class = {
+Class =
+{
 	-- Method: extend
 	-- Creates a subclass of a class object, replacing any class properties
 	-- with those in the object passed. It also sets the subclass's prototype
