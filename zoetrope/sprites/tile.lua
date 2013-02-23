@@ -60,10 +60,10 @@ Tile = Sprite:extend
 		y = math.floor(y or self.y)
 	
 		if STRICT then
-			assert(type(x) == 'number', 'visible fill does not have a numeric x property')
-			assert(type(y) == 'number', 'visible fill does not have a numeric y property')
-			assert(type(self.width) == 'number', 'visible fill does not have a numeric width property')
-			assert(type(self.height) == 'number', 'visible fill does not have a numeric height property')
+			assert(type(x) == 'number', 'visible tile does not have a numeric x property')
+			assert(type(y) == 'number', 'visible tile does not have a numeric y property')
+			assert(type(self.width) == 'number', 'visible tile does not have a numeric width property')
+			assert(type(self.height) == 'number', 'visible tile does not have a numeric height property')
 		end
 
 		if not self.image then return end
