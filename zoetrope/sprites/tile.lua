@@ -22,7 +22,7 @@ Tile = Sprite:extend
 	-- image must be a nonsense value, not nil,
 	-- for the tile to see that an image has been set if it
 	-- was initially nil
-	_set = { image = -1, imageOffset = { x = 0, y = 0 } },
+	_set = { image = -1 },
 
 	-- private property imageObj: actual Image instance used to draw
 	-- this is normally set via the image property, but you may set it directly
@@ -31,6 +31,7 @@ Tile = Sprite:extend
 	new = function (self, obj)
 		obj = obj or {}
 		self:extend(obj)
+		obj._set.imageOffset = {}
 		
 		if obj.image then obj:updateQuad() end
 		if obj.onNew then obj:onNew() end
