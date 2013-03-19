@@ -30,8 +30,9 @@ CollisionBlock = Fill:extend
 		end
 	end,
 
-	onCollide = function (self)
+	onCollide = function (self, other)
 		self.fill = CollisionBlock.hitFill
+		if the.app.mode == 'displace' then self:displace(other) end
 	end
 }
 
@@ -65,12 +66,7 @@ CollisionBenchmark = TestApp:extend
 			end
 		end
 
-		if self.mode == 'collide' then
-			self.blocks:collide(self.blocks)
-		else
-			self.blocks:displace(self.blocks)
-		end
-
+		self.blocks:collide()
 		self.currentFPS = math.floor(1 / elapsed)
 	
 		if self.currentFPS >= self.minFPS then
