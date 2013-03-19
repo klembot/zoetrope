@@ -174,7 +174,7 @@ Promise = Class:extend
 	--		This way, you can chain together promises.
 
 	andAlways = function (self, func)
-		self:andThen(func, func)
+		return self:andThen(func, func)
 	end,
 
 	-- internal method: _complete
