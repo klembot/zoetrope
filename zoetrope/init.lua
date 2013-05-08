@@ -36,67 +36,7 @@ if DEBUG then
 	-- initial view, doesn't work
 
 	love.errhand = function (message)
-		if debugger._crashed then
-			debugger._originalErrhand(message)
-			return
-		end
-
-		if the.console and the.keys then
-			debugger._crashed = true
-			print(string.rep('=', 40))
-			print('\nCrash, ' .. message .. '\n')
-			print(debug.traceback())
-			print('\n' .. string.rep('=', 40) .. '\n')
-			the.console:show()
-			love.audio.stop()
-
-			-- enter a mini event loop, just updating the
-			-- console and keys
-
-			local elapsed = 0
-
-			while true do
-				if love.event then
-					love.event.pump()
-					
-					for e, a, b, c, d in love.event.poll() do
-						if e == 'quit' then
-							if not love.quit or not love.quit() then return end
-						end
-
-						love.handlers[e](a, b, c, d)
-					end
-				end
-
-				if love.timer then
-					love.timer.step()
-					elapsed = love.timer.getDelta()
-				end
-
-				the.keys:startFrame(elapsed)
-				the.console:startFrame(elapsed)
-				the.keys:update(elapsed)
-				the.console:update(elapsed)
-				the.keys:endFrame(elapsed)
-				the.console:endFrame(elapsed)
-
-				if the.keys:pressed('escape') then
-					if not love.quit or not love.quit() then return end
-				end
-
-				if love.graphics then
-					love.graphics.clear()
-					if love.draw then
-						the.console:draw()
-					end
-				end
-
-				if love.timer then love.timer.sleep(0.02) end
-				if love.graphics then love.graphics.present() end
-			end
-		else
-			debugger._originalErrhand(message)
-		end
+		if debugger._handleCrash then debugger._handleCrash(message) end
 	end
 end
 

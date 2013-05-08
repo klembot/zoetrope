@@ -23,6 +23,10 @@ Debugging = TestApp:extend
 
 	onUpdate = function (self)
 		if the.keys:justPressed('d') and the.keys:pressed('ctrl') then
+			local testLocal = 'a string'
+			local testLocal2 = 23
+			local testLocal3 = true
+
 			error('testing error handler')
 		end
 	end

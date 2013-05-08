@@ -1,6 +1,7 @@
 -- Class: DebugConsole
 -- It can be used to keep track of fps, the position of a sprite,
--- and so on. It only updates when visible.
+-- and so on. It only updates when visible. After being created, it
+-- is accessible via <the>.console.
 --
 -- This also allows debugging hotkeys -- e.g. you could set it so that
 -- pressing Control-Alt-I toggles invincibility of the player sprite.
@@ -134,7 +135,7 @@ DebugConsole = Group:extend
 			obj._oldPrint(...)
 		end
 
-		debugger._unsourcedPrint = function (...)
+		obj._unsourcedPrint = function (...)
 			for _, value in pairs{...} do
 				obj.log.text = obj.log.text .. tostring(value) .. ' '
 			end
@@ -189,7 +190,7 @@ DebugConsole = Group:extend
 
 	execute = function (self, code)
 		if string.sub(code, 1, 1) == '=' then
-			code = 'debugger._unsourcedPrint (' .. string.sub(code, 2) .. ')'
+			code = 'the.console._unsourcedPrint (' .. string.sub(code, 2) .. ')'
 		end
 
 		local func, err = loadstring(code)
@@ -198,14 +199,14 @@ DebugConsole = Group:extend
 			local ok, result = pcall(func)
 
 			if not ok then
-				debugger._unsourcedPrint('Error, ' .. tostring(result) .. '\n')
+				the.console._unsourcedPrint('Error, ' .. tostring(result) .. '\n')
 			else
-				debugger._unsourcedPrint('')
+				the.console._unsourcedPrint('')
 			end
 
 			return tostring(result)
 		else
-			debugger._unsourcedPrint('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
+			the.console._unsourcedPrint('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
 		end
 	end,
 
@@ -329,7 +330,7 @@ DebugConsole = Group:extend
 			end
 
 			if the.keys:justPressed('return') then
-				debugger._unsourcedPrint('>' .. self.input.text)
+				the.console._unsourcedPrint('>' .. self.input.text)
 				self:execute(self.input.text)
 				table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
 
@@ -347,17 +348,18 @@ DebugConsole = Group:extend
 	end
 }
 
--- Function: debugger.reload
--- Resets the entire app and forces all code to be reloaded from 
--- on disk. via https://love2d.org/forums/viewtopic.php?f=3&t=7965
--- 
--- Arguments:
---		none
---
--- Returns:
---		nothing
-
 if debugger then
+
+	-- Function: debugger.reload
+	-- Resets the entire app and forces all code to be reloaded from 
+	-- on disk. via https://love2d.org/forums/viewtopic.php?f=3&t=7965
+	-- 
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
 	debugger.reload = function()
 		if DEBUG then
 			love.audio.stop()
@@ -384,6 +386,110 @@ if debugger then
 
 			require('main')
 			love.load()
+		end
+	end
+
+	-- internal function: debugger._handleCrash
+	-- This replaces the default love.errhand() method, displaying
+	-- a stack trace and allowing inspection of the state of things.
+	-- 
+	-- Arguments:
+	--		message - string error message to display
+	--
+	-- Returns:
+	--		nothing
+
+	debugger._handleCrash = function (message)
+		if debugger._crashed then
+			debugger._originalErrhand(message)
+			return
+		end
+
+		if the.console and the.keys then
+			debugger._crashed = true
+			local print = the.console._unsourcedPrint
+
+			print(string.rep('=', 40))
+			print('\nCrash, ' .. message)
+			print(debug.traceback('', 3))
+			print('\nlocal variables:')
+
+			-- http://www.lua.org/pil/23.1.1.html
+
+			local i = 1
+
+			while true do
+				local name, value = debug.getlocal(4, i)
+				if not name then break end
+
+				print(name .. ':', value)
+				_G[name] = value
+				 
+				i = i + 1
+			end
+
+			print('\n' .. string.rep('=', 40) .. '\n')
+			the.console:show()
+			love.audio.stop()
+
+			if debugger._miniEventLoop then debugger._miniEventLoop() end
+		else
+			debugger._originalErrhand(message)
+		end
+	end
+
+	-- internal function: debugger._miniEventLoop
+	-- This replicates the entire LOVE event loop, but only updates/draws
+	-- the debug console and keyboard. This is so that after a crash or
+	-- during a break, drawing and updates still continue to happen.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		nothing
+
+	debugger._miniEventLoop = function()
+		local elapsed = 0
+
+		while true do
+			if love.event then
+				love.event.pump()
+				
+				for e, a, b, c, d in love.event.poll() do
+					if e == 'quit' then
+						if not love.quit or not love.quit() then return end
+					end
+
+					love.handlers[e](a, b, c, d)
+				end
+			end
+
+			if love.timer then
+				love.timer.step()
+				elapsed = love.timer.getDelta()
+			end
+
+			the.keys:startFrame(elapsed)
+			the.console:startFrame(elapsed)
+			the.keys:update(elapsed)
+			the.console:update(elapsed)
+			the.keys:endFrame(elapsed)
+			the.console:endFrame(elapsed)
+
+			if the.keys:pressed('escape') then
+				if not love.quit or not love.quit() then return end
+			end
+
+			if love.graphics then
+				love.graphics.clear()
+				if love.draw then
+					the.console:draw()
+				end
+			end
+
+			if love.timer then love.timer.sleep(0.03) end
+			if love.graphics then love.graphics.present() end
 		end
 	end
 end
