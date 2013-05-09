@@ -228,14 +228,14 @@ function dump (source, ignore)
 
 		for key, value in pairs(source) do
 			if not ignore[value] then
+				if type(value) == 'table' then
+					ignore[value] = true
+				end
+
 				local dumpValue = dump(value, ignore)
 
 				if dumpValue ~= '' then
 					result = result .. '["' .. key .. '"] = ' .. dumpValue .. ', '
-				end
-
-				if type(value) == 'table' then
-					ignore[value] = true
 				end
 			end
 		end
