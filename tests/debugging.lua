@@ -29,5 +29,13 @@ Debugging = TestApp:extend
 
 			error('testing error handler')
 		end
+
+		if the.keys:justPressed('b') and the.keys:pressed('ctrl') then
+			debugger.breakpt()
+			local a = 1
+			local b = 2
+			local c = a + b
+			print(c)
+		end
 	end
 }

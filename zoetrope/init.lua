@@ -46,6 +46,7 @@ if STRICT then
 	setmetatable(_G, {
 		__index = function (table, key)
 			local info = debug.getinfo(2, 'Sl')
+			local print = the.console._unsourcedPrint or print
 			print('Warning: accessing undefined global ' .. key .. ', ' ..
 				  info.short_src .. ' line ' .. info.currentline)
 		end

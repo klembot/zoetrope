@@ -388,6 +388,35 @@ if debugger then
 			love.load()
 		end
 	end
+	
+	debugger.breakpt = function()
+		local print = the.console._unsourcedPrint or print
+		local caller = debug.getinfo(2, 'S')
+
+		the.console:show()
+		print(string.rep('=', 40))
+		print('\nBreakpoint, ' .. caller.short_src .. ', ' .. caller.linedefined .. '\n')
+		print(string.rep('=', 40))
+		debug.sethook(debugger._stepLine, 'l')
+	end
+
+	debugger._stepLine = function (_, line)
+		local state = debug.getinfo(2, 'S')
+
+		if state.func ~= debugger._stepLine then
+			local print = the.console._unsourcedPrint or print
+			print(state.short_src, line)
+
+			local paused = true
+
+			while paused do
+				debugger._miniEventLoop()
+				paused = not the.keys:pressed('right')
+			end
+			
+			print('stepping')
+		end
+	end
 
 	-- internal function: debugger._handleCrash
 	-- This replaces the default love.errhand() method, displaying
@@ -452,7 +481,7 @@ if debugger then
 			the.console:show()
 			love.audio.stop()
 
-			if debugger._miniEventLoop then debugger._miniEventLoop() end
+			if debugger._miniEventLoop then debugger._miniEventLoop(true) end
 		else
 			debugger._originalErrhand(message)
 		end
@@ -464,15 +493,15 @@ if debugger then
 	-- during a break, drawing and updates still continue to happen.
 	--
 	-- Arguments:
-	--		none
+	--		forever - run indefinitely, or just for a single frame?
 	--
 	-- Returns:
 	--		nothing
 
-	debugger._miniEventLoop = function()
+	debugger._miniEventLoop = function (forever)
 		local elapsed = 0
 
-		while true do
+		repeat
 			if love.event then
 				love.event.pump()
 				
@@ -510,6 +539,6 @@ if debugger then
 
 			if love.timer then love.timer.sleep(0.03) end
 			if love.graphics then love.graphics.present() end
-		end
+		until not forever 
 	end
 end
