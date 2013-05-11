@@ -393,6 +393,8 @@ if debugger then
 		local print = the.console._unsourcedPrint or print
 		local caller = debug.getinfo(2, 'S')
 
+		debugger._sourceFiles = {}
+
 		the.console:show()
 		print(string.rep('=', 40))
 		print('\nBreakpoint, ' .. caller.short_src .. ', ' .. caller.linedefined .. '\n')
@@ -402,10 +404,25 @@ if debugger then
 
 	debugger._stepLine = function (_, line)
 		local state = debug.getinfo(2, 'S')
+		local sourceLine
 
 		if state.func ~= debugger._stepLine then
 			local print = the.console._unsourcedPrint or print
-			print(state.short_src, line)
+			local file = string.match(state.source, '^@(.*)')
+
+			if file then
+				if not debugger._sourceFiles[file] then
+					debugger._sourceFiles[file] = {}
+
+					for line in love.filesystem.lines(file) do
+						table.insert(debugger._sourceFiles[file], line)
+					end
+				end
+
+				sourceLine = debugger._sourceFiles[file][line]
+			end
+
+			print(state.short_src .. ', ' .. line .. ':\t' .. (sourceLine or '(source not available)'))
 
 			local paused = true
 
