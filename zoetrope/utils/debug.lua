@@ -408,6 +408,7 @@ if debugger then
 		if the.console and the.keys then
 			debugger._crashed = true
 			local print = the.console._unsourcedPrint
+			setmetatable(_G, nil)
 
 			print(string.rep('=', 40))
 			print('\nCrash, ' .. message)
@@ -417,15 +418,34 @@ if debugger then
 			-- http://www.lua.org/pil/23.1.1.html
 
 			local i = 1
+			local localVars = {}
 
 			while true do
 				local name, value = debug.getlocal(4, i)
 				if not name then break end
 
-				print(name .. ':', value)
-				_G[name] = value
+				if (not string.find(name, ' ')) then
+					table.insert(localVars, name)
+					_G[name] = value
+				end
 				 
 				i = i + 1
+			end
+
+			table.sort(localVars)
+
+			for _, name in pairs(localVars) do
+				local val
+
+				if type(_G[name]) == 'string' then
+					val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
+				elseif type(_G[name]) == 'table' then
+					val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
+				else
+					val = tostring(_G[name])
+				end
+
+				print(name .. ': ' .. val)
 			end
 
 			print('\n' .. string.rep('=', 40) .. '\n')
