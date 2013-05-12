@@ -68,13 +68,10 @@ end
 debugger._stepLine = function (_, line)
 	local state = debug.getinfo(2, 'S')
 
-	for key, _ in pairs(debugger) do
-		if state.func == debugger[key] then return end
-	end
+	-- not totally in love with this, but it's faster than
+	-- checking all possible values
 
-	for key, _ in pairs(the.console) do
-		if state.func == the.console[key] then return end
-	end
+	if string.find(state.source, 'zoetrope/debug') then return end
 
 	local file = string.match(state.source, '^@(.*)')
 	the.console.stepper:showLine(file, line)
