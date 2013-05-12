@@ -81,11 +81,18 @@ require 'zoetrope.ui.button'
 require 'zoetrope.ui.cursor'
 require 'zoetrope.ui.textinput'
 
-require 'zoetrope.utils.debug'
 require 'zoetrope.utils.factory'
 require 'zoetrope.utils.recorder'
 require 'zoetrope.utils.storage'
 require 'zoetrope.utils.subview'
+
+if DEBUG then
+	require 'zoetrope.debug.console'
+	require 'zoetrope.debug.hotkeys'
+	require 'zoetrope.debug.stepper'
+	require 'zoetrope.debug.watch'
+	require 'zoetrope.debug.debugger'
+end
 
 -- simple load function to bootstrap the app if love.load() hasn't already been defined;
 -- defining it again after this works fine as well

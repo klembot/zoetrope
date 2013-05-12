@@ -394,6 +394,31 @@ if debugger then
 		local caller = debug.getinfo(2, 'S')
 
 		debugger._sourceFiles = {}
+		debugger._breakControls = Group:new()
+
+		debugger._breakControls:add(Button:new
+		{
+			x = 200, y = the.app.height - 20,
+			width = 100, height = 20,
+			label = Text:new{ text = 'Step', width = 100, align = 'center' },
+			background = Fill:new{ width = 100, height = 20, fill = {0, 0, 0}, border = {255, 255, 255} },
+			onMouseUp = function(self)
+				debugger._stepCommand = 'next'
+			end
+		})
+
+		debugger._breakControls:add(Button:new
+		{
+			x = 400, y = the.app.height - 20,
+			width = 100, height = 20,
+			label = Text:new{ text = 'Continue', width = 100, align = 'center' },
+			background = Fill:new{ width = 100, height = 20, fill = {0, 0, 0}, border = {255, 255, 255} },
+			onMouseUp = function(self)
+				debugger._stepCommand = 'continue'
+			end
+		})
+
+		the.console:add(debugger._breakControls)
 
 		the.console:show()
 		print(string.rep('=', 40))
@@ -404,34 +429,47 @@ if debugger then
 
 	debugger._stepLine = function (_, line)
 		local state = debug.getinfo(2, 'S')
+
+		for key, _ in pairs(debugger) do
+			print('skipping debugger statement')
+			if state.func == debugger[key] then return end
+		end
+
+		for key, _ in pairs(the.console) do
+			print('skipping console statement')
+			if state.func == the.console[key] then return end
+		end
+
+		local print = the.console._unsourcedPrint or print
+		local file = string.match(state.source, '^@(.*)')
 		local sourceLine
 
-		if state.func ~= debugger._stepLine then
-			local print = the.console._unsourcedPrint or print
-			local file = string.match(state.source, '^@(.*)')
+		if file then
+			if not debugger._sourceFiles[file] then
+				debugger._sourceFiles[file] = {}
 
-			if file then
-				if not debugger._sourceFiles[file] then
-					debugger._sourceFiles[file] = {}
-
-					for line in love.filesystem.lines(file) do
-						table.insert(debugger._sourceFiles[file], line)
-					end
+				for line in love.filesystem.lines(file) do
+					table.insert(debugger._sourceFiles[file], line)
 				end
-
-				sourceLine = debugger._sourceFiles[file][line]
 			end
 
-			print(state.short_src .. ', ' .. line .. ':\t' .. (sourceLine or '(source not available)'))
+			sourceLine = debugger._sourceFiles[file][line]
+		end
 
-			local paused = true
+		print(state.short_src .. ', ' .. line .. ':\t' .. (sourceLine or '(source not available)'))
 
-			while paused do
-				debugger._miniEventLoop()
-				paused = not the.keys:pressed('right')
+		debugger._stepPaused = true
+
+		while debugger._stepPaused do
+			debugger._miniEventLoop()
+
+			if debugger._stepCommand == 'next' then
+				debugger._stepPaused = false
+			elseif debugger._stepCommand == 'continue' then
+				debugger._stepPaused = false
+				the.console:hide()
+				debug.sethook()
 			end
-			
-			print('stepping')
 		end
 	end
 
@@ -506,7 +544,7 @@ if debugger then
 
 	-- internal function: debugger._miniEventLoop
 	-- This replicates the entire LOVE event loop, but only updates/draws
-	-- the debug console and keyboard. This is so that after a crash or
+	-- the debug console, keyboard, and mouse. This is so that after a crash or
 	-- during a break, drawing and updates still continue to happen.
 	--
 	-- Arguments:
@@ -537,10 +575,13 @@ if debugger then
 			end
 
 			the.keys:startFrame(elapsed)
+			the.mouse:startFrame(elapsed)
 			the.console:startFrame(elapsed)
 			the.keys:update(elapsed)
+			the.mouse:update(elapsed)
 			the.console:update(elapsed)
 			the.keys:endFrame(elapsed)
+			the.mouse:endFrame(elapsed)
 			the.console:endFrame(elapsed)
 
 			if the.keys:pressed('escape') then

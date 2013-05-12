@@ -4,8 +4,8 @@ Debugging = TestApp:extend
 {
 	onRun = function (self)
 		the.block = Fill:new { x = 300, y = 200, width = 200, height = 200, fill = {255, 255, 255 } }
-		the.console:watch('the.block.x', 'the.block.x')
-		the.console:watch('the.block.y', 'the.block.y')
+		debugger.watch('the.block.x')
+		debugger.watch('the.block.y')
 		self:add(the.block)
 
 		self:add(Text:new
