@@ -2,6 +2,7 @@ DEBUG = true
 STRICT = true
 
 require 'tests'
+if arg[#arg] == "-debug" then require("mobdebug").start() end
 
 MenuButton = Button:extend
 {

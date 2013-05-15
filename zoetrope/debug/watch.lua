@@ -1,21 +1,19 @@
-DebugWatch = Group:extend
+DebugWatch = DebugInstrument:extend
 {
 	_watches = {},
 
-	new = function (self, obj)
-		obj = self:extend(obj or {})
+	onNew = function (self)
+		self.title.text = 'Watch'
+		self.labels = Text:new{ font = self.font }
+		self.values = Text:new{ font = self.font }
+		self.lineHeight = self.labels._fontObj:getHeight()
+		self:add(self.labels)
+		self:add(self.values)
 
-		obj.labels = Text:new{ x = the.app.width - the.console.sidebarWidth, y = 0, width = 90, align = 'right' }
-		obj.values = Text:new{ x = obj.labels.x + 100, y = 0, width = 90 }
+		self:addExpression('love.timer.getFPS()', 'FPS')
+		self:addExpression('math.floor(collectgarbage("count") / 1024) .. "M"', 'Memory used')
 
-		obj:add(obj.labels)
-		obj:add(obj.values)
-
-		obj:addExpression('love.timer.getFPS()', 'FPS')
-		obj:addExpression('math.floor(collectgarbage("count") / 1024) .. "M"', 'Memory used')
-
-		Group.new(obj)
-		return obj
+		debugger.watch = function (exp, label) self:addExpression(exp, label) end
 	end,
 
 	-- Method: addExpression
@@ -28,9 +26,11 @@ DebugWatch = Group:extend
 	addExpression = function (self, expression, label)
 		table.insert(self._watches, { label = label or expression,
 									  func = loadstring('return ' .. expression) })
+	
+		self.contentHeight = #self._watches * self.lineHeight + 2 * self.spacing
 	end,
 
-	update = function (self)
+	onUpdate = function (self)
 		if self.visible then
 			self.labels.text = ''
 			self.values.text = ''
@@ -42,5 +42,16 @@ DebugWatch = Group:extend
 				self.values.text = self.values.text .. tostring(value) .. '\n'
 			end
 		end
+	end,
+
+	onResize = function (self, x, y, width, height)
+		self.labels.y, self.values.y = y + self.spacing, y + self.spacing
+		self.labels.height, self.values.height = height, height
+
+		self.labels.x = x + self.spacing
+		self.labels.width = width / 2 - self.spacing * 2
+		
+		self.values.x = self.labels.x + self.labels.width + self.spacing
+		self.values.width = self.labels.width
 	end
 }

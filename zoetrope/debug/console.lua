@@ -1,19 +1,11 @@
 -- Class: DebugConsole
--- It can be used to keep track of fps, the position of a sprite,
--- and so on. It only updates when visible. After being created, it
--- is accessible via <the>.console. All debugging instruments, even
--- <DebugHotkeys>, are children of this group.
+-- Displays a running log of output that is print()ed, and allows
+-- interactive execution of Lua This adds a debugger.unsourcedPrint
+-- function that allows output of text without the usual source
+-- attribution.
 
-DebugConsole = Group:extend
+DebugConsole = DebugInstrument:extend
 {
-	-- Property: toggleKey
-	-- What key toggles visibility. By default, this is the tab key.
-	toggleKey = 'tab',
-
-	-- Property: sidebarWidth
-	-- How much space to reserve on the right side, for watches and stack traces.
-	sidebarWidth = 300,
-
 	-- Property: inputHistory
 	-- A table of previously-entered commands.
 	inputHistory = {},
@@ -22,10 +14,8 @@ DebugConsole = Group:extend
 	-- Which history entry, if any, we are displaying.
 	inputHistoryIndex = 1,
 
-	visible = false,
-
-	-- Property: bg
-	-- The background <Fill> used to darken the view.
+	width = 'wide',
+	contentHeight = '*',
 
 	-- Property: log
 	-- The <Text> sprite showing recent lines in the log.
@@ -36,111 +26,116 @@ DebugConsole = Group:extend
 	-- Property: prompt
 	-- The <Text> sprite that shows a > in front of commands.
 
-	new = function (self, obj)
-		local width = the.app.width
-		local height = the.app.height
+	onNew = function (self)
+		self.title.text = 'Console'
 
-		obj = self:extend(obj)
-		
-		obj.fill = Fill:new{ x = 0, y = 0, width = width, height = height, fill = {0, 0, 0, 200} }
-		obj:add(obj.fill)
+		self.log = Text:new{ font = self.font }
+		self:add(self.log)
 
-		obj.log = Text:new{ x = 4, y = 4, width = width - self.sidebarWidth - 8, height = height - 8, text = '' }
-		obj:add(obj.log)
+		self.prompt = Text:new{ font = self.font, text = '>' }
+		self:add(self.prompt)
 
-		obj.prompt = Text:new{ x = 4, y = 0, width = 100, text = '>' }
-		obj:add(obj.prompt)
+		local w = self.prompt:getSize()
+		self.inputIndent = w
+		self.lineHeight = self.log._fontObj:getHeight()
 
-		local inputIndent = obj.log._fontObj:getWidth('>') + 4
-		obj.input = TextInput:new
+		self.input = TextInput:new
 		{
-			x = inputIndent, y = 0, width = the.app.width,
-			active = false,
+			font = self.font,
 			onType = function (self, char)
-				return char ~= the.console.toggleKey
+				return char ~= debugger.consoleKey
 			end
 		}
-		obj:add(obj.input)
+		self:add(self.input)
 
 		-- hijack print function
 		-- this is nasty to debug if it goes wrong, be careful
 
-		obj._oldPrint = print
+		self._oldPrint = print
 
 		print = function (...)
 			local caller = debug.getinfo(2)
 
 			if caller.linedefined ~= 0 then
-				obj.log.text = obj.log.text .. '(' .. caller.short_src .. ':' .. caller.linedefined .. ') '
+				self.log.text = self.log.text .. '(' .. caller.short_src .. ':' .. caller.linedefined .. ') '
 			end
 
 			for _, value in pairs{...} do
-				obj.log.text = obj.log.text .. tostring(value) .. ' '
+				self.log.text = self.log.text .. tostring(value) .. ' '
 			end
 
-			obj.log.text = obj.log.text .. '\n'
-			obj._updateLog = true
-			obj._oldPrint(...)
+			self.log.text = self.log.text .. '\n'
+			self._updateLog = true
+			self._oldPrint(...)
 		end
 
-		obj._unsourcedPrint = function (...)
+		debugger.unsourcedPrint = function (...)
 			for _, value in pairs{...} do
-				obj.log.text = obj.log.text .. tostring(value) .. ' '
+				self.log.text = self.log.text .. tostring(value) .. ' '
 			end
 
-			obj.log.text = obj.log.text .. '\n'
-			obj._updateLog = true
-			obj._oldPrint(...)
+			self.log.text = self.log.text .. '\n'
+			self._updateLog = true
+			self._oldPrint(...)
 		end
 
-		-- add other instruments
+		-- This replaces the default love.errhand() method, displaying
+		-- a stack trace and allowing inspection of the state of things.
 
-		the.console = obj
+		debugger._handleCrash = function (message)
+			if debugger._crashed then
+				debugger._originalErrhand(message)
+				return
+			end
 
-		obj.watch = DebugWatch:new()
-		obj:add(obj.watch)
-		obj.hotkeys = DebugHotkeys:new()
-		obj:add(obj.hotkeys)
-		obj.stepper = DebugStepper:new()
-		obj:add(obj.stepper)
+			debugger._crashed = true
+			local print = debugger.unsourcedPrint or print
+			debug.sethook()
+			setmetatable(_G, nil)
+			love.audio.stop()
 
-		if obj.onNew then obj.onNew() end
-		return obj
-	end,
+			print(string.rep('=', 40))
+			print('Crash, ' .. message)
+			print(debug.traceback('', 3))
+			print('\nlocal variables:')
 
-	-- Method: show
-	-- Shows the debug console.
-	-- 
-	-- Arguments:
-	--		none
-	--
-	-- Returns:
-	--		nothing
+			-- http://www.lua.org/pil/23.1.1.html
 
-	show = function (self)
-		self.visible = true
-		self.input.active = self.visible
+			local i = 1
+			local localVars = {}
 
-		for _, spr in pairs(self.sprites) do
-			spr.visible = self.visible
-		end
-	end,
+			while true do
+				local name, value = debug.getlocal(4, i)
+				if not name then break end
 
-	-- Method: hide
-	-- Hides the debug console.
-	-- 
-	-- Arguments:
-	--		none
-	--
-	-- Returns:
-	--		nothing
+				if (not string.find(name, ' ')) then
+					table.insert(localVars, name)
+					_G[name] = value
+				end
+				 
+				i = i + 1
+			end
 
-	hide = function (self)
-		self.visible = false
-		self.input.active = self.visible
+			table.sort(localVars)
 
-		for _, spr in pairs(self.sprites) do
-			spr.visible = self.visible
+			for _, name in pairs(localVars) do
+				local val
+
+				if type(_G[name]) == 'string' then
+					val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
+				elseif type(_G[name]) == 'table' then
+					val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
+				else
+					val = tostring(_G[name])
+				end
+
+				print(name .. ': ' .. val)
+			end
+
+			print(string.rep('=', 40) .. '\n')
+			debugger.showConsole()
+
+			if debugger._miniEventLoop then debugger._miniEventLoop(true) end
 		end
 	end,
 
@@ -155,7 +150,7 @@ DebugConsole = Group:extend
 
 	execute = function (self, code)
 		if string.sub(code, 1, 1) == '=' then
-			code = 'the.console._unsourcedPrint (' .. string.sub(code, 2) .. ')'
+			code = 'debugger.unsourcedPrint (' .. string.sub(code, 2) .. ')'
 		end
 
 		local func, err = loadstring(code)
@@ -164,92 +159,95 @@ DebugConsole = Group:extend
 			local ok, result = pcall(func)
 
 			if not ok then
-				the.console._unsourcedPrint('Error, ' .. tostring(result) .. '\n')
+				debugger.unsourcedPrint('Error, ' .. tostring(result) .. '\n')
 			else
-				the.console._unsourcedPrint('')
+				debugger.unsourcedPrint('')
 			end
 
 			return tostring(result)
 		else
-			the.console._unsourcedPrint('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
+			debugger.unsourcedPrint('Syntax error, ' .. string.gsub(tostring(err), '^.*:', '') .. '\n')
 		end
 	end,
 
-	update = function (self, elapsed)
-		-- listen for visibility key
+	onUpdate = function (self, elapsed)
+		-- update the log contents if output is waiting
 
-		if the.keys:justPressed(self.toggleKey) then
-			if self.visible then
-				self:hide()
-			else
-				self:show()
+		if self._updateLog then
+			local _, height = self.log:getSize()
+			local linesToDelete = math.ceil((height - self.log.height) / self.lineHeight)
+			
+			if linesToDelete > 0 then
+				self.log.text = string.gsub(self.log.text, '.-\n', '', linesToDelete) 
 			end
+			
+			_, height = self.log:getSize()
+
+			self.prompt.y = self.log.y + height
+			self.input.y = self.log.y + height
+			self._updateLog = false
 		end
 
-		if self.visible then
-			-- update log
+		-- control keys to jump to different sides and erase everything
 
-			if self._updateLog then
-				local lineHeight = self.log._fontObj:getHeight()
-				local _, height = self.log:getSize()
-				local linesToDelete = math.ceil((height - the.app.height - 20) / lineHeight)
-				
-				if linesToDelete > 0 then
-					self.log.text = string.gsub(self.log.text, '.-\n', '', linesToDelete) 
-					height = height - linesToDelete * lineHeight
-				end
-
-				self.prompt.y = height + 4
-				self.input.y = height + 4
-				self._updateLog = false
-			end
-
-			-- handle special keys at the console
-
-			if the.keys:pressed('ctrl') and the.keys:justPressed('a') then
-				self.input.caret = 0
-			end
-
-			if the.keys:pressed('ctrl') and the.keys:justPressed('e') then
-				self.input.caret = string.len(self.input.text)
-			end
-
-			if the.keys:pressed('ctrl') and the.keys:justPressed('k') then
-				self.input.caret = 0
-				self.input.text = ''
-			end
-
-			if the.keys:justPressed('up') and self.inputHistoryIndex > 1 then
-				-- save what the user was in the middle of typing
-
-				self.inputHistory[self.inputHistoryIndex] = self.input.text
-
-				self.input.text = self.inputHistory[self.inputHistoryIndex - 1]
-				self.input.caret = string.len(self.input.text)
-				self.inputHistoryIndex = self.inputHistoryIndex - 1
-			end
-
-			if the.keys:justPressed('down') and self.inputHistoryIndex < #self.inputHistory then
-				self.input.text = self.inputHistory[self.inputHistoryIndex + 1]
-				self.input.caret = string.len(self.input.text)
-				self.inputHistoryIndex = self.inputHistoryIndex + 1
-			end
-
-			if the.keys:justPressed('return') then
-				the.console._unsourcedPrint('>' .. self.input.text)
-				self:execute(self.input.text)
-				table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
-
-				while #self.inputHistory > self.inputHistoryIndex do
-					table.remove(self.inputHistory)
-				end
-
-				self.inputHistoryIndex = self.inputHistoryIndex + 1
-				self.input.text = ''
-				self.input.caret = 0
-			end
+		if the.keys:pressed('ctrl') and the.keys:justPressed('a') then
+			self.input.caret = 0
 		end
 
-		Group.update(self, elapsed)
+		if the.keys:pressed('ctrl') and the.keys:justPressed('e') then
+			self.input.caret = string.len(self.input.text)
+		end
+
+		if the.keys:pressed('ctrl') and the.keys:justPressed('k') then
+			self.input.caret = 0
+			self.input.text = ''
+		end
+
+		-- up and down arrows cycle through history
+
+		if the.keys:justPressed('up') and self.inputHistoryIndex > 1 then
+			-- save what the user was in the middle of typing
+
+			self.inputHistory[self.inputHistoryIndex] = self.input.text
+
+			self.input.text = self.inputHistory[self.inputHistoryIndex - 1]
+			self.input.caret = string.len(self.input.text)
+			self.inputHistoryIndex = self.inputHistoryIndex - 1
+		end
+
+		if the.keys:justPressed('down') and self.inputHistoryIndex < #self.inputHistory then
+			self.input.text = self.inputHistory[self.inputHistoryIndex + 1]
+			self.input.caret = string.len(self.input.text)
+			self.inputHistoryIndex = self.inputHistoryIndex + 1
+		end
+
+		-- return executes
+
+		if the.keys:justPressed('return') then
+			debugger.unsourcedPrint('>' .. self.input.text)
+			self:execute(self.input.text)
+			table.insert(self.inputHistory, self.inputHistoryIndex, self.input.text)
+
+			while #self.inputHistory > self.inputHistoryIndex do
+				table.remove(self.inputHistory)
+			end
+
+			self.inputHistoryIndex = self.inputHistoryIndex + 1
+			self.input.text = ''
+			self.input.caret = 0
+		end
+	end,
+
+	onResize = function (self, x, y, width, height)
+		self.log.x = x + self.spacing
+		self.log.y = y + self.spacing
+		self.log.width = width - self.spacing * 2
+		self.log.height = height - self.spacing * 2
+
+		self.prompt.x = self.log.x
+		self.input.x = self.prompt.x + self.inputIndent
+		self.input.width = width - self.inputIndent
+
+		self._updateLog = true
 	end
 }

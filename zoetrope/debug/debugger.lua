@@ -1,16 +1,104 @@
 debugger = debugger or {}
 
--- Function: debugger.watch
--- Watches an expression.
+-- Property: debugger.consoleKey
+-- What key toggles visibility. By default, this is the tab key.
+debugger.consoleKey = 'tab'
+
+-- Function: debugger.init()
+-- Adds debug instruments to the app. Must be called *after*
+-- an app has started running, i.e. in its <App.onRun> event
+-- handler.
 --
 -- Arguments:
---		expression - string expression to watch
---		label - label to use, defaults to expression
+--		Instrument classes to add, defaults to all available
+--
+-- Returns:
+--		nothing
 
-debugger.watch = function (expression, label)
-	if the.console and the.console.watch then
-		the.console.watch:addExpression(expression, label)
-	end
+debugger.init = function()
+	debugger.console = Group:new
+	{
+		visible = false,
+		spacing = 10,
+		instruments = { narrow = Group:new(), wide = Group:new() },
+		widths = { wide = 0.7, narrow = 0.3 },
+
+		_instrumentHeights = {},
+
+		onNew = function (self)
+			self:add(self.instruments.narrow)
+			self:add(self.instruments.wide)
+		end,
+
+		onUpdate = function (self)
+			if the.keys:justPressed(debugger.consoleKey) then
+				if self.visible then
+					debugger.hideConsole()
+				else
+					debugger.showConsole()
+				end
+			end
+
+			if debugger.console.visible then
+				for spr, height in pairs(debugger.console._instrumentHeights) do
+					if height ~= spr.contentHeight then
+						debugger._resizeInstruments()
+					end
+				end
+			end
+		end
+	}
+
+	the.app.meta:add(debugger.console)
+
+	debugger.addInstrument(DebugWatch:new())
+	debugger.addInstrument(DebugConsole:new())
+	debugger.addInstrument(DebugStepper:new())
+end
+
+-- Function: debugger.showConsole()
+-- Makes the console visible.
+--
+-- Arguments:
+--		none
+--
+-- Returns:
+--		nothing
+
+debugger.showConsole = function()
+	debugger.console.visible = true
+end
+
+-- Function: debugger.hideConsole
+-- Makes the console invisible.
+--
+-- Arguments:
+--		none
+--
+-- Returns:
+--		nothing
+
+debugger.hideConsole = function()
+	debugger.console.visible = false
+end
+
+-- Function: debugger.addInstrument
+-- Adds an instrument to the console, creating a container and
+-- tab to select it.
+--
+-- Arguments:
+--		instrument - <Group> enclosing the entire instrument
+--
+-- Returns:
+--		nothing
+
+debugger.addInstrument = function (instrument)
+	local console = debugger.console
+	assert(instrument.width == 'narrow' or instrument.width == 'wide',
+	       "debug instrument's width property must be either 'wide' or 'narrow'")
+
+	console.instruments[instrument.width]:add(instrument)
+	debugger._resizeInstruments()
 end
 
 -- Function: debugger.reload
@@ -24,143 +112,93 @@ end
 --		nothing
 
 debugger.reload = function()
-	if DEBUG then
-		love.audio.stop()
+	love.audio.stop()
 
-		-- create local references to needed variables
-		-- because we're about to blow the global scope away
+	-- create local references to needed variables
+	-- because we're about to blow the global scope away
 
-		local initialGlobals = debugger._initialGlobals
-		local initialPackages = debugger._initialPackages
-		
-		-- reset global scope
+	local initialGlobals = debugger._initialGlobals
+	local initialPackages = debugger._initialPackages
+	
+	-- reset global scope
 
-		for key, _ in pairs(_G) do
-			_G[key] = initialGlobals[key]
-		end
-
-		-- reload main file and restart
-
-		for key, _ in pairs(package.loaded) do
-			if not initialPackages[key] then
-				package.loaded[key] = nil
-			end
-		end
-
-		require('main')
-		love.load()
-	end
-end
-
-debugger.breakpt = function()
-	local print = the.console._unsourcedPrint or print
-	local caller = debug.getinfo(2, 'S')
-
-	the.console:show()
-	the.console.stepper:show()
-
-	print(string.rep('=', 40))
-	print('\nBreakpoint, ' .. caller.short_src .. ', ' .. caller.linedefined .. '\n')
-	print(string.rep('=', 40))
-	debug.sethook(debugger._stepLine, 'l')
-end
-
-debugger._stepLine = function (_, line)
-	local state = debug.getinfo(2, 'S')
-
-	-- not totally in love with this, but it's faster than
-	-- checking all possible values
-
-	if string.find(state.source, 'zoetrope/debug') then return end
-
-	local file = string.match(state.source, '^@(.*)')
-	the.console.stepper:showLine(file, line)
-
-	debugger._stepPaused = true
-
-	while debugger._stepPaused do
-		debugger._stepCommand = nil
-		debugger._miniEventLoop()
-
-		if debugger._stepCommand == 'next' then
-			debugger._stepPaused = false
-		elseif debugger._stepCommand == 'continue' then
-			debugger._stepPaused = false
-			the.console:hide()
-			debug.sethook()
-		end
-	end
-end
-
--- internal function: debugger._handleCrash
--- This replaces the default love.errhand() method, displaying
--- a stack trace and allowing inspection of the state of things.
--- 
--- Arguments:
---		message - string error message to display
---
--- Returns:
---		nothing
-
-debugger._handleCrash = function (message)
-	if debugger._crashed then
-		debugger._originalErrhand(message)
-		return
+	for key, _ in pairs(_G) do
+		_G[key] = initialGlobals[key]
 	end
 
-	if the.console and the.keys then
-		debugger._crashed = true
-		local print = the.console._unsourcedPrint
-		debug.sethook()
-		setmetatable(_G, nil)
+	-- reload main file and restart
 
-		print(string.rep('=', 40))
-		print('\nCrash, ' .. message)
-		print(debug.traceback('', 3))
-		print('\nlocal variables:')
-
-		-- http://www.lua.org/pil/23.1.1.html
-
-		local i = 1
-		local localVars = {}
-
-		while true do
-			local name, value = debug.getlocal(4, i)
-			if not name then break end
-
-			if (not string.find(name, ' ')) then
-				table.insert(localVars, name)
-				_G[name] = value
-			end
-			 
-			i = i + 1
+	for key, _ in pairs(package.loaded) do
+		if not initialPackages[key] then
+			package.loaded[key] = nil
 		end
+	end
 
-		table.sort(localVars)
+	require('main')
+	love.load()
+end
 
-		for _, name in pairs(localVars) do
-			local val
+debugger._resizeInstruments = function()
+	local console = debugger.console
 
-			if type(_G[name]) == 'string' then
-				val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
-			elseif type(_G[name]) == 'table' then
-				val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
+	-- wide instruments
+
+	local x = console.spacing
+	local y = console.spacing
+	local width = the.app.width * console.widths.wide
+	local expandables = {}
+	
+	for _, spr in pairs(console.instruments.wide.sprites) do
+		if spr.visible then
+			local height = spr:totalHeight()
+			console._instrumentHeights[spr] = height
+
+			if height == '*' then
+				table.insert(expandables, spr)
 			else
-				val = tostring(_G[name])
+				spr:resize(x, y, width - console.spacing, height)
+				y = y + height + console.spacing
 			end
-
-			print(name .. ': ' .. val)
 		end
+	end
 
-		print('\n' .. string.rep('=', 40) .. '\n')
-		the.console:show()
-		love.audio.stop()
+	if #expandables > 0 then
+		local height = (the.app.height - y) / #expandables
 
-		if debugger._miniEventLoop then debugger._miniEventLoop(true) end
-	else
-		debugger._originalErrhand(message)
+		for i, spr in ipairs(expandables) do
+			spr:resize(x, y + height * (i - 1), width - console.spacing, height - console.spacing)
+		end
+	end
+
+	-- narrow instruments
+
+	x = x + width
+	y = console.spacing
+	width = the.app.width * console.widths.narrow
+	expandables = {}
+
+	for _, spr in pairs(console.instruments.narrow.sprites) do
+		local height = spr:totalHeight()
+		console._instrumentHeights[spr] = height
+
+		if height == '*' then
+			table.insert(expandables, spr)
+		else
+			spr:resize(x, y, width - 2 * console.spacing, height)
+			y = y + height + console.spacing
+		end
+	end
+
+	if #expandables > 0 then
+		local height = (the.app.height - y) / #expandables
+
+		for i, spr in ipairs(expandables) do
+			spr:resize(x, y + height * (i - 1), width - console.spacing, height - console.spacing)
+		end
 	end
 end
+
+
 
 -- internal function: debugger._miniEventLoop
 -- This replicates the entire LOVE event loop, but only updates/draws
@@ -196,13 +234,13 @@ debugger._miniEventLoop = function (forever)
 
 		the.keys:startFrame(elapsed)
 		the.mouse:startFrame(elapsed)
-		the.console:startFrame(elapsed)
+		debugger.console:startFrame(elapsed)
 		the.keys:update(elapsed)
 		the.mouse:update(elapsed)
-		the.console:update(elapsed)
+		debugger.console:update(elapsed)
 		the.keys:endFrame(elapsed)
 		the.mouse:endFrame(elapsed)
-		the.console:endFrame(elapsed)
+		debugger.console:endFrame(elapsed)
 
 		if the.keys:pressed('escape') then
 			if not love.quit or not love.quit() then return end
@@ -211,7 +249,7 @@ debugger._miniEventLoop = function (forever)
 		if love.graphics then
 			love.graphics.clear()
 			if love.draw then
-				the.console:draw()
+				debugger.console:draw()
 			end
 		end
 

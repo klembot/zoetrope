@@ -46,7 +46,7 @@ if STRICT then
 	setmetatable(_G, {
 		__index = function (table, key)
 			local info = debug.getinfo(2, 'Sl')
-			local print = the.console._unsourcedPrint or print
+			local print = debugger.unsourcedPrint or print
 			print('Warning: accessing undefined global ' .. key .. ', ' ..
 				  info.short_src .. ' line ' .. info.currentline)
 		end
@@ -87,6 +87,7 @@ require 'zoetrope.utils.storage'
 require 'zoetrope.utils.subview'
 
 if DEBUG then
+	require 'zoetrope.debug.instrument'
 	require 'zoetrope.debug.console'
 	require 'zoetrope.debug.hotkeys'
 	require 'zoetrope.debug.stepper'

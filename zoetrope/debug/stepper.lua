@@ -1,125 +1,120 @@
-DebugStepperButton = Button:extend
+-- Class: DebugStepper
+-- This lets you pause execution of the app and step through it line by line.
+-- This adds a function, debugger.breakpt(), that triggers this intrument.
+-- Until this is called, the instrument remains hidden.
+
+DebugStepper = DebugInstrument:extend
 {
-	width = 75,
-	height = 25,
 	visible = false,
-	active = false,
+	lineContext = 5,
+	width = 'wide',
+	_fileCache = {},
 
-	new = function (self, obj)
-		obj = self:extend(obj or {})
-		obj.y = the.app.height - obj.height + 1
-
-		obj.background = Fill:new
+	onNew = function (self)
+		self.stepButton = DebugInstrumentButton:new
 		{
-			width = self.width, height = self.height,
-			fill = {64, 64, 64, 200},
-			border = {255, 255, 255}
-		}
-
-		obj.label = Text:new
-		{
-			width = self.width, height = self.height,
-			align = 'center',
-			y = 5,
-			text = obj.label
-		}
-
-		Button.new(obj)
-		return obj
-	end,
-
-	onMouseEnter = function (self)
-		self.background.fill = { 128, 128, 128, 200 }
-	end,
-
-	onMouseExit = function (self)
-		self.background.fill = { 64, 64, 64, 200 }
-	end
-}
-
-DebugStepper = Group:extend
-{
-	active = false,
-	visible = false,
-	lineContext = 2,
-
-	new = function (self, obj)
-		obj = self:extend(obj or {})
-
-		obj.x = the.app.width - the.console.sidebarWidth
-		
-		obj.stepButton = DebugStepperButton:new
-		{
-			x = obj.x,
 			label = 'Step',
 			onMouseUp = function (self)
 				debugger._stepCommand = 'next'
 			end
 		}
-		obj:add(obj.stepButton)
+		self:add(self.stepButton)
 
-		obj.stepButton = DebugStepperButton:new
+		self.continueButton = DebugInstrumentButton:new
 		{
-			x = obj.x + DebugStepperButton.width + 5,
 			label = 'Continue',
 			onMouseUp = function (self)
 				debugger._stepCommand = 'continue'
 			end
 		}
-		obj:add(obj.stepButton)
+		self:add(self.continueButton)
 
-		obj.sourceFile = Text:new
+		self.lineHighlight = Fill:new{ fill = {32, 32, 32} }
+		self:add(self.lineHighlight)
+
+		self.sourceLines = Text:new
 		{
-			font = 11,
-			x = obj.x,
-			y = the.app.height - 120,
-			width = the.console.sidebarWidth
+			font = self.font,
+			width = 20,
+			align = 'right',
+			wordWrap = false,
 		}
+		self:add(self.sourceLines)
 
-		local fontHeight = obj.sourceFile._fontObj:getHeight()
+		self.sourceView = Text:new{ font = self.font, wordWrap = false }
+		self.lineHeight = self.sourceView._fontObj:getHeight()
+		self:add(self.sourceView)
 
-		obj.lineHighlight = Fill:new
-		{
-			x = obj.x,
-			y = the.app.height - 100 + fontHeight * obj.lineContext,
-			height = fontHeight,
-			width = the.console.sidebarWidth,
-			fill = {128, 128, 128}
-		}
-		obj:add(obj.lineHighlight)
+		self.title.text = 'Source'
+		self.contentHeight = self.lineHeight * (self.lineContext + 1) * 2 + self.spacing * 3 +
+		                     DebugInstrumentButton.height
 
-		obj:add(obj.sourceFile)
+		debugger.breakpt = function()
+			local print = debugger.unsourcedPrint or print
+			local caller = debug.getinfo(2, 'S')
 
-		obj.sourceLines = Text:new
-		{
-			font = 11,
-			x = obj.x,
-			y = the.app.height - 100,
-			width = 20
-		}
-		obj:add(obj.sourceLines)
+			debugger.showConsole()
+			self.visible = true
 
-		obj.sourceView = Text:new
-		{
-			font = 11,
-			x = obj.x + 20,
-			y = the.app.height - 100,
-			width = the.console.sidebarWidth - 20
-		}
-		obj:add(obj.sourceView)
+			print(string.rep('=', 40))
+			print('Breakpoint, ' .. caller.short_src .. ', ' .. caller.linedefined)
+			print(string.rep('=', 40))
+			debug.sethook(debugger._stepLine, 'l')
+		end
 
-		Group.new(obj)
-		return obj
+		debugger.endBreakpt = function()
+			self.visible = false
+			debugger.hideConsole()
+			debug.sethook()
+		end
+
+		debugger._stepLine = function (_, line)
+			local state = debug.getinfo(2, 'S')
+
+			-- not totally in love with this, but it's faster than
+			-- checking all possible values
+
+			if string.find(state.source, 'zoetrope/debug') then return end
+
+			local file = string.match(state.source, '^@(.*)')
+			self:showLine(file, line)
+
+			debugger._stepPaused = true
+
+			while debugger._stepPaused do
+				debugger._stepCommand = nil
+				debugger._miniEventLoop()
+
+				if debugger._stepCommand == 'next' then
+					debugger._stepPaused = false
+				elseif debugger._stepCommand == 'continue' then
+					debugger._stepPaused = false
+					debugger.endBreakpt()
+				end
+			end
+		end
 	end,
 
-	show = function (self)
-		self.active = true
-		self._fileCache = {}
+	onResize = function (self, x, y, width, height)
+		self.sourceLines.x = x + self.spacing
+		self.sourceLines.y = y + self.spacing
+		self.sourceLines.height = height - self.sourceLines.y - self.spacing
+		
+		self.sourceView.x = self.sourceLines.x + self.sourceLines.width + self.spacing
+		self.sourceView.y = self.sourceLines.y
+		self.sourceView.width = width - self.sourceView.x - self.spacing * 2
+		self.sourceView.height = self.sourceLines.height
 
-		for _, spr in pairs(self.sprites) do
-			spr.active = true
-			spr.visible = true
-		end
+		self.lineHighlight.x = x + self.spacing
+		self.lineHighlight.y = self.sourceLines.y + self.lineHeight * self.lineContext
+		self.lineHighlight.width = width - self.spacing * 2
+		self.lineHighlight.height = self.lineHeight
+
+		self.stepButton.x = self.sourceLines.x
+		self.stepButton.y = self.sourceView.y + self.sourceView.height + self.spacing
+
+		self.continueButton.x = self.stepButton.x + self.stepButton.width + self.spacing
+		self.continueButton.y = self.stepButton.y
 	end,
 
 	showLine = function (self, file, line)
@@ -134,16 +129,21 @@ DebugStepper = Group:extend
 
 			sourceLine = self._fileCache[file][line]
 
-			self.sourceFile.text = file
 			self.sourceLines.text = ''
 			self.sourceView.text = ''
 
-			for i = line - self.lineContext, line + self.lineContext do
-				self.sourceLines.text = self.sourceLines.text .. i .. '\n'
-				self.sourceView.text = self.sourceView.text .. string.gsub(self._fileCache[file][i], '\t', string.rep(' ', 20)) .. '\n'
+			for i = line - self.lineContext, line + self.lineContext + 1 do
+				if self._fileCache[file][i] then
+					self.sourceLines.text = self.sourceLines.text .. i .. '\n'
+					self.sourceView.text = self.sourceView.text .. string.gsub(self._fileCache[file][i], '\t', string.rep(' ', 4)) .. '\n'
+				end
 			end
+
+			self.title.text = file .. ':' .. line
 		else
+			self.title.text = 'Source'
 			self.sourceView.text = '(source not available)'
 		end
 	end
 }
+

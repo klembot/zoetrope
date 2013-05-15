@@ -164,8 +164,7 @@ App = Class:extend
 		-- attach debug console
 
 		if DEBUG then
-			self.console = DebugConsole:new()
-			self.meta:add(self.console)
+			debugger.init()
 		end
 
 		-- set up callbacks
