@@ -48,9 +48,6 @@ DebugStack = DebugInstrument:extend
 
 			level = level + 1
 		until not info
-			
-		--[[
-		--]]
 	end,
 
 	onResize = function (self, x, y, width, height)

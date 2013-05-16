@@ -56,7 +56,7 @@ DebugStepper = DebugInstrument:extend
 			debugger.showConsole()
 			self.visible = true
 
-			print(string.rep('=', 40))
+			print('\n' .. string.rep('=', 40))
 			print('Breakpoint, ' .. caller.short_src .. ', ' .. caller.linedefined)
 			print(string.rep('=', 40))
 			debug.sethook(debugger._stepLine, 'l')
@@ -124,23 +124,15 @@ DebugStepper = DebugInstrument:extend
 
 	showLine = function (self, file, line)
 		if file then
-			if not self._fileCache[file] then
-				self._fileCache[file] = {}
-
-				for line in love.filesystem.lines(file) do
-					table.insert(self._fileCache[file], line)
-				end
-			end
-
-			sourceLine = self._fileCache[file][line]
-
 			self.sourceLines.text = ''
 			self.sourceView.text = ''
 
 			for i = line - self.lineContext, line + self.lineContext + 1 do
-				if self._fileCache[file][i] then
+				local source = debugger.sourceLine(file, i)
+
+				if source then
 					self.sourceLines.text = self.sourceLines.text .. i .. '\n'
-					self.sourceView.text = self.sourceView.text .. string.gsub(self._fileCache[file][i], '\t', string.rep(' ', 4)) .. '\n'
+					self.sourceView.text = self.sourceView.text .. string.gsub(debugger.sourceLine(file, i), '\t', string.rep(' ', 4)) .. '\n'
 				end
 			end
 

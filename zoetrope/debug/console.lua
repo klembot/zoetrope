@@ -83,53 +83,73 @@ DebugConsole = DebugInstrument:extend
 		-- a stack trace and allowing inspection of the state of things.
 
 		debugger._handleCrash = function (message)
-			if debugger._crashed then
+			if debugger.crashed then
 				debugger._originalErrhand(message)
 				return
 			end
 
-			debugger._crashed = true
+			debugger.crashed = true
 			local print = debugger.unsourcedPrint or print
 			debug.sethook()
 			setmetatable(_G, nil)
 			love.audio.stop()
 
-			print(string.rep('=', 40))
+			print('\n' .. string.rep('=', 40) .. '\n')
 			print('Crash, ' .. message)
-			print(debug.traceback('', 3))
-			print('\nlocal variables:')
 
-			-- http://www.lua.org/pil/23.1.1.html
+			-- print offending source line where possible
 
-			local i = 1
-			local localVars = {}
+			local crashState = debug.getinfo(4, 'Sl')
+			
+			if string.find(crashState.source, '^@') then
+				print('\n>>> ' .. debugger.sourceLine(string.gsub(crashState.source, '^@', ''), crashState.currentline) .. '\n')
+			end
+			
+			-- print or show stack and locals
 
-			while true do
-				local name, value = debug.getlocal(4, i)
-				if not name then break end
-
-				if (not string.find(name, ' ')) then
-					table.insert(localVars, name)
-					_G[name] = value
-				end
-				 
-				i = i + 1
+			if debugger.showStack then
+				debugger.showStack(6)
+			else
+				print(debug.traceback('', 3))
 			end
 
-			table.sort(localVars)
+			if debugger.showLocals then
+				debugger.showLocals(6)
+			else
+				print('\nlocal variables:')
 
-			for _, name in pairs(localVars) do
-				local val
+				-- http://www.lua.org/pil/23.1.1.html
 
-				if type(_G[name]) == 'string' then
-					val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
-				elseif type(_G[name]) == 'table' then
-					val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
-				else
-					val = tostring(_G[name])
+				local i = 1
+				local localVars = {}
+
+				while true do
+					local name, value = debug.getlocal(4, i)
+					if not name then break end
+
+					if (not string.find(name, ' ')) then
+						table.insert(localVars, name)
+						_G[name] = value
+					end
+					 
+					i = i + 1
 				end
 
-				print(name .. ': ' .. val)
+				table.sort(localVars)
+
+				for _, name in pairs(localVars) do
+					local val
+
+					if type(_G[name]) == 'string' then
+						val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
+					elseif type(_G[name]) == 'table' then
+						val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
+					else
+						val = tostring(_G[name])
+					end
+
+					print(name .. ': ' .. val)
+				end
 			end
 
 			print(string.rep('=', 40) .. '\n')

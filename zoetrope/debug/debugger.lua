@@ -4,6 +4,14 @@ debugger = debugger or {}
 -- What key toggles visibility. By default, this is the tab key.
 debugger.consoleKey = 'tab'
 
+-- Property: debugger.crashed
+-- Records whether the app has crashed.
+debugger.crashed = false
+
+-- internal property: debugger._sourceCache
+-- A cache of source files used by debugger.sourceLine().
+debugger._sourceCache = {}
+
 -- Function: debugger.init()
 -- Adds debug instruments to the app. Must be called *after*
 -- an app has started running, i.e. in its <App.onRun> event
@@ -72,7 +80,8 @@ debugger.showConsole = function()
 end
 
 -- Function: debugger.hideConsole
--- Makes the console invisible.
+-- Makes the console invisible. If the app has crashed,
+-- this has no effect.
 --
 -- Arguments:
 --		none
@@ -81,7 +90,9 @@ end
 --		nothing
 
 debugger.hideConsole = function()
-	debugger.console.visible = false
+	if not debugger.crashed then
+		debugger.console.visible = false
+	end
 end
 
 -- Function: debugger.addInstrument
@@ -138,6 +149,35 @@ debugger.reload = function()
 
 	require('main')
 	love.load()
+end
+
+-- Function: debugger.sourceLine
+-- Retrieves a line of source code. If the source file cannot 
+-- be opened, then this returns '(source not available)'. If
+-- the line doesn't exist in the file (e.g. you ask for line 200
+-- of a 100-line file), this returns nil.
+--
+-- Arguments:
+--		file - filename of the source code
+--		line - line number to retrieve
+--
+-- Returns:
+--		string source or '(source not available')
+
+debugger.sourceLine = function (file, line)
+	if file then
+		if not debugger._sourceCache[file] then
+			debugger._sourceCache[file] = {}
+
+			for line in love.filesystem.lines(file) do
+				table.insert(debugger._sourceCache[file], line)
+			end
+		end
+
+		return debugger._sourceCache[file][line]
+	else
+		return '(source not available)'
+	end
 end
 
 debugger._resizeInstruments = function()
