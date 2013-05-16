@@ -64,6 +64,8 @@ DebugStepper = DebugInstrument:extend
 
 		debugger.endBreakpt = function()
 			self.visible = false
+			if debugger.hideStack then debugger.hideStack() end
+			if debugger.hideLocals then debugger.hideLocals() end
 			debugger.hideConsole()
 			debug.sethook()
 		end
@@ -75,6 +77,9 @@ DebugStepper = DebugInstrument:extend
 			-- checking all possible values
 
 			if string.find(state.source, 'zoetrope/debug') then return end
+
+			if debugger.showStack then debugger.showStack(4) end
+			if debugger.showLocals then debugger.showLocals(4) end
 
 			local file = string.match(state.source, '^@(.*)')
 			self:showLine(file, line)

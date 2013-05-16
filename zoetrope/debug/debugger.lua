@@ -54,6 +54,8 @@ debugger.init = function()
 	debugger.addInstrument(DebugWatch:new())
 	debugger.addInstrument(DebugConsole:new())
 	debugger.addInstrument(DebugStepper:new())
+	debugger.addInstrument(DebugLocals:new())
+	debugger.addInstrument(DebugStack:new())
 end
 
 -- Function: debugger.showConsole()
@@ -197,8 +199,6 @@ debugger._resizeInstruments = function()
 		end
 	end
 end
-
-
 
 -- internal function: debugger._miniEventLoop
 -- This replicates the entire LOVE event loop, but only updates/draws

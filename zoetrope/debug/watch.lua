@@ -31,16 +31,14 @@ DebugWatch = DebugInstrument:extend
 	end,
 
 	onUpdate = function (self)
-		if self.visible then
-			self.labels.text = ''
-			self.values.text = ''
+		self.labels.text = ''
+		self.values.text = ''
 
-			for _, watch in pairs(self._watches) do
-				local ok, value = pcall(watch.func)
-				if not ok then value = nil end
-				self.labels.text = self.labels.text .. watch.label .. '\n'
-				self.values.text = self.values.text .. tostring(value) .. '\n'
-			end
+		for _, watch in pairs(self._watches) do
+			local ok, value = pcall(watch.func)
+			if not ok then value = nil end
+			self.labels.text = self.labels.text .. watch.label .. '\n'
+			self.values.text = self.values.text .. tostring(value) .. '\n'
 		end
 	end,
 

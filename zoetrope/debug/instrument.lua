@@ -27,8 +27,8 @@ DebugInstrument = Group:extend
 	contentHeight = 0,
 
 	-- Property: width
-	-- Should be either 'wide' or 'narrow', *not* a pixel width. This cannot
-	-- be changed once the instrument is added to the debugger.
+	-- Should be either 'wide' or 'narrow', *not* a pixel width. This must
+	-- be set when the instrument is created, and cannot be changed.
 	width = 'narrow',
 
 	-- Property: innerBorderColor
@@ -36,8 +36,8 @@ DebugInstrument = Group:extend
 	-- Property: backgroundColor
 	-- Property: titleBarColor
 	-- Property: titleColor
-	-- Color properties to customize appearance. These cannot be changed once
-	-- an instrument has been instantiated.
+	-- Color properties to customize appearance. These must be set when the
+	-- instrument is created, and cannot be changed.
 	outerBorderColor = {0, 0, 0},
 	innerBorderColor = {255, 255, 255},
 	backgroundColor = {0, 0, 0, 200},
@@ -50,13 +50,12 @@ DebugInstrument = Group:extend
 	spacing = 5,
 
 	-- Property: titleBarHeight
-	-- How tall the title bar should be. This cannot be changed once an
-	-- instrument has been instantiated.
+	-- How tall the title bar should be. This must be set when the instrument
+	-- is created, and cannot be changed.
 	titleBarHeight = 20,
 
 	-- Property: font
 	-- Recommended font, for consistency.
-	font = 12,
 
 	-- Property: outerFrame
 	-- The <Fill> used to draw the outer frame of the instrument.
@@ -72,6 +71,12 @@ DebugInstrument = Group:extend
 
 	new = function (self, obj)
 		obj = self:extend(obj or {})
+
+		if obj.width == 'wide' then
+			obj.font = 12
+		else
+			obj.font = 11
+		end
 
 		obj.outerFrame = Fill:new{ width = 0, height = 0, border = obj.outerBorderColor, fill = {0, 0, 0, 0} }
 		obj.innerFrame = Fill:new{ width = 0, height = 0, border = obj.innerBorderColor, fill = obj.backgroundColor }

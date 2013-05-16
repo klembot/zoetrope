@@ -90,6 +90,8 @@ if DEBUG then
 	require 'zoetrope.debug.instrument'
 	require 'zoetrope.debug.console'
 	require 'zoetrope.debug.hotkeys'
+	require 'zoetrope.debug.locals'
+	require 'zoetrope.debug.stack'
 	require 'zoetrope.debug.stepper'
 	require 'zoetrope.debug.watch'
 	require 'zoetrope.debug.debugger'
