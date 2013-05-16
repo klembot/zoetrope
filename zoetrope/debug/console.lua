@@ -142,8 +142,6 @@ DebugConsole = DebugInstrument:extend
 
 					if type(_G[name]) == 'string' then
 						val = "'" .. string.gsub(_G[name], "'", "\\'") .. "'"
-					elseif type(_G[name]) == 'table' then
-						val = tostring(_G[name]) .. ' (' .. props(_G[name]) .. ')'
 					else
 						val = tostring(_G[name])
 					end
