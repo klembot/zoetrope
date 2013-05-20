@@ -30,6 +30,7 @@ debugger.init = function()
 		spacing = 10,
 		instruments = { narrow = Group:new(), wide = Group:new() },
 		widths = { wide = 0.7, narrow = 0.3 },
+		listeners = {},
 
 		_instrumentHeights = {},
 
@@ -54,12 +55,17 @@ debugger.init = function()
 					end
 				end
 			end
+
+			for _, listener in pairs(self.listeners) do
+				listener()
+			end
 		end
 	}
 
 	the.app.meta:add(debugger.console)
 
 	debugger.addInstrument(DebugWatch:new())
+	debugger.addInstrument(DebugShortcuts:new())
 	debugger.addInstrument(DebugConsole:new())
 	debugger.addInstrument(DebugStepper:new())
 	debugger.addInstrument(DebugLocals:new())
@@ -112,6 +118,20 @@ debugger.addInstrument = function (instrument)
 
 	console.instruments[instrument.width]:add(instrument)
 	debugger._resizeInstruments()
+end
+
+-- Function: debugger.addListener
+-- Adds a function that will be called on every frame,
+-- regardless of whether the console is visible.
+--
+-- Arguments:
+--		listener - function
+--
+-- Returns:
+--		nothing
+
+debugger.addListener = function (func)
+	table.insert(debugger.console.listeners, func)
 end
 
 -- Function: debugger.reload
