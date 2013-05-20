@@ -235,14 +235,14 @@ Animation = Sprite:extend{
 	end,
 
 	__tostring = function (self)
-		local result = 'Animation (x: ' .. self.x .. ', y: ' .. self.y ..
-					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+		local result = 'Animation (x: ' .. tostring(self.x) .. ', y: ' .. tostring(self.y) ..
+					   ', w: ' .. tostring(self.width) .. ', h: ' .. tostring(self.height) .. ', '
 
 		if self.currentName then
 			result = result .. 'playing ' .. self.currentName .. ', '
 		end
 
-		result = result .. ' frame ' .. self.currentFrame .. ', '
+		result = result .. ' frame ' .. tostring(self.currentFrame) .. ', '
 
 		if self.active then
 			result = result .. 'active, '

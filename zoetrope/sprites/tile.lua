@@ -103,8 +103,8 @@ Tile = Sprite:extend
 	end,
 
 	__tostring = function (self)
-		local result = 'Tile (x: ' .. self.x .. ', y: ' .. self.y ..
-					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+		local result = 'Tile (x: ' .. tostring(self.x) .. ', y: ' .. tostring(self.y) ..
+					   ', w: ' .. tostring(self.width) .. ', h: ' .. tostring(self.height) .. ', '
 
 		result = result .. 'image \'' .. self.image .. '\', '
 

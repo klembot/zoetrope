@@ -401,8 +401,8 @@ Map = Sprite:extend
 	end,
 
 	__tostring = function (self)
-		local result = 'Map (x: ' .. self.x .. ', y: ' .. self.y ..
-					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+		local result = 'Map (x: ' .. tostring(self.x) .. ', y: ' .. tostring(self.y) ..
+					   ', w: ' .. tostring(self.width) .. ', h: ' .. tostring(self.height) .. ', '
 
 		if self.active then
 			result = result .. 'active, '

@@ -435,6 +435,6 @@ App = Class:extend
 			result = result .. 'inactive'
 		end
 
-		return result .. ', ' .. self.fps .. ' fps, ' .. self.view:count(true) .. ' sprites)'
+		return result .. ', ' .. tostring(self.fps) .. ' fps, ' .. self.view:count(true) .. ' sprites)'
 	end
 }

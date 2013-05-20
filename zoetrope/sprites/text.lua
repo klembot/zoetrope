@@ -199,8 +199,8 @@ Text = Sprite:extend{
 	end,
 
 	__tostring = function (self)
-		local result = 'Text (x: ' .. self.x .. ', y: ' .. self.y ..
-					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+		local result = 'Text (x: ' .. tostring(self.x) .. ', y: ' .. tostring(self.y) ..
+					   ', w: ' .. tostring(self.width) .. ', h: ' .. tostring(self.height) .. ', '
 
 		result = result .. 'font ' .. dump(self.font) .. ', ' .. string.len(self.text) .. ' chars, '
 

@@ -78,17 +78,17 @@ Fill = Sprite:extend{
 	end,
 
 	__tostring = function (self)
-		local result = 'Fill (x: ' .. self.x .. ', y: ' .. self.y ..
-					   ', w: ' .. self.width .. ', h: ' .. self.height .. ', '
+		local result = 'Fill (x: ' .. tostring(self.x) .. ', y: ' .. tostring(self.y) ..
+					   ', w: ' .. tostring(self.width) .. ', h: ' .. tostring(self.height) .. ', '
 
 		if self.fill then
-			result = result .. 'fill {' .. table.concat(self.fill, ', ') .. '}, '
+			result = result .. 'fill {' .. table.concat(tostring(self.fill), ', ') .. '}, '
 		else
 			result = result .. 'no fill, '
 		end
 
 		if self.border then
-			result = result .. 'border {' .. table.concat(self.border, ', ') .. '}, '
+			result = result .. 'border {' .. table.concat(tostring(self.border), ', ') .. '}, '
 		else
 			result = result .. 'no border, '
 		end
