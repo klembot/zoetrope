@@ -54,10 +54,10 @@ DebugConsole = DebugInstrument:extend
 		self._oldPrint = print
 
 		print = function (...)
-			local caller = debug.getinfo(2)
+			local caller = debug.getinfo(2, 'Sl')
 
 			if caller.linedefined ~= 0 then
-				self.log.text = self.log.text .. '(' .. caller.short_src .. ':' .. caller.linedefined .. ') '
+				self.log.text = self.log.text .. '(' .. caller.short_src .. ':' .. (caller.currentline or caller.linedefined) .. ') '
 			end
 
 			for _, value in pairs{...} do
