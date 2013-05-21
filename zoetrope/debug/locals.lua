@@ -57,9 +57,9 @@ DebugLocals = DebugInstrument:extend
 		self.names.height, self.values.height = height, height
 
 		self.names.x = x + self.spacing
-		self.names.width = width / 2 - self.spacing * 2
+		self.names.width = width * 0.3 - self.spacing * 2
 		
 		self.values.x = self.names.x + self.names.width + self.spacing
-		self.values.width = self.names.width
+		self.values.width = width * 0.7
 	end
 }
