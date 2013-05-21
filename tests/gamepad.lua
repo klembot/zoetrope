@@ -15,11 +15,8 @@ GamepadSupport = TestApp:extend
 				   gp.numButtons .. ' buttons, ' .. gp.numHats .. ' hats'
 		})
 
-		self.controlLabel = Text:new{ x = 4, y = 200, width = 400, height = 400 }
-		self:add(self.controlLabel)
-
-		self.square = Fill:new{ x = 300, y = 300, width = 50, height = 50, fill = {255, 255, 255} }
-		self:add(self.square)
+		self.controlLabel = self:add(Text:new{ x = 4, y = 200, width = 400, height = 400 })
+		self.square = self:add(Fill:new{ x = 300, y = 300, width = 50, height = 50, fill = {255, 255, 255} })
 
 		self:add(Text:new
 		{

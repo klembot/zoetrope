@@ -47,10 +47,8 @@ CollisionBenchmark = TestApp:extend
 		DEBUG = false
 		STRICT = false
 
-		self.blocks = Group:new()
-		self:add(self.blocks)
-		self.countText = Text:new{ x = 10, y = 420, font = 144, width = 200 }
-		self:add(self.countText)
+		self.blocks = self:add(Group:new())
+		self.countText = self:add(Text:new{ x = 10, y = 420, font = 144, width = 200 })
 		self:add(Fill:new{ x = 0, y = 560, width = 800, height = 40, fill = {0, 0, 0, 200} })
 		self:add(Text:new{ x = 10, y = 562, font = 14, width = 600,
 				 text = 'sprites onscreen while maintaining roughly 60 frames per second.\n' ..

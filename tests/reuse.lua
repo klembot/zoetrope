@@ -21,11 +21,8 @@ FactoryParticle = Fill:extend{
 Reuse = TestApp:extend
 {
 	onNew = function (self)
-		self.particles = Group:new()
-		self:add(self.particles)
-		self.label = Text:new{ x = 10, y = 500, font = 48, width = 800, text = '0 sprites created' }
-		self:add(self.label)
-
+		self.particles = self:add(Group:new())
+		self.label = self:add(Text:new{ x = 10, y = 500, font = 48, width = 800, text = '0 sprites created' })
 		self:add(Text:new{ x = 10, y = 560, width = 640, font = 14,
 						   text = 'Press the R, G, and B keys to create sprites of different hues. ' ..
 						   'When a sprite goes offscreen, it is automatically reused. Zoetrope\'s Factory ' ..

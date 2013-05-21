@@ -11,39 +11,34 @@ DebugStepper = DebugInstrument:extend
 	_fileCache = {},
 
 	onNew = function (self)
-		self.stepButton = DebugInstrumentButton:new
+		self.stepButton = self:add(DebugInstrumentButton:new
 		{
 			label = 'Step',
 			onMouseUp = function (self)
 				debugger._stepCommand = 'next'
 			end
-		}
-		self:add(self.stepButton)
+		})
 
-		self.continueButton = DebugInstrumentButton:new
+		self.continueButton = self:add(DebugInstrumentButton:new
 		{
 			label = 'Continue',
 			onMouseUp = function (self)
 				debugger._stepCommand = 'continue'
 			end
-		}
-		self:add(self.continueButton)
+		})
 
-		self.lineHighlight = Fill:new{ fill = {64, 64, 64} }
-		self:add(self.lineHighlight)
+		self.lineHighlight = self:add(Fill:new{ fill = {64, 64, 64} })
 
-		self.sourceLines = Text:new
+		self.sourceLines = self:add(Text:new
 		{
 			font = self.font,
 			width = 20,
 			align = 'right',
 			wordWrap = false,
-		}
-		self:add(self.sourceLines)
+		})
 
-		self.sourceView = Text:new{ font = self.font, wordWrap = false }
+		self.sourceView = self:add(Text:new{ font = self.font, wordWrap = false })
 		self.lineHeight = self.sourceView._fontObj:getHeight()
-		self:add(self.sourceView)
 
 		self.title.text = 'Source'
 		self.contentHeight = self.lineHeight * (self.lineContext + 1) * 2 + self.spacing * 3 +

@@ -5,35 +5,31 @@ Scrolling = TestApp:extend
 	onRun = function (self)
 		local x
 		
-		local layer1 = Group:new()
+		local layer1 = self:add(Group:new())
 		layer1.translateScale.x = 0.25
 		layer1.translateScale.y = 0.25
-		self:add(layer1)
 		
 		for x = 16, self.width * 5, 64 do
 			layer1:add(Tile:new{ x = x, y = 100, image = 'tests/assets/bluegem.png', scale = 0.5 })
 		end
 		
-		local layer2 = Group:new()
+		local layer2 = self:add(Group:new())
 		layer2.translateScale.x = 0.5
 		layer2.translateScale.y = 0.5
-		self:add(layer2)
 		
 		for x = 16, self.width * 5, 64 do
 			layer2:add(Tile:new{ x = x, y = 150, image = 'tests/assets/bluegem.png' })
 		end
 		
-		local layer3 = Group:new()
-		self:add(layer3)
+		local layer3 = self:add(Group:new())
 		
 		for x = 16, self.width * 5, 64 do
 			layer3:add(Tile:new{ x = x, y = 200, image = 'tests/assets/bluegem.png', scale = 2 })
 		end
 		
-		local layer4 = Group:new()
+		local layer4 = self:add(Group:new())
 		layer4.translateScale.x = 0
 		layer4.translateScale.y = 0
-		self:add(layer4)
 		
 		for x = 16, self.width * 5, 100 do
 			layer4:add(Tile:new{ x = x, y = 400, image = 'tests/assets/bluegem.png', scale = 4 })

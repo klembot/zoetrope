@@ -156,8 +156,7 @@ the.app = App:new
 
 		-- blocks
 
-		self.blocks = Group:new()
-		self:add(self.blocks)
+		self.blocks = self:add(Group:new())
 	
 		for x = 480, 750, 50 do
 			for y = 10, 600, 50 do

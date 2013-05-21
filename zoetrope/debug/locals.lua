@@ -8,11 +8,9 @@ DebugLocals = DebugInstrument:extend
 
 	onNew = function (self)
 		self.title.text = 'Locals'
-		self.names = Text:new{ font = self.font }
-		self.values = Text:new{ font = self.font }
+		self.names = self:add(Text:new{ font = self.font })
+		self.values = self:add(Text:new{ font = self.font })
 		self.lineHeight = self.names._fontObj:getHeight()
-		self:add(self.names)
-		self:add(self.values)
 
 		debugger.showLocals = function (level) self:showLocals(level) end
 		debugger.hideLocals = function (level) self.visible = false end

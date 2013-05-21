@@ -3,14 +3,12 @@ require 'zoetrope'
 Sounds = TestApp:extend
 {
 	onNew = function (self)
-		self.timer = Timer:new()
-		self:add(self.timer)
+		self.timer = self:add(Timer:new())
 		self.testSound = sound('tests/assets/tone.mp3')
 		self.testSound:play(1)
 		self.testSound:setVolume(0.25)
 		
-		self.signal = Fill:new{ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } }
-		self:add(self.signal)
+		self.signal = self:add(Fill:new{ x = 100, y = 100, width = 100, height = 100, fill = { 0, 0, 255 } })
 
 		self.timer:after(1, bind(self.testSound, 'play'))
 

@@ -5,13 +5,7 @@ UI = TestApp:extend
 	name = 'UI Test',
 
 	onRun = function (self)
-		local cursor = Cursor:new()
-		cursor:add(Tile:new{ image = 'tests/assets/bluegem.png', scale = 1.5,
-							 velocity = { x = 0, y = 0, rotation = math.pi } })
-		cursor.hotspot.x = 12
-		cursor.hotspot.y = 12
-
-		local button = Button:new{ x = 250, y = 200, width = 300, height = 100 }
+		local button = self:add(Button:new{ x = 250, y = 200, width = 300, height = 100 })
 		button.background = Fill:new{ width = 300, height = 100,
 									  fill = {25, 25, 25}, border = {255, 255, 255} }
 		button.label = Text:new{ text = 'Hello', font = 72, width = 100, align = 'center' }
@@ -30,14 +24,16 @@ UI = TestApp:extend
 			self.y = math.random(0, the.app.height - self.height - 300)
 		end
 
-		local input = TextInput:new{ x = 250, y = 350, width = 300, height = 24, font = 72 }
+		local input = self:add(TextInput:new{ x = 250, y = 350, width = 300, height = 24, font = 72 })
+
+		local cursor = self:add(Cursor:new())
+		cursor:add(Tile:new{ image = 'tests/assets/bluegem.png', scale = 1.5,
+							 velocity = { x = 0, y = 0, rotation = math.pi } })
+		cursor.hotspot.x = 12
+		cursor.hotspot.y = 12
 
 		self.meta:add(DebugConsole:new())
 		the.console:watch('mouse clicked', 'the.mouse._thisFrame.l == true')
-
-		self:add(input)
-		self:add(button)
-		self:add(cursor)
 
 		self:add(Text:new
 		{

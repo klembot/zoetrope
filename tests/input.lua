@@ -14,29 +14,17 @@ Sensor = Fill:extend
 Input = TestApp:extend
 {
 	onNew = function (self)
-		self.released = Sensor:new{ width = 200, height = 400, fill = { 255, 0, 0 } }
-		self:add(self.released)
-		
-		self.justPressed = Sensor:new{ x = 200, width = 200, height = 400, fill = { 0, 255, 0 } }
-		self:add(self.justPressed)
-		
-		self.pressed = Sensor:new{ x = 400, width = 200, height = 400, fill = { 0, 0, 255 } }
-		self:add(self.pressed)
-		
-		self.justReleased = Sensor:new{ x = 600, width = 200, height = 400, fill = { 255, 255, 0 } }
-		self:add(self.justReleased)
-		
-		self.leftMouse = Sensor:new{ y = 400, width = 400, height = 200, fill = { 0, 255, 255 } }
-		self:add(self.leftMouse)
-		
-		self.rightMouse = Sensor:new{ x = 400, y = 400, width = 400, height = 200, fill = { 255, 0, 255 } }
-		self:add(self.rightMouse)
+		self.released = self:add(Sensor:new{ width = 200, height = 400, fill = { 255, 0, 0 } })
+		self.justPressed = self:add(Sensor:new{ x = 200, width = 200, height = 400, fill = { 0, 255, 0 } })
+		self.pressed = self:add(Sensor:new{ x = 400, width = 200, height = 400, fill = { 0, 0, 255 } })
+		self.justReleased = self:add(Sensor:new{ x = 600, width = 200, height = 400, fill = { 255, 255, 0 } })
+		self.leftMouse = self:add(Sensor:new{ y = 400, width = 400, height = 200, fill = { 0, 255, 255 } })
+		self.rightMouse = self:add(Sensor:new{ x = 400, y = 400, width = 400, height = 200, fill = { 255, 0, 255 } })
 
-		self.extraLabel = Text:new
+		self.extraLabel = self:add(Text:new
 		{
 			x = 10, y = 10, width = 200
-		}
-		self:add(self.extraLabel)
+		})
 
 		self:add(Text:new
 		{

@@ -7,9 +7,8 @@ Files = TestApp:extend
 		self.storage.data = { red = 'yes', green = true, blue = 1 }
 		self.storage:save()
 
-		self.label = Text:new{ x = 4, y =4, width = the.app.width, height = the.app.height }
+		self.label = self:add(Text:new{ x = 4, y =4, width = the.app.width, height = the.app.height })
 		self.label.text = 'Saved to storage.dat:\n' .. dump(self.storage.data)
-		self:add(self.label)
 
 		self.countStorage = Storage:new{ filename = 'count.dat' }
 		self.countStorage:load()

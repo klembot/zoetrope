@@ -53,18 +53,17 @@ SpriteTypes = TestApp:extend
 			text = 'A Tile stamps an image or repeats it across a rectangular area.'
 		})
 		
-		local anim = Animation:new
+		local anim = self:add(Animation:new
 		{
 			x = 600, y = 45,
 			width = 16, height = 24,
 			image = self.chestAnim,
 			sequences = { open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 } }
-		}
+		})
 
 		anim:play('open')
-		self:add(anim)
 
-		local anim2 = Animation:new
+		local anim2 = self:add(Animation:new
 		{
 			x = 640, y = 45,
 			width = 16, height = 24,
@@ -72,9 +71,8 @@ SpriteTypes = TestApp:extend
 			sequences = { open = { frames = { 1, 2, 3, 4, 5, 4, 3, 2 }, fps = 10 } },
 		  	tint = { 0.5, 1, 0.5 }, alpha = 0.5,
 			velocity = { rotation = math.pi }, scale = 3
-		}
+		})
 		anim2:play('open')
-		self:add(anim2)
 
 		self:add(Text:new
 		{

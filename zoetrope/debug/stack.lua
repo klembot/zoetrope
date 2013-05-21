@@ -8,9 +8,8 @@ DebugStack = DebugInstrument:extend
 
 	onNew = function (self)
 		self.title.text = 'Stack'
-		self.text = Text:new{ font = self.font, wordWrap = false }
+		self.text = self:add(Text:new{ font = self.font, wordWrap = false })
 		self.lineHeight = self.text._fontObj:getHeight()
-		self:add(self.text)
 
 		debugger.showStack = function (level) self:showStack(level) end
 		debugger.hideStack = function() self.visible = false end

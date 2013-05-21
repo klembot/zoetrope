@@ -3,10 +3,9 @@ require 'zoetrope'
 Debugging = TestApp:extend
 {
 	onRun = function (self)
-		the.block = Fill:new { x = 300, y = 200, width = 200, height = 200, fill = {255, 255, 255 } }
+		the.block = self:add(Fill:new{ x = 300, y = 200, width = 200, height = 200, fill = {255, 255, 255 } })
 		debugger.watch('the.block.x')
 		debugger.watch('the.block.y')
-		self:add(the.block)
 
 		self:add(Text:new
 		{

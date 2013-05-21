@@ -78,15 +78,11 @@ DebugInstrument = Group:extend
 			obj.font = 11
 		end
 
-		obj.outerFrame = Fill:new{ width = 0, height = 0, border = obj.outerBorderColor, fill = {0, 0, 0, 0} }
-		obj.innerFrame = Fill:new{ width = 0, height = 0, border = obj.innerBorderColor, fill = obj.backgroundColor }
-		obj.titleBar = Fill:new{ width = 0, height = obj.titleBarHeight, fill = obj.titlebarColor }
-		obj.title = Text:new{ width = 0, height = 0, fill = obj.titlebarColor, font = obj.font,
-		                      tint = {obj.titleColor[1] / 255, obj.titleColor[2] / 255, obj.titleColor[3] / 255}}
-		obj:add(obj.outerFrame)
-		obj:add(obj.innerFrame)
-		obj:add(obj.titleBar)
-		obj:add(obj.title)
+		obj.outerFrame = obj:add(Fill:new{ width = 0, height = 0, border = obj.outerBorderColor, fill = {0, 0, 0, 0} })
+		obj.innerFrame = obj:add(Fill:new{ width = 0, height = 0, border = obj.innerBorderColor, fill = obj.backgroundColor })
+		obj.titleBar = obj:add(Fill:new{ width = 0, height = obj.titleBarHeight, fill = obj.titlebarColor })
+		obj.title = obj:add(Text:new{ width = 0, height = 0, fill = obj.titlebarColor, font = obj.font,
+		                      tint = {obj.titleColor[1] / 255, obj.titleColor[2] / 255, obj.titleColor[3] / 255}})
 
 		if obj.onNew then obj:onNew() end
 		return obj

@@ -336,10 +336,10 @@ App = Class:extend
 	--		sprite - sprite to add
 	-- 
 	-- Returns:
-	--		nothing
+	--		sprite added
 
 	add = function (self, sprite)
-		self.view:add(sprite)
+		return self.view:add(sprite)
 	end,
 
 	-- Method: remove

@@ -2,8 +2,7 @@ Effects = TestApp:extend
 {
 	onRun = function (self)
 		self:add(Fill:new{ width = self.width, height = self.height, fill = {200, 200, 200} })
-		the.group = Group:new()
-		self:add(the.group)
+		the.group = self:add(Group:new())
 
 		for i = 1, 100 do
 			the.group:add(Tile:new
@@ -18,8 +17,7 @@ Effects = TestApp:extend
 		end
 
 		self:add(Fill:new{ x = 0, y = 550, width = 800, height = 50, fill = {0, 0, 0, 200} })
-		local text = Text:new{ x = 10, y = 560, font = 14, width = 780 }
-		self:add(text)
+		local text = self:add(Text:new{ x = 10, y = 560, font = 14, width = 780 })
 
 		if (love.graphics.isSupported('pixeleffect')) then
 			text.text = 'Press the F key to toggle a fuzzy screen effect, the D key to toggle ' ..

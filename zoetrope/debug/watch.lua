@@ -4,11 +4,9 @@ DebugWatch = DebugInstrument:extend
 
 	onNew = function (self)
 		self.title.text = 'Watch'
-		self.labels = Text:new{ font = self.font }
-		self.values = Text:new{ font = self.font }
+		self.labels = self:add(Text:new{ font = self.font })
+		self.values = self:add(Text:new{ font = self.font })
 		self.lineHeight = self.labels._fontObj:getHeight()
-		self:add(self.labels)
-		self:add(self.values)
 
 		self:addExpression('love.timer.getFPS()', 'FPS')
 		self:addExpression('math.floor(collectgarbage("count") / 1024) .. "M"', 'Memory used')

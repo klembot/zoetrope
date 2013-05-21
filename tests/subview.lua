@@ -14,9 +14,8 @@ SubviewTest = TestApp:extend
 		self.subview = Subview:new
 		{
 			onNew = function (self)
-				self.bg = Fill:new{ x = (the.app.width - 300) / 2, y = 100,
-								    height = 50, width = 300, fill = {255, 255, 255} }
-				self:add(self.bg)
+				self.bg = self:add(Fill:new{ x = (the.app.width - 300) / 2, y = 100,
+								    height = 50, width = 300, fill = {255, 255, 255} })
 				self:add(Text:new{ x = (the.app.width - 300) / 2 + 10, y = 110,
 								   width = 280, align = 'center', tint = {0, 0, 0},
 								   text = 'Press the S key again to hide this overlay.', font = 14 })

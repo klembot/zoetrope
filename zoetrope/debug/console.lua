@@ -29,24 +29,20 @@ DebugConsole = DebugInstrument:extend
 	onNew = function (self)
 		self.title.text = 'Console'
 
-		self.log = Text:new{ font = self.font }
-		self:add(self.log)
-
-		self.prompt = Text:new{ font = self.font, text = '>' }
-		self:add(self.prompt)
+		self.log = self:add(Text:new{ font = self.font })
+		self.prompt = self:add(Text:new{ font = self.font, text = '>' })
 
 		local w = self.prompt:getSize()
 		self.inputIndent = w
 		self.lineHeight = self.log._fontObj:getHeight()
 
-		self.input = TextInput:new
+		self.input = self:add(TextInput:new
 		{
 			font = self.font,
 			onType = function (self, char)
 				return char ~= debugger.consoleKey
 			end
-		}
-		self:add(self.input)
+		})
 
 		-- hijack print function
 		-- this is nasty to debug if it goes wrong, be careful

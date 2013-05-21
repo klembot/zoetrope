@@ -22,7 +22,7 @@ Tiled = TestApp:extend
 		self.view:clampTo(self.view.map)
 		self.view.focus = the.player
 		
-		local overlay = Group:new({ translateScale = { x = 0, y = 0 } })
+		local overlay = self:add(Group:new({ translateScale = { x = 0, y = 0 } }))
 		
 		overlay:add(Fill:new{ x = 0, y = 550, width = 800, height = 50, fill = {0, 0, 0, 200} })
 		overlay:add(Text:new
@@ -31,8 +31,6 @@ Tiled = TestApp:extend
 			text = 'Move the square with the arrow keys to explore the map. Zoetrope can load tilemaps and objects created in Tiled, and respects layer ' ..
 				   'order. Connecting an object to a class is as simple as giving it a name.'
 		})
-
-		self:add(overlay)
 	end,
 
 	onUpdate = function (self)

@@ -3,21 +3,15 @@ require 'zoetrope'
 Recording = TestApp:extend
 {
 	onNew = function (self)
-		self.recorder = Recorder:new()
-		self.meta:add(self.recorder)
+		self.recorder = self.meta:add(Recorder:new())
+		self.player = self:add(Fill:new{ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } })
 
-		local cursor = Cursor:new()
+		local cursor = self:add(Cursor:new())
 		cursor:add(Fill:new{ width = 8, height = 8, fill = { 255, 0, 0 } })
 		self:useSysCursor(false)
 
-		self.player = Fill:new{ x = 100, y = 100, width = 16, height = 16, fill = { 255, 255, 255 } }
-
-		self.recLabel = Text:new { x = 750, y = 10, tint = { 1, 0, 0 }, text = 'REC', visible = false } 
+		self.recLabel = self:add(Text:new{ x = 750, y = 10, tint = { 1, 0, 0 }, text = 'REC', visible = false })
 		self.view.tween:start(self.recLabel, 'alpha', 0, 0.25):andThen(Tween.reverseForever)
-
-		self:add(self.player)
-		self:add(cursor)
-		self:add(self.recLabel)
 
 		self:add(Text:new
 		{

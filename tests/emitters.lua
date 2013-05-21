@@ -6,7 +6,7 @@ Emitters = TestApp:extend{
 	title = 'Particle Emitter',
 
 	onNew = function (self)
-		self.emitter = Emitter:new{ x = 350, y = 250, width = 100, height = 100 }
+		self.emitter = self:add(Emitter:new{ x = 350, y = 250, width = 100, height = 100 })
 		self.emitter.min = { velocity = { x = -500, y = -500, rotation = math.pi / 4 }, alpha = 0.25 }
 		self.emitter.max = { velocity = { x = 500, y = 500, rotation = 4 * math.pi }, alpha = 0.75 }
 		self.emitter.period = 0.05
@@ -17,8 +17,6 @@ Emitters = TestApp:extend{
 
 		self.emitter:loadParticles(RedParticle, 400)
 		self.emitter:loadParticles(RedParticle:extend{ fill = {0, 255, 0, 128} }, 400)
-
-		self:add(self.emitter)
 
 		self:add(Text:new
 		{

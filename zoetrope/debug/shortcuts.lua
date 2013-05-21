@@ -77,17 +77,16 @@ DebugShortcuts = DebugInstrument:extend
 			label = label .. ' (' .. key .. ')'
 		end
 
-		local button = DebugInstrumentButton:new
+		local button = self:add(DebugInstrumentButton:new
 		{
 			label = label,
 			onMouseUp = func
-		}
+		})
 
 		button.label.font = 11
 		button.label.y = 6
 		button.background.height = 24
 		
-		self:add(button)
 		table.insert(self._buttons, button)
 
 		self.contentHeight = #self._buttons * (DebugInstrumentButton.height + self.spacing) + 2 * self.spacing

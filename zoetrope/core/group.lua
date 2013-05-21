@@ -56,7 +56,8 @@ Group = Class:extend
 	--		sprite - <Sprite> to add
 	--
 	-- Returns:
-	--		nothing
+	--		the sprite added, so you can write things like
+	-- 		self.player = self:add(Player:new())      
 
 	add = function (self, sprite)
 		assert(sprite, 'asked to add nil to a group')
@@ -69,6 +70,7 @@ Group = Class:extend
 		end
 
 		table.insert(self.sprites, sprite)
+		return sprite
 	end,
 
 	-- Method: remove
@@ -367,7 +369,7 @@ Group = Class:extend
 				end
 
 				if layer.type == 'tilelayer' then
-					local map = Map:new{ spriteWidth = data.tilewidth, spriteHeight = data.tileheight }
+					local map = self:add(Map:new{ spriteWidth = data.tilewidth, spriteHeight = data.tileheight })
 					map:empty(layer.width, layer.height)
 
 					-- load tiles
@@ -400,9 +402,8 @@ Group = Class:extend
 					end
 
 					self[layer.name] = map
-					self:add(map)
 				elseif layer.type == 'objectgroup' then
-					local group = Group:new()
+					local group = self:add(Group:new())
 
 					for _, obj in pairs(layer.objects) do
 						-- roll in tile properties if based on a tile
@@ -443,8 +444,6 @@ Group = Class:extend
 						if obj.properties._the then
 							the[obj.properties._the] = spr
 						end
-
-						group:add(spr)
 					end
 
 					self[layer.name] = group

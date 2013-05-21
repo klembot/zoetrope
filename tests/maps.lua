@@ -5,7 +5,7 @@ Maps = TestApp:extend
 	onRun = function (self)	
 		-- programmatically created map
 	
-		local map = Map:new{ x = 124, y = 10, spriteWidth = 16, spriteHeight = 16 }
+		local map = self:add(Map:new{ x = 124, y = 10, spriteWidth = 16, spriteHeight = 16 })
 		map:empty(16, 16)
 		
 		local x, y
@@ -22,21 +22,19 @@ Maps = TestApp:extend
 		map.sprites[2] = Fill:new{ width = 16, height = 16, fill = {0, 255, 0} }
 		map.sprites[3] = Fill:new{ width = 16, height = 16, fill = {0, 0, 255} }
 		map.sprites[4] = Tile:new{ width = 16, height = 16, image = mario }
-		self:add(map)
 		
 		-- map loaded from CSV
 		
-		self.map2 = Map:new{ x = 256, y = 300, spriteWidth = 24, spriteHeight = 24 }
+		self.map2 = self:add(Map:new{ x = 256, y = 300, spriteWidth = 24, spriteHeight = 24 })
 		self.map2:loadMap('tests/assets/map.csv')
 		self.map2.sprites[1] = Fill:new{ width = 24, height = 24, fill = {0, 0, 255},
 			onCollide = function (self, other)
 				self:displace(other)
 			end }
-		self:add(self.map2)
 		
 		-- map with loadTiles() used
 		
-		local map3 = Map:new{ x = 400, y = 10, spriteWidth = 16, spriteHeight = 16 }
+		local map3 = self:add(Map:new{ x = 400, y = 10, spriteWidth = 16, spriteHeight = 16 })
 		map3:loadTiles('tests/assets/tiles.png')
 		map3:empty(16, 16)
 		
@@ -46,12 +44,9 @@ Maps = TestApp:extend
 			end
 		end
 		
-		self:add(map3)
-		
 		-- player for testing collisions
 		
-		self.player = Fill:new{ x = 380, y = 380, width = 16, height = 16 }
-		self:add(self.player)
+		self.player = self:add(Fill:new{ x = 380, y = 380, width = 16, height = 16 })
 
 		self:add(Text:new
 		{
