@@ -106,7 +106,7 @@ App = Class:extend
 	
 		-- view containers
 
-		obj.meta = obj.meta or Group:new()
+		obj.meta = obj.meta or View:new()
 		obj.view = obj.view or View:new()		
 		
 		-- input
