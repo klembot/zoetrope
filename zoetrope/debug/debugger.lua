@@ -64,12 +64,12 @@ debugger.init = function()
 
 	the.app.meta:add(debugger.console)
 
-	debugger.addInstrument(DebugWatch:new())
-	debugger.addInstrument(DebugShortcuts:new())
-	debugger.addInstrument(DebugConsole:new())
 	debugger.addInstrument(DebugStepper:new())
 	debugger.addInstrument(DebugLocals:new())
 	debugger.addInstrument(DebugStack:new())
+	debugger.addInstrument(DebugWatch:new())
+	debugger.addInstrument(DebugShortcuts:new())
+	debugger.addInstrument(DebugConsole:new())
 end
 
 -- Function: debugger.showConsole()
