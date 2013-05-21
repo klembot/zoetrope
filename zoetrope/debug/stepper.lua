@@ -29,7 +29,7 @@ DebugStepper = DebugInstrument:extend
 		}
 		self:add(self.continueButton)
 
-		self.lineHighlight = Fill:new{ fill = {32, 32, 32} }
+		self.lineHighlight = Fill:new{ fill = {64, 64, 64} }
 		self:add(self.lineHighlight)
 
 		self.sourceLines = Text:new
