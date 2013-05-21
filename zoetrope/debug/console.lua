@@ -93,13 +93,14 @@ DebugConsole = DebugInstrument:extend
 			debug.sethook()
 			setmetatable(_G, nil)
 			love.audio.stop()
+			love.mouse.setVisible(true)
 
 			print('\n' .. string.rep('=', 40) .. '\n')
 			print('Crash, ' .. message)
 
 			-- print offending source line where possible
 
-			local crashState = debug.getinfo(4, 'Sl')
+			local crashState = debug.getinfo(3, 'Sl')
 			
 			if string.find(crashState.source, '^@') then
 				print('\n>>> ' .. debugger.sourceLine(string.gsub(crashState.source, '^@', ''), crashState.currentline) .. '\n')
@@ -108,13 +109,30 @@ DebugConsole = DebugInstrument:extend
 			-- print or show stack and locals
 
 			if debugger.showStack then
-				debugger.showStack(6)
+				debugger.showStack(5)
 			else
 				print(debug.traceback('', 3))
 			end
 
 			if debugger.showLocals then
-				debugger.showLocals(6)
+				debugger.showLocals(5)
+
+				-- move locals into global context
+				-- http://www.lua.org/pil/23.1.1.html
+
+				local i = 1
+
+				while true do
+					local name, value = debug.getlocal(4, i)
+					if not name then break end
+
+					if (not string.find(name, ' ')) then
+						_G[name] = value
+					end
+					 
+					i = i + 1
+				end
+
 			else
 				print('\nlocal variables:')
 
