@@ -240,10 +240,10 @@ Sprite = Class:extend
 		local xChange = 0
 		local yChange = 0
 
-		if other.sprites then
+		if other.members then
 			-- handle groups
 
-			for _, spr in pairs(other.sprites) do
+			for _, spr in other:members() do
 				self:displace(spr, xHint, yHint)
 			end
 		else

@@ -373,7 +373,7 @@ Map = Sprite:extend
 	-- makes sure all sprites receive startFrame messages
 
 	startFrame = function (self, elapsed)
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			spr:startFrame(elapsed)
 		end
 
@@ -383,7 +383,7 @@ Map = Sprite:extend
 	-- makes sure all sprites receive update messages
 
 	update = function (self, elapsed)
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			spr:update(elapsed)
 		end
 
@@ -393,11 +393,17 @@ Map = Sprite:extend
 	-- makes sure all sprites receive endFrame messages
 
 	endFrame = function (self, elapsed)
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			spr:endFrame(elapsed)
 		end
 
 		Sprite.endFrame(self, elapsed)
+	end,
+
+	-- mimic Group's members() method
+
+	members = function (self)
+		return ipairs(self.sprites)
 	end,
 
 	__tostring = function (self)

@@ -31,7 +31,8 @@ Group = Class:extend
 	solid = true,
 
 	-- Property: sprites
-	-- A table of member sprites, in drawing order.
+	-- A table of member sprites, in drawing order. You can iterate over this
+	-- table with <members()>.
 	sprites = {},
 
 	-- Property: timeScale
@@ -84,7 +85,7 @@ Group = Class:extend
 	-- 		nothing
 
 	remove = function (self, sprite)
-		for i, spr in ipairs(self.sprites) do
+		for i, spr in self:members() do
 			if spr == sprite then
 				table.remove(self.sprites, i)
 				return
@@ -109,7 +110,7 @@ Group = Class:extend
 	--		nothing
 
 	moveToFront = function (self, sprite)
-		for i, spr in ipairs(self.sprites) do
+		for i, spr in self:members() do
 			if spr == sprite then
 				table.remove(self.sprites, i)
 				table.insert(self.sprites, sprite)
@@ -133,7 +134,7 @@ Group = Class:extend
 	--		nothing
 	
 	moveToBack = function (self, sprite)
-		for i, spr in ipairs(self.sprites) do
+		for i, spr in self:members() do
 			if spr == sprite then
 				table.remove(self.sprites, i)
 				table.insert(self.sprites, 1, sprite)
@@ -158,6 +159,19 @@ Group = Class:extend
 
 	sort = function (self, func)
 		table.sort(self.sprites, func)
+	end,
+
+	-- Method: members
+	-- A convenience method that iterates over all member sprites.
+	--
+	-- Arguments:
+	--		none
+	--
+	-- Returns:
+	--		order, sprite
+
+	members = function (self)
+		return ipairs(self.sprites)
 	end,
 
 	-- Method: collide
@@ -245,7 +259,7 @@ Group = Class:extend
 		if subgroups then
 			local count = 0
 
-			for _, spr in pairs(self.sprites) do
+			for _, spr in self:members() do
 				if spr:instanceOf(Group) then
 					count = count + spr:count(true)
 				else
@@ -304,7 +318,7 @@ Group = Class:extend
 	contains = function (self, sprite, recurse)
 		if recurse ~= false then recurse = true end
 
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			if spr == sprite then return true end
 
 			if recurse and spr:instanceOf(Group) and spr:contains(sprite) then
@@ -463,7 +477,7 @@ Group = Class:extend
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
 		
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			if spr.active then spr:startFrame(elapsed) end
 		end
 
@@ -476,7 +490,7 @@ Group = Class:extend
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
 
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			if spr.active then spr:update(elapsed) end
 		end
 
@@ -489,7 +503,7 @@ Group = Class:extend
 		if not self.active then return end
 		elapsed = elapsed * self.timeScale
 
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			if spr.active then spr:endFrame(elapsed) end
 		end
 
@@ -523,7 +537,7 @@ Group = Class:extend
 			end
 		end
 		
-		for _, spr in pairs(self.sprites) do	
+		for _, spr in self:members() do	
 			if spr.visible then
 				if spr.translate then
 					spr:draw(spr.translate.x + scrollX, spr.translate.y + scrollY)

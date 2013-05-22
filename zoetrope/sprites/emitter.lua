@@ -180,7 +180,7 @@ Emitter = Group:extend{
 	--		nothing
 
 	extinguish = function (self)
-		for _, spr in pairs(self.sprites) do
+		for _, spr in self:members() do
 			spr:die()
 		end
 
