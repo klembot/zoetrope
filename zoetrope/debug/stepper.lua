@@ -6,16 +6,77 @@
 DebugStepper = DebugInstrument:extend
 {
 	visible = false,
-	lineContext = 5,
+	lineContext = 10,
 	width = 'wide',
 	_fileCache = {},
 
 	onNew = function (self)
-		self.stepButton = self:add(DebugInstrumentButton:new
+		self.stepIntoButton = self:add(DebugInstrumentButton:new
 		{
-			label = 'Step',
+			label = 'Step Into',
 			onMouseUp = function (self)
-				debugger._stepCommand = 'next'
+				debugger._stepPaused = false
+				debugger._stepFilter = nil
+			end
+		})
+
+		self.stepOverButton = self:add(DebugInstrumentButton:new
+		{
+			label = 'Step Over',
+			onMouseUp = function (self)
+				debugger._stepPaused = false
+				local prevStack = debugger._stepStack()
+
+				debugger._stepFilter = function (stack)
+					for i = 1, #stack - #prevStack do
+						local match = true
+
+						for j = 1, #prevStack do
+							if stack[i + j] ~= prevStack[j] then
+								match = false
+								break
+							end
+						end
+
+						-- we are now executing a sub-call;
+						-- temporarily disable our line hook until
+						-- we return to the previous function
+
+						if match then
+							debug.sethook(function()
+								local state = debug.getinfo(3, 'f')
+
+								if state.func == prevStack[1] then 
+									-- we're at least on our old function, but is
+									-- the stack depth the same?
+
+									local depth = 1
+									
+									while true do
+										state = debug.getinfo(3 + depth, 'f')
+										if not state then break end
+										depth = depth + 1
+									end
+
+									if depth == #prevStack then
+										debug.sethook(debugger._stepLine, 'l')
+									end
+								end
+							end, 'r')
+							return false
+						end
+					end
+
+					return true
+				end
+			end
+		})
+
+		self.stepOutButton = self:add(DebugInstrumentButton:new
+		{
+			label = 'Step Out',
+			onMouseUp = function (self)
+				debugger._stepPaused = false
 			end
 		})
 
@@ -23,7 +84,8 @@ DebugStepper = DebugInstrument:extend
 		{
 			label = 'Continue',
 			onMouseUp = function (self)
-				debugger._stepCommand = 'continue'
+				debugger._stepPaused = false
+				debugger.endBreakpt()
 			end
 		})
 
@@ -65,13 +127,16 @@ DebugStepper = DebugInstrument:extend
 			debug.sethook()
 		end
 
+		-- hook to handle stepping over source
+
 		debugger._stepLine = function (_, line)
-			local state = debug.getinfo(2, 'S')
+			local state = debug.getinfo(2, 'Sl')
 
-			-- not totally in love with this, but it's faster than
-			-- checking all possible values
-
-			if string.find(state.source, 'zoetrope/debug') then return end
+			if string.find(state.source, 'zoetrope/debug') or
+			   (debugger._stepFilter and not debugger._stepFilter(debugger._stepStack())) then
+				--print('skipping', state.source, state.currentline, #debugger._stepStack())
+				return
+			end
 
 			if debugger.showStack then debugger.showStack(4) end
 			if debugger.showLocals then debugger.showLocals(4) end
@@ -82,16 +147,32 @@ DebugStepper = DebugInstrument:extend
 			debugger._stepPaused = true
 
 			while debugger._stepPaused do
-				debugger._stepCommand = nil
 				debugger._miniEventLoop()
-
-				if debugger._stepCommand == 'next' then
-					debugger._stepPaused = false
-				elseif debugger._stepCommand == 'continue' then
-					debugger._stepPaused = false
-					debugger.endBreakpt()
-				end
 			end
+		end
+
+		-- returns a table representing the call stack during a source step
+
+		debugger._stepStack = function()
+			local level = 2
+			local result = {}
+			local info = {}
+			local afterHook = false
+
+			while true do
+				info = debug.getinfo(level, 'f')
+				if not info then break end
+
+				if afterHook then
+					table.insert(result, info.func)
+				elseif info.func == debugger._stepLine then
+					afterHook = true
+				end
+
+				level = level + 1
+			end
+
+			return result
 		end
 	end,
 
@@ -110,11 +191,17 @@ DebugStepper = DebugInstrument:extend
 		self.lineHighlight.width = width - self.spacing * 2
 		self.lineHighlight.height = self.lineHeight
 
-		self.stepButton.x = self.sourceLines.x
-		self.stepButton.y = self.sourceView.y + self.sourceView.height + self.spacing
+		self.stepIntoButton.x = self.sourceLines.x
+		self.stepIntoButton.y = self.sourceView.y + self.sourceView.height + self.spacing
 
-		self.continueButton.x = self.stepButton.x + self.stepButton.width + self.spacing
-		self.continueButton.y = self.stepButton.y
+		self.stepOverButton.x = self.stepIntoButton.x + self.stepIntoButton.width + self.spacing
+		self.stepOverButton.y = self.stepIntoButton.y
+
+		self.stepOutButton.x = self.stepOverButton.x + self.stepOverButton.width + self.spacing
+		self.stepOutButton.y = self.stepOverButton.y
+
+		self.continueButton.x = width - self.stepOverButton.width
+		self.continueButton.y = self.stepOverButton.y
 	end,
 
 	showLine = function (self, file, line)
