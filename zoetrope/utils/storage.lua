@@ -48,13 +48,21 @@ Storage = Class:extend{
 	-- Saves data to disk.
 	--
 	-- Arguments:
-	--		none
+	--		values - table of values to set before saving, optional -- these
+	--		act in addition to anything previously set in the <data>
+	--		ignoreError - silently ignore any errors saving, defaults to true 
 	--
 	-- Returns:
 	--		nothing
 
-	save = function (self, ignoreError)
+	save = function (self, values, ignoreError)
 		if ignoreError ~= false then ignoreError = true end
+
+		if values then
+			for key, value in pairs(values) do
+				self.data[key] = value
+			end
+		end
 
 		local ok, message = pcall(love.filesystem.write, self.filename, dump(self.data))
 
@@ -67,7 +75,7 @@ Storage = Class:extend{
 	-- Loads data from disk.
 	--
 	-- Arguments:
-	--		ignoreError - silently ignore any errors loading, default to true
+	--		ignoreError - silently ignore any errors loading, defaults to true
 	--
 	-- Returns:
 	--		whether loading actually worked, boolean

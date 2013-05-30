@@ -11,14 +11,8 @@ Files = TestApp:extend
 		self.label.text = 'Saved to storage.dat:\n' .. dump(self.storage.data)
 
 		self.countStorage = Storage:new{ filename = 'count.dat' }
-		self.countStorage:load()
-
-		if not self.countStorage.data.count then
-			self.countStorage.data.count = 0
-		end
-
-		self.countStorage.data.count = self.countStorage.data.count + 1
-		self.countStorage:save()
+		self.countStorage.data.count = self.countStorage.data.count or 0
+		self.countStorage:save({ count = self.countStorage.data.count + 1 })
 
 		self:add(Text:new
 		{
