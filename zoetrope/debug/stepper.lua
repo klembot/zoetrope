@@ -77,6 +77,31 @@ DebugStepper = DebugInstrument:extend
 			label = 'Step Out',
 			onMouseUp = function (self)
 				debugger._stepPaused = false
+				local prevStack = debugger._stepStack()
+
+				-- disable our line hook until the current function returns
+
+				debug.sethook(function()
+					local depth = 2
+					local match = false
+
+					while true do
+						local state = debug.getinfo(depth, 'f')
+
+						if not state then
+							match = true
+							break
+						elseif state.func ~= prevStack[depth - 1] then
+							break
+						end
+
+						depth = depth + 1
+					end
+
+					if match then
+						debug.sethook(debugger._stepLine, 'l')
+					end
+				end, 'r')
 			end
 		})
 
