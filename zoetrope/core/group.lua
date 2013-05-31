@@ -50,6 +50,19 @@ Group = Class:extend
 	-- sprites at their normal position, set both x and y to 1.
 	translateScale = { x = 1, y = 1 },
 
+	-- Property: scale
+	-- Zooms in or out all drawing operations in the group, centering them with
+	-- respect to the <origin> property.
+	scale = 1,
+
+	-- Property: distort
+	-- Distorts the group's scale, similar to <Sprite.distort>.
+	distort = { x = 1, y = 1 },
+
+	-- Property: origin
+	-- Sets the center point for all scaling operations.
+	origin = { x = 0, y = 0 },
+
 	-- Method: add
 	-- Adds a sprite to the group.
 	--
@@ -526,6 +539,7 @@ Group = Class:extend
 		local scrollY = y * self.translateScale.y
 		local appWidth = the.app.width
 		local appHeight = the.app.height
+		local scaled = self.scale ~= 1 or self.distort.x ~= 1 or self.distort.y ~= 1
 
 		if self.effect then
 			if self.effectType == 'screen' then
@@ -535,6 +549,16 @@ Group = Class:extend
 			elseif self.effectType == 'sprite' then
 				love.graphics.setPixelEffect(self.effect)
 			end
+		end
+
+		if scaled then
+			local scaleX = self.scale * self.distort.x
+			local scaleY = self.scale * self.distort.y
+
+			love.graphics.push()
+			love.graphics.translate(self.origin.x, self.origin.y)
+			love.graphics.scale(scaleX, scaleY)
+			love.graphics.translate(- self.origin.x, - self.origin.y)
 		end
 		
 		for _, spr in self:members() do	
@@ -553,6 +577,10 @@ Group = Class:extend
 					spr:draw(scrollX, scrollY)
 				end
 			end
+		end
+
+		if scaled then
+			love.graphics.pop()
 		end
 			
 		if self.effect then
