@@ -11,7 +11,8 @@
 -- Extends:
 --		<Sprite>
 
-Animation = Sprite:extend{
+Animation = Sprite:extend
+{
 	-- Property: paused
 	-- Set this to true to freeze the animation on the current frame.
 	paused = false,
@@ -223,9 +224,12 @@ Animation = Sprite:extend{
 
 		if self.flipX then scaleX = scaleX * -1 end
 		if self.flipY then scaleY = scaleY * -1 end
+
+		local origX = self.origin.x or (self.width / 2)
+		local origY = self.origin.y or (self.height / 2)
 			
-		love.graphics.drawq(self._imageObj, self._quad, x + self.width / 2, y + self.height / 2, self.rotation,
-							scaleX, scaleY, self.width / 2, self.height / 2)
+		love.graphics.drawq(self._imageObj, self._quad, x + origX, y + origY, self.rotation,
+							scaleX, scaleY, origX, origY)
 		
 		-- reset color
 		

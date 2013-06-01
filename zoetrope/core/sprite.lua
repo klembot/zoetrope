@@ -58,6 +58,12 @@ Sprite = Class:extend
 	-- Property: height
 	-- Height in pixels.
 
+	-- Property: origin
+	-- Sets the origin to use when rotating and scaling this sprite, in pixels
+	-- from the top left corner of the sprite. If either x or y property is
+	-- nil, this uses the center of the sprite.
+	origin = {},
+
 	-- Property: rotation
 	-- Rotation of drawn sprite in radians. This does not affect the bounds
 	-- used during collision checking.

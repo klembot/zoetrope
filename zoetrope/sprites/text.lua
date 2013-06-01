@@ -166,11 +166,14 @@ Text = Sprite:extend{
 		if self.flipY then scaleY = scaleY * -1 end
 
 		if scaleX ~= 1 or scaleY ~= 1 or self.rotation ~= 0 then
+			local origX = self.origin.x or (self.width / 2)
+			local origY = self.origin.y or (self.height / 2)
+
 			love.graphics.push()
-			love.graphics.translate(x + self.width / 2, y + self.height / 2)
+			love.graphics.translate(x + origX, y + origY)
 			love.graphics.scale(scaleX, scaleY)
 			love.graphics.rotate(self.rotation)
-			love.graphics.translate(- (x + self.width / 2), - (y + self.height / 2))
+			love.graphics.translate(- (x + origX), - (y + origY))
 		end
 
 		-- set color if needed

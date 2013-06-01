@@ -83,6 +83,7 @@ DebugPerformance = DebugInstrument:extend
 			spr.y = self.y
 			spr.width = barWidth
 			spr.height = height - self.spacing * 2
+			spr.origin.y = spr.height
 			x = x + barWidth
 		end
 	end
