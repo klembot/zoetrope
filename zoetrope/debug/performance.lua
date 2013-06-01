@@ -6,9 +6,9 @@ DebugPerformance = DebugInstrument:extend
 	width = 'narrow',
 	contentHeight = 30,
 	samples = {},
-	sampleInterval = 0.1,
+	sampleInterval = 0.25,
 	samplePtr = 1,
-	numSamples = 210,
+	numSamples = 105,
 	_sampleTimer = 0,
 	_sampleBars = {},
 	average = '-',
@@ -21,11 +21,11 @@ DebugPerformance = DebugInstrument:extend
 
 	onUpdate = function (self, elapsed)
 		self._sampleTimer = self._sampleTimer + elapsed
+		local fps = math.floor(1 / elapsed + 0.5)
+		self.title.text = 'FPS (' .. fps .. ', average ' .. self.average .. ')'
 
 		if self._sampleTimer > self.sampleInterval then
 			-- record fps and percent of desired fps
-
-			local fps = math.floor(1 / elapsed + 0.5)
 
 			table.insert(self.samples, fps)
 			table.insert(self.samples, fps / the.app.fps)
@@ -68,7 +68,6 @@ DebugPerformance = DebugInstrument:extend
 				end
 			end
 
-			self.title.text = 'FPS (' .. fps .. ', average ' .. self.average .. ')'
 			self._sampleTimer = 0
 		end
 	end,
