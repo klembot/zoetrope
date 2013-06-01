@@ -67,6 +67,7 @@ debugger.init = function()
 	debugger.addInstrument(DebugStepper:new())
 	debugger.addInstrument(DebugLocals:new())
 	debugger.addInstrument(DebugStack:new())
+	debugger.addInstrument(DebugPerformance:new())
 	debugger.addInstrument(DebugWatch:new())
 	debugger.addInstrument(DebugShortcuts:new())
 	debugger.addInstrument(DebugConsole:new())
@@ -213,7 +214,7 @@ debugger._resizeInstruments = function()
 	for _, spr in pairs(console.instruments.wide.sprites) do
 		if spr.visible then
 			local height = spr:totalHeight()
-			console._instrumentHeights[spr] = height
+			console._instrumentHeights[spr] = spr.contentHeight
 
 			if height == '*' then
 				table.insert(expandables, spr)
@@ -240,14 +241,16 @@ debugger._resizeInstruments = function()
 	expandables = {}
 
 	for _, spr in pairs(console.instruments.narrow.sprites) do
-		local height = spr:totalHeight()
-		console._instrumentHeights[spr] = height
+		if spr.visible then
+			local height = spr:totalHeight()
+			console._instrumentHeights[spr] = spr.contentHeight
 
-		if height == '*' then
-			table.insert(expandables, spr)
-		else
-			spr:resize(x, y, width - 2 * console.spacing, height)
-			y = y + height + console.spacing
+			if height == '*' then
+				table.insert(expandables, spr)
+			else
+				spr:resize(x, y, width - 2 * console.spacing, height)
+				y = y + height + console.spacing
+			end
 		end
 	end
 
