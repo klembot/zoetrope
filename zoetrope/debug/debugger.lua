@@ -39,7 +39,7 @@ debugger.init = function()
 			self:add(self.instruments.wide)
 		end,
 
-		onUpdate = function (self)
+		update = function (self, elapsed)
 			if the.keys:justPressed(debugger.consoleKey) then
 				if self.visible then
 					debugger.hideConsole()
@@ -48,16 +48,18 @@ debugger.init = function()
 				end
 			end
 
+			for _, listener in pairs(self.listeners) do
+				listener()
+			end
+
 			if debugger.console.visible then
 				for spr, height in pairs(debugger.console._instrumentHeights) do
 					if height ~= spr.contentHeight then
 						debugger._resizeInstruments()
 					end
 				end
-			end
 
-			for _, listener in pairs(self.listeners) do
-				listener()
+				Group.update(self, elapsed)
 			end
 		end
 	}
