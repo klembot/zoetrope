@@ -1,15 +1,13 @@
 DebugWatch = DebugInstrument:extend
 {
 	_watches = {},
+	visible = false,
 
 	onNew = function (self)
 		self.title.text = 'Watch'
 		self.labels = self:add(Text:new{ font = self.font })
 		self.values = self:add(Text:new{ font = self.font })
 		self.lineHeight = self.labels._fontObj:getHeight()
-
-		self:addExpression('love.timer.getFPS()', 'FPS')
-		self:addExpression('math.floor(collectgarbage("count") / 1024) .. "M"', 'Memory used')
 
 		debugger.watch = function (exp, label) self:addExpression(exp, label) end
 	end,
@@ -22,6 +20,7 @@ DebugWatch = DebugInstrument:extend
 	--		label - string label, defaults to expression
 
 	addExpression = function (self, expression, label)
+		self.visible = true
 		table.insert(self._watches, { label = label or expression,
 									  func = loadstring('return ' .. expression) })
 	
