@@ -274,10 +274,12 @@ end
 --		forever - run indefinitely, or just for a single frame?
 --
 -- Returns:
---		nothing
+--		whether a quit event was detected, and the caller
+--		should take an action based on this
 
 debugger._miniEventLoop = function (forever)
 	local elapsed = 0
+	local quitNow = false
 
 	repeat
 		if love.event then
@@ -285,7 +287,10 @@ debugger._miniEventLoop = function (forever)
 			
 			for e, a, b, c, d in love.event.poll() do
 				if e == 'quit' then
-					if not love.quit or not love.quit() then return end
+					if not love.quit or not love.quit() then
+						quitNow = true
+						forever = false
+					end
 				end
 
 				love.handlers[e](a, b, c, d)
@@ -308,7 +313,9 @@ debugger._miniEventLoop = function (forever)
 		debugger.console:endFrame(elapsed)
 
 		if the.keys:pressed('escape') then
-			if not love.quit or not love.quit() then return end
+			if not love.quit or not love.quit() then
+				love.event.quit()
+			end
 		end
 
 		if love.graphics then
@@ -321,4 +328,6 @@ debugger._miniEventLoop = function (forever)
 		if love.timer then love.timer.sleep(0.03) end
 		if love.graphics then love.graphics.present() end
 	until not forever 
+
+	return quitNow
 end

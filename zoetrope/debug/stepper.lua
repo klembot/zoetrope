@@ -170,9 +170,15 @@ DebugStepper = DebugInstrument:extend
 			self:showLine(file, line)
 
 			debugger._stepPaused = true
+			local quit = false
 
-			while debugger._stepPaused do
-				debugger._miniEventLoop()
+			while debugger._stepPaused and not quit do
+				quit = debugger._miniEventLoop()
+			end
+
+			if quit then
+				debug.sethook()
+				love.event.quit()
 			end
 		end
 
