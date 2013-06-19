@@ -114,7 +114,7 @@ DebugStepper = DebugInstrument:extend
 			end
 		})
 
-		self.lineHighlight = self:add(Fill:new{ fill = {64, 64, 64} })
+		self.lineHighlight = self:add(Fill:new{ fill = {64, 64, 64}, height = 0, width = 0 })
 
 		self.sourceLines = self:add(Text:new
 		{
