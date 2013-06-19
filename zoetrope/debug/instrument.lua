@@ -142,6 +142,19 @@ DebugInstrument = Group:extend
 		else
 			return self.contentHeight + self.titleBarHeight
 		end
+	end,
+
+	draw = function (self, x, y)
+		local sx, sy, sw, sh = love.graphics.getScissor()
+		love.graphics.setScissor(self.outerFrame.x - 1, self.outerFrame.y - 1,
+		                         self.outerFrame.width + 2, self.outerFrame.height + 2)
+		Group.draw(self, x, y)
+
+		if sx and sy then
+			love.graphics.setScissor(sx, sy, sw, sh)
+		else
+			love.graphics.setScissor()
+		end
 	end
 }
 
