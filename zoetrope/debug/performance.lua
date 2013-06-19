@@ -8,15 +8,12 @@ DebugPerformance = DebugInstrument:extend
 	samples = {},
 	sampleInterval = 0.25,
 	samplePtr = 1,
-	numSamples = 105,
+	numSamples = 100,
 	_sampleTimer = 0,
-	_sampleBars = {},
 	average = '-',
 
 	onNew = function (self)
-		for i = 1, self.numSamples do
-			self._sampleBars[i] = self:add(Fill:new{ fill = {255, 255, 255}, width = 0, height = 0 })
-		end
+		self.bars = self:add(Group:new())
 	end,
 
 	onUpdate = function (self, elapsed)
@@ -73,17 +70,33 @@ DebugPerformance = DebugInstrument:extend
 	end,
 
 	onResize = function (self, x, y, width, height)
+		local oldSamples = self.numSamples
+
 		self.y = y + self.spacing 
 		x = x + self.spacing
-		local barWidth = math.ceil((width - 2 * self.spacing) / self.numSamples)
+		self.numSamples = math.floor(width - 2 * self.spacing) / 2
 
-		for _, spr in pairs(self._sampleBars) do
-			spr.x = x
-			spr.y = self.y
-			spr.width = barWidth
-			spr.height = height - self.spacing * 2
-			spr.origin.y = spr.height
-			x = x + barWidth
+		if self.numSamples ~= oldSamples then
+			self._sampleBars = {}
+
+			while #self.bars.sprites > 0 do
+				self.bars:remove(self.bars.sprites[1])
+			end
+
+			for i = 1, self.numSamples do
+				self._sampleBars[i] = self.bars:add(Fill:new
+				{
+					x = x,
+					y = self.y,
+					width = 2,
+					height = height - self.spacing * 2,
+					origin = { y = height - self.spacing * 2 },
+					distort = { x = 1, y = 0 },
+					fill = {255, 255, 255},
+				})
+
+				x = x + 2
+			end
 		end
 	end
 }
