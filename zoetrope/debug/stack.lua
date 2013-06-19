@@ -36,13 +36,22 @@ DebugStack = DebugInstrument:extend
 			info = debug.getinfo(level, 'nlS')
 			
 			if info then
-				if info.name then
-					self.text.text = self.text.text .. info.name .. '()\n    '
-					self.contentHeight = self.contentHeight + self.lineHeight
+				self.contentHeight = self.contentHeight + self.lineHeight
+
+				if info.name and info.name ~= '' then
+					self.text.text = self.text.text .. info.name .. '()\n'
+				elseif not info.name then
+					self.text.text = self.text.text .. '(anonymous function)\n'
+				else
+					self.text.text = self.text.text .. '(tail call)\n'
 				end
 
-				self.text.text = self.text.text .. info.short_src .. ':' .. info.currentline .. '\n'
-				self.contentHeight = self.contentHeight + self.lineHeight
+				if info.currentline ~= -1 then
+					self.text.text = self.text.text .. '    ' .. info.short_src ..
+					                 ':' .. info.currentline .. '\n'
+
+					self.contentHeight = self.contentHeight + self.lineHeight
+				end
 			end
 
 			level = level + 1
