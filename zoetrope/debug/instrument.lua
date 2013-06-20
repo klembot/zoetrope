@@ -146,7 +146,8 @@ DebugInstrument = Group:extend
 
 	draw = function (self, x, y)
 		local sx, sy, sw, sh = love.graphics.getScissor()
-		love.graphics.setScissor(self.outerFrame.x - 1, self.outerFrame.y - 1,
+		love.graphics.setScissor(the.app.inset.x + self.outerFrame.x - 1,
+		                         the.app.inset.y + self.outerFrame.y - 1,
 		                         self.outerFrame.width + 2, self.outerFrame.height + 2)
 		Group.draw(self, x, y)
 
